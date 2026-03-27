@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: var(--font-display-theme);
+  --font-serif: "Cormorant Garamond", serif;
+
+  --color-bg: var(--bg);
+  --color-accent: var(--accent);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+}
+
+:root {
+  /* Light Mode - Studio / Girly Aesthetic */
+  --bg: #fffafb;
+  --accent: #ff85a1;
+  --ink: #2d1b20;
+  --muted: #8e7d81;
+  --border: rgba(255, 133, 161, 0.12);
+  --font-display-theme: "Playfair Display", serif;
+  --glass-bg: rgba(255, 255, 255, 0.4);
+}
+
+.dark {
+  /* Dark Mode - Terminal / Professional Aesthetic */
+  --bg: #050505;
+  --accent: #60a5fa;
+  --ink: #e5e5e5;
+  --muted: #737373;
+  --border: rgba(255, 255, 255, 0.08);
+  --font-display-theme: "Space Grotesk", sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.02);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg text-ink font-sans overflow-x-hidden antialiased cursor-none transition-colors duration-500;
+  }
+}
+
+/* Custom Cursor */
+.cursor-dot {
+  @apply fixed top-0 left-0 w-2 h-2 bg-accent rounded-full pointer-events-none z-[999] mix-blend-difference;
+  transform: translate3d(var(--cursor-x, -100px), var(--cursor-y, -100px), 0);
+  transition: transform 0.05s linear;
+}
+
+.cursor-outline {
+  @apply fixed top-0 left-0 w-10 h-10 border border-accent/30 rounded-full pointer-events-none z-[998];
+  transform: translate3d(calc(var(--cursor-x, -100px) - 20px), calc(var(--cursor-y, -100px) - 20px), 0);
+  transition: transform 0.15s ease-out;
+}
+
+@media (max-width: 768px) {
+  .cursor-dot, .cursor-outline {
+    display: none;
+  }
+  body {
+    cursor: auto;
+  }
+}
+
+/* Technical Grid Lines */
+.grid-line-v {
+  @apply absolute top-0 bottom-0 w-[1px] bg-border transition-colors duration-500;
+}
+
+.grid-line-h {
+  @apply absolute left-0 right-0 h-[1px] bg-border transition-colors duration-500;
+}
+
+.text-stroke {
+  -webkit-text-stroke: 1px var(--color-ink);
+  color: transparent;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+.mono-label {
+  @apply font-mono text-[10px] uppercase tracking-[0.2em] text-muted transition-colors duration-500;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 40s linear infinite;
+}
+
+@keyframes scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.animate-scan {
+  animation: scan 8s linear infinite;
+}
+
+.writing-vertical-rl {
+  writing-mode: vertical-rl;
+}
+
+.bento-card {
+  @apply relative overflow-hidden border border-border p-8 transition-all duration-500;
+  background: var(--card-bg);
+}
+
+:root {
+  --card-bg: rgba(255, 133, 161, 0.05);
+}
+
+.dark {
+  --card-bg: rgba(255, 255, 255, 0.02);
+}
+
+.bento-card:hover {
+  background: var(--card-hover-bg);
+  @apply border-accent;
+}
+
+:root {
+  --card-hover-bg: rgba(255, 133, 161, 0.1);
+}
+
+.dark {
+  --card-hover-bg: rgba(255, 255, 255, 0.05);
+}
