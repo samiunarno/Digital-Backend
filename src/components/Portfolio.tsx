@@ -488,10 +488,10 @@ export default function Portfolio() {
           </div>
 
           <h1 className="hero-reveal font-display font-bold text-[clamp(2.5rem,12vw,9rem)] leading-[0.9] md:leading-[0.85] tracking-tighter md:tracking-[-0.04em] mb-10 uppercase relative z-10">
-            <span className="block overflow-hidden">
+            <span className="block overflow-hidden pb-6 -mb-6 pr-8 -mr-8">
               <span className="block">{firstName}</span>
             </span>
-            <span className="block overflow-hidden mt-2">
+            <span className="block overflow-hidden mt-2 pb-8 -mb-8 pr-8 -mr-8">
               <span className={cn(
                 "block", 
                 theme === 'dark' ? "text-stroke" : "text-accent font-serif italic normal-case tracking-tight"
@@ -551,7 +551,7 @@ export default function Portfolio() {
             <div className="lg:col-span-7 section-reveal bg-bg border border-border p-6 sm:p-8 md:p-16 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors" />
               <h2 className="text-4xl sm:text-6xl md:text-8xl font-bold uppercase mb-12 leading-[0.85] font-display tracking-tighter">
-                {language === 'en' ? 'The' : ''} <span className={cn("text-accent", theme === 'light' && "italic font-serif normal-case")}>{UI_TRANSLATIONS[language].about.title}</span>
+                {language === 'en' ? 'The' : ''} <span className={cn("text-accent pr-4", theme === 'light' && "italic font-serif normal-case")}>{UI_TRANSLATIONS[language].about.title}</span>
               </h2>
               <p className="text-lg sm:text-xl md:text-3xl font-light leading-relaxed text-muted mb-16 max-w-2xl">
                 {t.about?.text || ""}
