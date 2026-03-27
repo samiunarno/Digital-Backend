@@ -488,10 +488,10 @@ export default function Portfolio() {
           </div>
 
           <h1 className="hero-reveal font-display font-bold text-[clamp(2.5rem,12vw,9rem)] leading-[0.9] md:leading-[0.85] tracking-tighter md:tracking-[-0.04em] mb-10 uppercase relative z-10">
-            <span className="block overflow-hidden pb-6 -mb-6 pr-8 -mr-8">
+            <span className="block">
               <span className="block">{firstName}</span>
             </span>
-            <span className="block overflow-hidden mt-2 pb-8 -mb-8 pr-8 -mr-8">
+            <span className="block mt-2">
               <span className={cn(
                 "block", 
                 theme === 'dark' ? "text-stroke" : "text-accent font-serif italic normal-case tracking-tight"
