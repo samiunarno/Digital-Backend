@@ -514,6 +514,9 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* ── MARQUEE TECH BANNER ── */}
+      <MarqueeBanner skills={common.skills} />
+
       {/* 3. About Section */}
       <section id="about" ref={aboutRef} className="py-32 px-6 md:px-[10%] relative z-10 border-y border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
@@ -763,6 +766,9 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* ── MANIFESTO SECTION ── */}
+      <ManifestoSection language={language} />
+
       {/* ── PROCESS SECTION ── */}
       <ProcessSection language={language} />
 
@@ -996,6 +1002,9 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* ── ACTIVITY HEATMAP ── */}
+      <ActivityHeatmap language={language} />
+
       {/* 11. Gallery / Memories Section */}
       <section ref={galleryRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
@@ -1181,6 +1190,375 @@ export default function Portfolio() {
     </motion.div>
       )}
     </div>
+  );
+}
+
+// ─── Marquee Tech Banner ──────────────────────────────────────────────────────
+function MarqueeBanner({ skills }: { skills: string[] }) {
+  const row1 = [...skills, ...skills, ...skills];
+  const row2 = [...skills].reverse();
+  const row2Doubled = [...row2, ...row2, ...row2];
+
+  return (
+    <div className="relative z-10 border-y border-border bg-bg overflow-hidden py-0 select-none">
+      {/* Row 1 — left to right */}
+      <div className="flex gap-0 py-4 border-b border-border/50">
+        <div
+          className="flex gap-0 shrink-0"
+          style={{
+            animation: 'marquee-left 30s linear infinite',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {row1.map((skill, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-3 px-8 font-mono text-[10px] uppercase tracking-[0.3em] text-muted/60 hover:text-accent transition-colors duration-300 cursor-default"
+            >
+              <span className="w-1 h-1 bg-accent/40 rotate-45 inline-block flex-shrink-0" />
+              {skill}
+            </span>
+          ))}
+        </div>
+        <div
+          aria-hidden
+          className="flex gap-0 shrink-0"
+          style={{
+            animation: 'marquee-left 30s linear infinite',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {row1.map((skill, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-3 px-8 font-mono text-[10px] uppercase tracking-[0.3em] text-muted/60 hover:text-accent transition-colors duration-300 cursor-default"
+            >
+              <span className="w-1 h-1 bg-accent/40 rotate-45 inline-block flex-shrink-0" />
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Row 2 — right to left */}
+      <div className="flex gap-0 py-4">
+        <div
+          className="flex gap-0 shrink-0"
+          style={{
+            animation: 'marquee-right 22s linear infinite',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {row2Doubled.map((skill, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-3 px-8 font-mono text-[10px] uppercase tracking-[0.3em] text-muted/30 hover:text-accent/70 transition-colors duration-300 cursor-default"
+            >
+              <span className="w-1 h-1 border border-accent/30 rotate-45 inline-block flex-shrink-0" />
+              {skill}
+            </span>
+          ))}
+        </div>
+        <div
+          aria-hidden
+          className="flex gap-0 shrink-0"
+          style={{
+            animation: 'marquee-right 22s linear infinite',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {row2Doubled.map((skill, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-3 px-8 font-mono text-[10px] uppercase tracking-[0.3em] text-muted/30 hover:text-accent/70 transition-colors duration-300 cursor-default"
+            >
+              <span className="w-1 h-1 border border-accent/30 rotate-45 inline-block flex-shrink-0" />
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Fade edges */}
+      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-bg to-transparent pointer-events-none z-10" />
+      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-bg to-transparent pointer-events-none z-10" />
+    </div>
+  );
+}
+
+// ─── Manifesto Section ────────────────────────────────────────────────────────
+function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const lines = language === 'en'
+    ? [
+        { words: ['I', 'DON\'T'], accent: false },
+        { words: ['BUILD'], accent: true },
+        { words: ['WEBSITES.'], accent: false },
+        { words: ['I', 'BUILD'], accent: false },
+        { words: ['DIGITAL'], accent: true },
+        { words: ['ECOSYSTEMS.'], accent: false },
+      ]
+    : [
+        { words: ['我', '不'], accent: false },
+        { words: ['构建'], accent: true },
+        { words: ['网站。'], accent: false },
+        { words: ['我', '构建'], accent: false },
+        { words: ['数字'], accent: true },
+        { words: ['生态系统。'], accent: false },
+      ];
+
+  const pills = language === 'en'
+    ? ['Performance-First', 'Zero Compromise', 'System Thinking', 'Ship Fast, Scale Bigger']
+    : ['性能优先', '零妥协', '系统思维', '快速发布，无限扩展'];
+
+  return (
+    <section
+      ref={ref}
+      className="py-24 sm:py-32 md:py-40 px-6 md:px-[10%] relative z-10 border-b border-border overflow-hidden"
+    >
+      {/* Huge faint background word */}
+      <div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.02] overflow-hidden"
+      >
+        <span className="font-display font-black text-[20vw] uppercase leading-none text-accent">
+          {language === 'en' ? 'BUILD' : '构建'}
+        </span>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative">
+        <div className="mono-label mb-8 opacity-60">
+          {language === 'en' ? '// ENGINEERING_PHILOSOPHY' : '// 工程哲学'}
+        </div>
+
+        {/* Manifesto text */}
+        <div className="mb-16">
+          {lines.map((line, li) => (
+            <div key={li} className="overflow-hidden">
+              <motion.div
+                initial={{ y: '110%' }}
+                animate={visible ? { y: 0 } : { y: '110%' }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: li * 0.1 }}
+                className="flex flex-wrap gap-x-6"
+              >
+                {line.words.map((word, wi) => (
+                  <span
+                    key={wi}
+                    className={cn(
+                      'font-display font-black uppercase leading-[0.9] tracking-[-0.03em]',
+                      'text-[clamp(2.5rem,10vw,7rem)]',
+                      line.accent ? 'text-accent' : 'text-ink'
+                    )}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+          ))}
+        </div>
+
+        {/* Divider line */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={visible ? { scaleX: 1 } : { scaleX: 0 }}
+          transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
+          className="h-[1px] bg-border mb-12 origin-left"
+        />
+
+        {/* Pills row */}
+        <div className="flex flex-wrap gap-3 sm:gap-4">
+          {pills.map((pill, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={visible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}
+              className="px-5 py-2.5 border border-accent/30 text-accent font-mono text-[10px] sm:text-xs uppercase tracking-widest hover:bg-accent hover:text-bg transition-all duration-300 cursor-default"
+            >
+              {pill}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Activity Heatmap ─────────────────────────────────────────────────────────
+function ActivityHeatmap({ language }: { language: 'en' | 'zh' }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; commits: number; date: string } | null>(null);
+
+  // Generate deterministic-ish fake data
+  const weeks = 52;
+  const days = 7;
+  const cells = React.useMemo(() => {
+    const data: { commits: number; date: string; intensity: number }[][] = [];
+    const now = new Date();
+    for (let w = 0; w < weeks; w++) {
+      const week: { commits: number; date: string; intensity: number }[] = [];
+      for (let d = 0; d < days; d++) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - ((weeks - w - 1) * 7 + (days - d - 1)));
+        // Pseudo-random but consistent commits
+        const seed = w * 7 + d;
+        const raw = Math.sin(seed * 2.3 + 1.7) * 0.5 + 0.5; // 0..1
+        const spike = (w % 8 === 3 || w % 8 === 5) && d < 5 ? 1.6 : 1; // periodic spikes
+        const commits = Math.round(raw * raw * 12 * spike); // skew toward 0
+        const intensity = commits === 0 ? 0 : commits <= 2 ? 1 : commits <= 5 ? 2 : commits <= 9 ? 3 : 4;
+        week.push({
+          commits,
+          date: date.toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+          intensity,
+        });
+      }
+      data.push(week);
+    }
+    return data;
+  }, [language]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const totalCommits = cells.flat().reduce((s, c) => s + c.commits, 0);
+  const activeDays = cells.flat().filter(c => c.commits > 0).length;
+
+  const intensityClass = (level: number) => {
+    switch (level) {
+      case 0: return 'bg-white/5 hover:bg-accent/20';
+      case 1: return 'bg-accent/20 hover:bg-accent/40';
+      case 2: return 'bg-accent/40 hover:bg-accent/60';
+      case 3: return 'bg-accent/70 hover:bg-accent/90';
+      case 4: return 'bg-accent hover:bg-accent shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]';
+      default: return 'bg-white/5';
+    }
+  };
+
+  return (
+    <section
+      ref={ref}
+      className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border"
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="mono-label mb-4 section-reveal">
+          {language === 'en' ? '11 / Activity' : '11 / 活跃度'}
+        </div>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 section-reveal">
+          <h2 className="text-5xl md:text-7xl font-bold uppercase">
+            {language === 'en' ? 'Commit' : '提交'}{' '}
+            <span className="text-accent">{language === 'en' ? 'History' : '历史'}</span>
+          </h2>
+          <div className="flex gap-8 text-right">
+            <div>
+              <div className="text-3xl font-bold tabular-nums text-accent">{totalCommits.toLocaleString()}</div>
+              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Total Commits' : '总提交'}</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold tabular-nums">{activeDays}</div>
+              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Active Days' : '活跃天数'}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Heatmap grid — scrollable on mobile */}
+        <div className="relative">
+          <div className="overflow-x-auto pb-4 -mx-2 px-2">
+            <div
+              className="flex gap-[3px] min-w-max"
+              style={{ minWidth: 'calc(52 * (12px + 3px))' }}
+            >
+              {cells.map((week, wi) => (
+                <div key={wi} className="flex flex-col gap-[3px]">
+                  {week.map((cell, di) => (
+                    <motion.div
+                      key={di}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={visible ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ duration: 0.3, delay: visible ? (wi * 0.012 + di * 0.008) : 0 }}
+                      className={cn(
+                        'w-3 h-3 rounded-[2px] cursor-pointer transition-all duration-200',
+                        intensityClass(cell.intensity)
+                      )}
+                      onMouseEnter={(e) => {
+                        const rect = (e.target as HTMLElement).getBoundingClientRect();
+                        setTooltip({
+                          x: rect.left + rect.width / 2,
+                          y: rect.top - 8,
+                          commits: cell.commits,
+                          date: cell.date,
+                        });
+                      }}
+                      onMouseLeave={() => setTooltip(null)}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Scroll hint on mobile */}
+          <div className="flex md:hidden items-center gap-2 mt-3 text-muted/30 font-mono text-[9px] uppercase tracking-widest">
+            <ChevronRight size={10} />
+            {language === 'en' ? 'Scroll to see full history' : '滑动查看完整历史'}
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center justify-between mt-6 flex-wrap gap-4">
+          <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-muted/40">
+            <span>{language === 'en' ? 'Less' : '少'}</span>
+            {[0, 1, 2, 3, 4].map(l => (
+              <div key={l} className={cn('w-3 h-3 rounded-[2px]', intensityClass(l))} />
+            ))}
+            <span>{language === 'en' ? 'More' : '多'}</span>
+          </div>
+          <div className="font-mono text-[9px] uppercase tracking-widest text-muted/30">
+            {language === 'en' ? `Last 12 months of contributions` : `过去12个月的贡献`}
+          </div>
+        </div>
+      </div>
+
+      {/* Floating tooltip */}
+      <AnimatePresence>
+        {tooltip && (
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.15 }}
+            className="fixed z-[200] pointer-events-none"
+            style={{ left: tooltip.x, top: tooltip.y, transform: 'translate(-50%, -100%)' }}
+          >
+            <div className="bg-bg border border-border shadow-xl px-3 py-2 rounded font-mono text-[10px] whitespace-nowrap">
+              <span className="text-accent font-bold">{tooltip.commits} {language === 'en' ? 'commits' : '次提交'}</span>
+              <span className="text-muted/60 ml-2">{tooltip.date}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   );
 }
 
