@@ -70,6 +70,11 @@ export const initialPortfolioData: PortfolioContent = {
         id: 3,
         title: "Technical Architecture",
         description: "Designing complex system architectures that are built for growth and performance."
+      },
+      {
+        id: 4,
+        title: "Artificial Intelligence",
+        description: "Leveraging AI/ML technologies to build intelligent applications and automate processes."
       }
     ],
     achievements: [
