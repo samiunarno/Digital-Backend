@@ -3,8 +3,8 @@ import { PortfolioContent } from '../types';
 export const initialPortfolioData: PortfolioContent = {
   en: {
     hero: {
-      name: "Joyi Ahmed",
-      role: "Senior Full Stack Engineer",
+      name: "Dong Xiao Xuan",
+      role: "Software Engineer",
       tagline: "Architecting high-performance digital ecosystems with precision and purpose."
     },
     about: {
@@ -50,9 +50,9 @@ export const initialPortfolioData: PortfolioContent = {
     ],
     education: [
       {
-        school: "Global Institute of Technology",
-        degree: "M.S. in Software Engineering",
-        year: "2019"
+        school: "Jilin University",
+        degree: "B.Sc. in Software Engineering",
+        year: "Present"
       }
     ],
     services: [
@@ -79,15 +79,15 @@ export const initialPortfolioData: PortfolioContent = {
     ],
     achievements: [
       {
-        title: "Open Source Contributor of the Year",
-        date: "2024",
-        description: "Awarded for significant contributions to the React and Three.js ecosystems."
+        title: "Blue Bridge Competition",
+        date: "2026",
+        description: "Awarded for outstanding performance in the Blue Bridge Coding Competition."
       },
-      {
-        title: "Tech Innovation Award",
-        date: "2023",
-        description: "Recognized for developing a novel algorithm for real-time data compression."
-      }
+      // {
+      //   title: "Tech Innovation Award",
+      //   date: "2023",
+      //   description: "Recognized for developing a novel algorithm for real-time data compression."
+      // }
     ]
   },
   zh: {

@@ -1057,11 +1057,11 @@ export default function Portfolio() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { img: "https://picsum.photos/seed/seminar1/800/600", tag: "Seminar", icon: <Mic size={14} /> },
-              { img: "https://picsum.photos/seed/workshop1/600/800", tag: "Workshop", icon: <Camera size={14} />, span: "row-span-2" },
-              { img: "https://picsum.photos/seed/team1/800/800", tag: "Team", icon: <Users size={14} /> },
-              { img: "https://picsum.photos/seed/event1/800/600", tag: "Event", icon: <Camera size={14} /> },
-              { img: "https://picsum.photos/seed/code1/800/600", tag: "Hackathon", icon: <Terminal size={14} /> },
+              { img: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778070425/pexels-duncanoluwaseun-226232_pk3jtr.jpg", tag: "Seminar", icon: <Mic size={14} /> },
+              { img: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778070651/pexels-thisisengineering-3861967_q84zmy.jpg", tag: "Workshop", icon: <Camera size={14} />, span: "row-span-2" },
+              { img: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778070646/pexels-dhiren-13947197_f8sdig.jpg", tag: "Team", icon: <Users size={14} /> },
+              { img: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778070645/pexels-polina-zimmerman-3747481_l56hff.jpg", tag: "Event", icon: <Camera size={14} /> },
+              { img: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778070644/pexels-thisisengineering-3861972_cymoyf.jpg", tag: "Hackathon", icon: <Terminal size={14} /> },
               { img: "https://picsum.photos/seed/award1/800/1000", tag: "Awards", icon: <Award size={14} />, span: "row-span-2" },
               { img: "https://picsum.photos/seed/meetup1/800/600", tag: "Meetup", icon: <Globe size={14} /> },
             ].map((item, i) => (
