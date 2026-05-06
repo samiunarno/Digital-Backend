@@ -772,29 +772,68 @@ export default function Portfolio() {
       {/* ── PROCESS SECTION ── */}
       <ProcessSection language={language} />
 
-      {/* 6. Experience Section */}
-      <section id="experience" className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10">
+      {/* 6. Experience Section — Vertical Timeline */}
+      <section id="experience" className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 overflow-hidden">
+        {/* Vertical rail */}
+        <div className="absolute left-[calc(10%+1.75rem)] top-0 bottom-0 w-px bg-border hidden md:block" />
+
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label section-reveal mb-4">04 / {language === 'en' ? 'Experience' : '经验'}</div>
-          <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal">{language === 'en' ? 'Career' : '职业'} <span className="text-accent">{language === 'en' ? 'Log' : '日志'}</span></h2>
-          
-          <div className="space-y-[1px] bg-border border border-border">
-            {(t.experience || []).map((exp, i) => (
-              <div key={i} className="section-reveal group flex flex-col md:flex-row gap-8 p-12 bg-bg hover:bg-white/[0.02] transition-all duration-500 relative overflow-hidden">
-                <div className="absolute left-0 top-0 w-[2px] h-full bg-accent scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-500" />
-                
-                <div className="md:w-1/4 font-mono text-xs text-muted group-hover:text-accent transition-colors">
-                  {exp.period}
-                </div>
-                <div className="md:w-3/4">
-                  <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-2">
-                    <h3 className="text-3xl font-bold uppercase tracking-tight group-hover:translate-x-2 transition-transform duration-500">{exp.company}</h3>
-                    <div className="px-3 py-1 border border-accent/30 text-accent mono-label !text-[8px] group-hover:bg-accent group-hover:text-bg transition-colors duration-500">{exp.role}</div>
+          <div className="mono-label section-reveal mb-3">04 / {language === 'en' ? 'Experience' : '经验'}</div>
+          <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase mb-16 sm:mb-20 section-reveal leading-none">
+            {language === 'en' ? 'Career ' : '职业'}<span className="text-accent">{language === 'en' ? 'Log' : '日志'}</span>
+          </h2>
+
+          <div className="relative">
+            {/* Central timeline line — mobile */}
+            <div className="absolute left-3 top-0 bottom-0 w-px bg-border md:hidden" />
+
+            <div className="space-y-0">
+              {(t.experience || []).map((exp, i) => (
+                <div key={i} className="section-reveal group relative flex gap-6 sm:gap-10 md:gap-16 pb-12 last:pb-0">
+                  {/* Timeline dot + connector */}
+                  <div className="flex flex-col items-center flex-shrink-0">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-border group-hover:border-accent group-hover:bg-accent transition-all duration-400 bg-bg z-10 mt-1 flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent/40 group-hover:bg-bg transition-colors duration-300" />
+                    </div>
+                    {i < (t.experience?.length ?? 1) - 1 && (
+                      <div className="w-px flex-1 bg-border group-hover:bg-accent/30 transition-colors duration-500 mt-2" />
+                    )}
                   </div>
-                  <p className="text-muted font-light leading-relaxed max-w-2xl text-sm opacity-60 group-hover:opacity-100 transition-opacity duration-500">{exp.desc}</p>
+
+                  {/* Card */}
+                  <div className="flex-1 pb-2">
+                    <div className="border border-border group-hover:border-accent/40 bg-bg group-hover:bg-white/[0.02] transition-all duration-500 p-5 sm:p-7 relative overflow-hidden">
+                      {/* Accent top bar */}
+                      <div className="absolute top-0 left-0 w-0 group-hover:w-full h-[2px] bg-accent transition-all duration-500 origin-left" />
+
+                      {/* Header row */}
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                        <div>
+                          <h3 className="text-xl sm:text-2xl font-bold uppercase tracking-tight group-hover:text-accent transition-colors duration-300">
+                            {exp.company}
+                          </h3>
+                          <span className="inline-block mt-1.5 font-mono text-[10px] uppercase tracking-widest text-accent border border-accent/30 px-2 py-0.5">
+                            {exp.role}
+                          </span>
+                        </div>
+                        <span className="font-mono text-[10px] text-muted/60 tracking-widest whitespace-nowrap sm:text-right">
+                          {exp.period}
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-muted font-light leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                        {exp.desc}
+                      </p>
+
+                      {/* Index badge */}
+                      <div className="absolute bottom-4 right-5 font-display font-black text-[4rem] leading-none text-border/30 select-none pointer-events-none group-hover:text-accent/10 transition-colors">
+                        {String(i + 1).padStart(2, '0')}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -1615,16 +1654,14 @@ function StatsSection({ language }: { language: 'en' | 'zh' }) {
 
   const metrics = language === 'en'
     ? [
-        { id: 'exp',      value: 5,  max: 10,  suffix: '+', unit: 'yrs', label: 'Experience',     sub: 'In Production',       pct: 50,  icon: '⚙' },
-        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: 'Shipped',        sub: 'Web · Mobile · API',  pct: 50,  icon: '🚀' },
-        { id: 'sat',      value: 99, max: 100, suffix: '%', unit: 'nps',  label: 'Satisfaction',   sub: 'All Engagements',     pct: 99,  icon: '✦' },
-        { id: 'commits',  value: 12, max: 20,  suffix: 'k+', unit: 'git', label: 'Commits',        sub: 'GitHub · GitLab',     pct: 60,  icon: '⌥' },
+        { id: 'exp',      value: 5,  max: 10, suffix: '+', unit: 'yrs',  label: 'Experience',   sub: 'Production environments', pct: 50, icon: '⚙' },
+        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: 'Projects',     sub: 'Web · Mobile · API',      pct: 50, icon: '🚀' },
+        { id: 'comp',     value: 20, max: 30,  suffix: '+', unit: 'wins', label: 'Competitions', sub: 'Hackathons & contests',    pct: 80, icon: '🏆' },
       ]
     : [
-        { id: 'exp',      value: 5,  max: 10,  suffix: '+', unit: 'yrs', label: '年经验',   sub: '生产环境',     pct: 50,  icon: '⚙' },
-        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: '已交付',  sub: 'Web · 移动端', pct: 50,  icon: '🚀' },
-        { id: 'sat',      value: 99, max: 100, suffix: '%', unit: 'nps',  label: '满意度',  sub: '所有项目',     pct: 99,  icon: '✦' },
-        { id: 'commits',  value: 12, max: 20,  suffix: 'k+', unit: 'git', label: '代码提交', sub: 'GitHub · GitLab', pct: 60, icon: '⌥' },
+        { id: 'exp',      value: 5,  max: 10, suffix: '+', unit: 'yrs',  label: '年经验',   sub: '生产环境',     pct: 50, icon: '⚙' },
+        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: '项目',     sub: 'Web · 移动端', pct: 50, icon: '🚀' },
+        { id: 'comp',     value: 20, max: 30,  suffix: '+', unit: 'wins', label: '竞赛',     sub: '黑客马拉松',   pct: 80, icon: '🏆' },
       ];
 
   return (
@@ -1643,7 +1680,7 @@ function StatsSection({ language }: { language: 'en' | 'zh' }) {
       </div>
 
       {/* Bento grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {metrics.map((m, i) => (
           <MetricCard key={m.id} m={m} visible={visible} delay={i * 150} />
         ))}
