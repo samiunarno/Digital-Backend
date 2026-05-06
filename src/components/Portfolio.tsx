@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PortfolioContent, Language } from '../types';
@@ -6,7 +6,8 @@ import {
   ArrowRight, Github, Linkedin, Mail, Instagram, Cpu, Globe, Shield, 
   Code, Terminal, Layers, Activity, Database, Layout, 
   GitBranch, Server, Workflow, Box, Award, Trophy, Image, Camera, Mic,
-  ChevronLeft, ChevronRight, Palette, Sun, Moon, Users, Zap, Eye, BarChart
+  ChevronLeft, ChevronRight, Palette, Sun, Moon, Users, Zap, Eye, BarChart,
+  Search, GitCommit, CheckCheck, Rocket, LightbulbIcon, Wrench
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -19,6 +20,25 @@ import { initialPortfolioData } from '../data/portfolioData';
 import { AnimatePresence, motion } from 'motion/react';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// ─── Animated Counter Hook ───────────────────────────────────────────────────
+function useCountUp(end: number, duration = 2000, start = false) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // easeOutQuart
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.floor(eased * end));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [start, end, duration]);
+  return count;
+}
 
 const UI_TRANSLATIONS = {
   en: {
@@ -606,6 +626,11 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* ── STATS COUNTER SECTION ── */}
+      <section className="py-24 px-6 md:px-[10%] relative z-10 border-b border-border overflow-hidden bg-accent">
+        <StatsSection language={language} />
+      </section>
+
       {/* 4. Services Section */}
       <section id="services" ref={servicesRef} className="py-32 px-6 md:px-[10%] relative z-10 border-b border-border">
         <div className="max-w-7xl mx-auto">
@@ -737,6 +762,9 @@ export default function Portfolio() {
           </div>
         </div>
       </section>
+
+      {/* ── PROCESS SECTION ── */}
+      <ProcessSection language={language} />
 
       {/* 6. Experience Section */}
       <section id="experience" className="py-32 px-6 md:px-[10%] relative z-10">
@@ -1153,5 +1181,219 @@ export default function Portfolio() {
     </motion.div>
       )}
     </div>
+  );
+}
+
+// ─── Stats Counter Section Component ─────────────────────────────────────────
+function StatsSection({ language }: { language: 'en' | 'zh' }) {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const stats = language === 'en'
+    ? [
+        { value: 5, suffix: '+', label: 'Years Experience', sub: 'In Production Environments' },
+        { value: 50, suffix: '+', label: 'Projects Shipped', sub: 'Across Web & Mobile' },
+        { value: 99, suffix: '%', label: 'Client Satisfaction', sub: 'Across All Engagements' },
+        { value: 12, suffix: 'k+', label: 'Commits Pushed', sub: 'On GitHub & GitLab' },
+      ]
+    : [
+        { value: 5, suffix: '+', label: '年经验', sub: '在生产环境中' },
+        { value: 50, suffix: '+', label: '已交付项目', sub: '跨Web与移动端' },
+        { value: 99, suffix: '%', label: '客户满意度', sub: '所有项目' },
+        { value: 12, suffix: 'k+', label: '代码提交', sub: '在 GitHub & GitLab' },
+      ];
+
+  return (
+    <div ref={ref} className="max-w-7xl mx-auto">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-bg/20">
+        {stats.map((stat, i) => (
+          <StatCard key={i} stat={stat} visible={visible} delay={i * 200} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ stat, visible, delay }: { stat: { value: number; suffix: string; label: string; sub: string }; visible: boolean; delay: number }) {
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    if (visible) {
+      const t = setTimeout(() => setStarted(true), delay);
+      return () => clearTimeout(t);
+    }
+  }, [visible, delay]);
+  const count = useCountUp(stat.value, 1800, started);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: delay / 1000 }}
+      className="p-8 md:p-12 bg-accent group hover:bg-bg/10 transition-colors duration-500 cursor-default"
+    >
+      <div className="text-5xl md:text-7xl font-bold text-bg leading-none mb-4 tabular-nums">
+        {count}{stat.suffix}
+      </div>
+      <div className="text-bg font-bold uppercase text-sm tracking-widest mb-1">{stat.label}</div>
+      <div className="text-bg/50 font-mono text-[10px] uppercase tracking-widest">{stat.sub}</div>
+      <div className="mt-6 w-8 h-[2px] bg-bg/30 group-hover:w-full transition-all duration-700" />
+    </motion.div>
+  );
+}
+
+// ─── Process / Workflow Section Component ─────────────────────────────────────
+function ProcessSection({ language }: { language: 'en' | 'zh' }) {
+  const [activeStep, setActiveStep] = useState<number | null>(null);
+
+  const steps = language === 'en'
+    ? [
+        {
+          num: '01',
+          icon: <Search size={28} />,
+          title: 'Discovery',
+          short: 'Understanding the problem space deeply.',
+          detail: 'I conduct thorough stakeholder interviews, competitor analysis, and technical audits to map every constraint before writing a single line of code.'
+        },
+        {
+          num: '02',
+          icon: <LightbulbIcon size={28} />,
+          title: 'Architecture',
+          short: 'Designing scalable system blueprints.',
+          detail: 'Every system starts with its data model. I design API contracts, database schemas, and component hierarchies before opening an IDE.'
+        },
+        {
+          num: '03',
+          icon: <Wrench size={28} />,
+          title: 'Build',
+          short: 'Iterative, test-driven development.',
+          detail: 'Feature branches, pull requests, and CI/CD pipelines from day one. I write code that the next engineer will thank me for.'
+        },
+        {
+          num: '04',
+          icon: <GitCommit size={28} />,
+          title: 'Integrate',
+          short: 'Seamless API & service integration.',
+          detail: 'Third-party services, webhooks, real-time sync, payment gateways — I wire up complex integrations with bulletproof error handling.'
+        },
+        {
+          num: '05',
+          icon: <CheckCheck size={28} />,
+          title: 'Test & QA',
+          short: 'Zero bugs in production is the goal.',
+          detail: 'Unit tests, integration tests, E2E automation, load testing and security auditing. Nothing ships without passing the gauntlet.'
+        },
+        {
+          num: '06',
+          icon: <Rocket size={28} />,
+          title: 'Deploy',
+          short: 'Zero-downtime production releases.',
+          detail: 'Blue-green deployments, automated rollbacks, monitoring dashboards and on-call runbooks. Launch day is just another Tuesday.'
+        },
+      ]
+    : [
+        { num: '01', icon: <Search size={28} />, title: '发现', short: '深入了解问题空间。', detail: '我进行深入的利益相关者访谈、竞争对手分析和技术审计，在编写任何代码之前映射每个约束。' },
+        { num: '02', icon: <LightbulbIcon size={28} />, title: '架构', short: '设计可扩展的系统蓝图。', detail: '每个系统都从其数据模型开始。我在打开IDE之前设计API合同、数据库模式和组件层次结构。' },
+        { num: '03', icon: <Wrench size={28} />, title: '构建', short: '迭代的测试驱动开发。', detail: '从第一天起就有功能分支、拉取请求和CI/CD管道。我写的代码让下一个工程师感谢我。' },
+        { num: '04', icon: <GitCommit size={28} />, title: '集成', short: '无缝API和服务集成。', detail: '第三方服务、webhooks、实时同步、支付网关——我用防弹错误处理来连接复杂的集成。' },
+        { num: '05', icon: <CheckCheck size={28} />, title: '测试', short: '零错误是目标。', detail: '单元测试、集成测试、E2E自动化、负载测试和安全审计。没有通过测试的东西不会发布。' },
+        { num: '06', icon: <Rocket size={28} />, title: '部署', short: '零停机生产发布。', detail: '蓝绿部署、自动回滚、监控仪表板和值班手册。发布日只是另一个星期二。' },
+      ];
+
+  return (
+    <section className="py-32 px-6 md:px-[10%] relative z-10 border-b border-border bg-white/[0.01]">
+      <div className="max-w-7xl mx-auto">
+        <div className="mono-label section-reveal mb-4">
+          {language === 'en' ? '06 / Process' : '06 / 流程'}
+        </div>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 section-reveal">
+          <h2 className="text-5xl md:text-7xl font-bold uppercase leading-none">
+            {language === 'en' ? 'How I' : ''}{' '}
+            <span className="text-accent">{language === 'en' ? 'Work' : '工作方式'}</span>
+          </h2>
+          <p className="max-w-xs text-muted font-light italic text-sm">
+            {language === 'en'
+              ? 'A disciplined, battle-tested engineering methodology.'
+              : '经过实战检验的工程方法论。'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+          {steps.map((step, i) => (
+            <motion.div
+              key={i}
+              layout
+              onClick={() => setActiveStep(activeStep === i ? null : i)}
+              className={cn(
+                'relative p-8 md:p-10 bg-bg cursor-pointer group transition-all duration-500 overflow-hidden',
+                activeStep === i ? 'bg-white/[0.04]' : 'hover:bg-white/[0.02]'
+              )}
+            >
+              {/* Step number background */}
+              <div className="absolute top-4 right-6 font-display font-bold text-[5rem] leading-none text-border/40 select-none pointer-events-none group-hover:text-accent/10 transition-colors duration-500">
+                {step.num}
+              </div>
+
+              {/* Icon */}
+              <div className={cn(
+                'w-14 h-14 border flex items-center justify-center mb-6 transition-all duration-500',
+                activeStep === i
+                  ? 'bg-accent text-bg border-accent'
+                  : 'border-border text-accent group-hover:border-accent/50'
+              )}>
+                {step.icon}
+              </div>
+
+              <h3 className={cn(
+                'text-xl font-bold uppercase tracking-tight mb-3 transition-colors duration-300',
+                activeStep === i ? 'text-accent' : 'group-hover:text-accent'
+              )}>
+                {step.title}
+              </h3>
+
+              <p className="text-muted font-light text-sm leading-relaxed">{step.short}</p>
+
+              {/* Expanded detail */}
+              <AnimatePresence>
+                {activeStep === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <p className="text-sm text-muted/80 font-light leading-relaxed">{step.detail}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Accent bottom bar */}
+              <div className={cn(
+                'absolute bottom-0 left-0 h-[2px] bg-accent transition-all duration-500',
+                activeStep === i ? 'w-full' : 'w-0 group-hover:w-1/2'
+              )} />
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-8 flex items-center gap-3 text-muted/40 font-mono text-[10px] uppercase tracking-widest section-reveal">
+          <div className="w-2 h-2 bg-accent/40 rotate-45 animate-pulse" />
+          {language === 'en' ? 'Click any step to expand details' : '点击任意步骤展开详情'}
+        </div>
+      </div>
+    </section>
   );
 }
