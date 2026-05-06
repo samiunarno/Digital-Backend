@@ -1286,112 +1286,131 @@ function MarqueeBanner({ skills }: { skills: string[] }) {
   );
 }
 
-// ─── Manifesto Section ────────────────────────────────────────────────────────
+// ─── Engineering Philosophy — Agent Tree ──────────────────────────────────────
 function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 }
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      { threshold: 0.1 }
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  const lines = language === 'en'
+  const branches = language === 'en'
     ? [
-        { words: ['I', 'DON\'T'], accent: false },
-        { words: ['BUILD'], accent: true },
-        { words: ['WEBSITES.'], accent: false },
-        { words: ['I', 'BUILD'], accent: false },
-        { words: ['DIGITAL'], accent: true },
-        { words: ['ECOSYSTEMS.'], accent: false },
+        { id: 'perf', label: 'Performance', desc: 'Sub-100ms p99', leaves: ['Lazy Loading', 'Edge Cache'] },
+        { id: 'arch', label: 'Architecture', desc: 'Scale-first design', leaves: ['Domain-Driven', 'Event-Sourced'] },
+        { id: 'rel',  label: 'Reliability',  desc: '99.99% uptime',   leaves: ['Circuit Breaker', 'Observability'] },
       ]
     : [
-        { words: ['我', '不'], accent: false },
-        { words: ['构建'], accent: true },
-        { words: ['网站。'], accent: false },
-        { words: ['我', '构建'], accent: false },
-        { words: ['数字'], accent: true },
-        { words: ['生态系统。'], accent: false },
+        { id: 'perf', label: '性能', desc: 'P99低于100ms', leaves: ['懒加载', '边缘缓存'] },
+        { id: 'arch', label: '架构', desc: '扩展优先设计', leaves: ['领域驱动', '事件溯源'] },
+        { id: 'rel',  label: '可靠性', desc: '99.99%可用', leaves: ['熔断器', '可观测性'] },
       ];
 
-  const pills = language === 'en'
-    ? ['Performance-First', 'Zero Compromise', 'System Thinking', 'Ship Fast, Scale Bigger']
-    : ['性能优先', '零妥协', '系统思维', '快速发布，无限扩展'];
+  const Stem = ({ delay }: { delay: number }) => (
+    <motion.div
+      initial={{ scaleY: 0 }} animate={visible ? { scaleY: 1 } : {}}
+      transition={{ duration: 0.3, delay }}
+      className="w-px h-7 bg-accent/30 origin-top"
+    />
+  );
 
   return (
-    <section
-      ref={ref}
-      className="py-24 sm:py-32 md:py-40 px-6 md:px-[10%] relative z-10 border-b border-border overflow-hidden"
-    >
-      {/* Huge faint background word */}
-      <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.02] overflow-hidden"
-      >
-        <span className="font-display font-black text-[20vw] uppercase leading-none text-accent">
-          {language === 'en' ? 'BUILD' : '构建'}
-        </span>
-      </div>
+    <section ref={ref} className="py-24 sm:py-36 px-6 md:px-[10%] relative z-10 border-b border-border overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        style={{ backgroundImage: 'radial-gradient(circle, var(--accent) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
 
-      <div className="max-w-7xl mx-auto relative">
-        <div className="mono-label mb-8 opacity-60">
-          {language === 'en' ? '// ENGINEERING_PHILOSOPHY' : '// 工程哲学'}
-        </div>
+      <div className="max-w-6xl mx-auto relative">
+        <div className="mono-label mb-4 opacity-50">{'// ENGINEERING_PHILOSOPHY'}</div>
+        <motion.h2 initial={{ opacity: 0, y: 24 }} animate={visible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
+          className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase mb-16">
+          {language === 'en' ? 'How I ' : ''}<span className="text-accent">{language === 'en' ? 'Think' : '思维框架'}</span>
+        </motion.h2>
 
-        {/* Manifesto text */}
-        <div className="mb-16">
-          {lines.map((line, li) => (
-            <div key={li} className="overflow-hidden">
-              <motion.div
-                initial={{ y: '110%' }}
-                animate={visible ? { y: 0 } : { y: '110%' }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: li * 0.1 }}
-                className="flex flex-wrap gap-x-6"
-              >
-                {line.words.map((word, wi) => (
-                  <span
-                    key={wi}
-                    className={cn(
-                      'font-display font-black uppercase leading-[0.9] tracking-[-0.03em]',
-                      'text-[clamp(2.5rem,10vw,7rem)]',
-                      line.accent ? 'text-accent' : 'text-ink'
-                    )}
-                  >
-                    {word}
-                  </span>
-                ))}
-              </motion.div>
+        <div className="flex flex-col items-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.7 }} animate={visible ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative px-6 sm:px-8 py-4 border border-accent bg-accent/10 font-mono text-accent shadow-[0_0_28px_rgba(var(--accent-rgb),0.18)] text-center"
+          >
+            <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-accent animate-pulse" />
+            <div className="text-xs sm:text-sm font-bold uppercase tracking-widest">
+              {language === 'en' ? 'ENGINEERING_PHILOSOPHY' : '工程哲学'}
             </div>
-          ))}
+            <div className="text-[9px] opacity-50 mt-0.5 uppercase tracking-wider">{'// core runtime'}</div>
+          </motion.div>
+
+          <Stem delay={0.35} />
+
+          <motion.div initial={{ scaleX: 0 }} animate={visible ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.5 }} style={{ height: 1, background: 'rgba(var(--accent-rgb),0.3)' }}
+            className="w-full max-w-2xl origin-center" />
+
+          <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-3">
+            {branches.map((b, bi) => (
+              <div key={b.id} className="flex flex-col items-center">
+                <Stem delay={0.6 + bi * 0.08} />
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }} animate={visible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.45, delay: 0.68 + bi * 0.1 }}
+                  onMouseEnter={() => setHovered(b.id)}
+                  onMouseLeave={() => setHovered(null)}
+                  className={cn(
+                    'w-full max-w-[180px] px-4 py-3 border font-mono cursor-pointer text-center transition-all duration-300',
+                    hovered === b.id
+                      ? 'border-accent bg-accent/10 text-accent shadow-[0_0_16px_rgba(var(--accent-rgb),0.2)]'
+                      : 'border-border/60 hover:border-accent/50 text-ink'
+                  )}
+                >
+                  <div className="text-xs font-bold uppercase tracking-wider">{b.label}</div>
+                  <div className="text-[9px] opacity-40 mt-0.5 uppercase">{b.desc}</div>
+                </motion.div>
+                <Stem delay={0.85 + bi * 0.08} />
+                <motion.div initial={{ scaleX: 0 }} animate={visible ? { scaleX: 1 } : {}}
+                  transition={{ duration: 0.3, delay: 0.95 + bi * 0.08 }}
+                  className="h-px origin-center w-28" style={{ background: 'rgba(var(--accent-rgb),0.2)' }} />
+                <div className="grid grid-cols-2 gap-2">
+                  {b.leaves.map((leaf, li) => (
+                    <div key={li} className="flex flex-col items-center">
+                      <motion.div initial={{ scaleY: 0 }} animate={visible ? { scaleY: 1 } : {}}
+                        transition={{ duration: 0.2, delay: 1.0 + bi * 0.08 + li * 0.04 }}
+                        className="w-px h-5 origin-top" style={{ background: 'rgba(var(--accent-rgb),0.2)' }} />
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }} animate={visible ? { opacity: 1, scale: 1 } : {}}
+                        transition={{ duration: 0.35, delay: 1.05 + bi * 0.08 + li * 0.06 }}
+                        onMouseEnter={() => setHovered(b.id + li)}
+                        onMouseLeave={() => setHovered(null)}
+                        className={cn(
+                          'px-3 py-2 border font-mono text-[10px] uppercase tracking-wider cursor-pointer transition-all duration-200 text-center',
+                          hovered === b.id + li
+                            ? 'border-accent/70 bg-accent/10 text-accent'
+                            : 'border-border/40 text-muted hover:border-accent/40 hover:text-accent/80'
+                        )}
+                      >
+                        {leaf}
+                      </motion.div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Divider line */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={visible ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
-          className="h-[1px] bg-border mb-12 origin-left"
-        />
-
-        {/* Pills row */}
-        <div className="flex flex-wrap gap-3 sm:gap-4">
-          {pills.map((pill, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={visible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}
-              className="px-5 py-2.5 border border-accent/30 text-accent font-mono text-[10px] sm:text-xs uppercase tracking-widest hover:bg-accent hover:text-bg transition-all duration-300 cursor-default"
-            >
-              {pill}
-            </motion.span>
-          ))}
-        </div>
+        <motion.p initial={{ opacity: 0 }} animate={visible ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}
+          className="mt-10 font-mono text-[9px] uppercase tracking-widest text-muted/30 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 bg-accent/40 rotate-45 animate-pulse inline-block" />
+          {language === 'en' ? 'Hover any node to activate' : '悬停任意节点激活'}
+        </motion.p>
       </div>
     </section>
   );
