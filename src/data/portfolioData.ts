@@ -58,11 +58,16 @@ export const initialPortfolioData: PortfolioContent = {
     services: [
       {
         id: 1,
-        title: "Full Stack Development",
-        description: "End-to-end development of robust, scalable, and secure web applications."
+        title: "Problem Solving",
+        description: "Expertise in diagnosing issues and implementing effective solutions across the tech stack."
       },
       {
         id: 2,
+        title: "Full Stack Web Development",
+        description: "End-to-end development of responsive, scalable, and secure web applications using modern frontend and backend technologies."
+      },
+      {
+        id: 3,
         title: "Technical Architecture",
         description: "Designing complex system architectures that are built for growth and performance."
       }
