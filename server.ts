@@ -14,6 +14,17 @@ import { AppError } from "./server/utils/AppError.js";
 
 dotenv.config();
 
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason: unknown) => {
+  console.error('Unhandled Promise Rejection:', reason);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err: Error) => {
+  console.error('Uncaught Exception:', err.message);
+  process.exit(1);
+});
+
 async function startServer() {
   const app = express();
   const httpServer = createServer(app);
@@ -70,6 +81,17 @@ async function startServer() {
 
   httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
+  });
+
+  httpServer.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n❌ Port ${PORT} is already in use.`);
+      console.error(`   → Kill the process with: kill -9 $(lsof -t -i:${PORT})`);
+      console.error(`   → Or use a different port: PORT=3005 npm run dev\n`);
+      process.exit(1);
+    } else {
+      throw err;
+    }
   });
 }
 

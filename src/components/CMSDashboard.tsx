@@ -4,7 +4,6 @@ import { initialPortfolioData } from '../data/portfolioData';
 import { PortfolioContentSchema } from '../lib/validation';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
-import { io, Socket } from 'socket.io-client';
 import { 
   Save, 
   Database, 
@@ -67,7 +66,8 @@ export default function CMSDashboard() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData>({ activeUsers: 0, visitorCount: 0, messageCount: 0 });
-  const socketRef = useRef<Socket | null>(null);
+  // socketRef kept for UI status indicator but not connected
+  const socketRef = useRef<{ connected: boolean } | null>({ connected: false });
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'education' | 'services' | 'achievements' | 'messages' | 'ai' | 'users'>('overview');
@@ -107,168 +107,97 @@ export default function CMSDashboard() {
       navigate('/admin');
     }
     
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/portfolio');
-        if (response.ok) {
-          const data = await response.json();
-          setContent(data);
-          setOriginalContent(JSON.parse(JSON.stringify(data)));
-        } else {
-          setContent(initialPortfolioData);
-          setOriginalContent(JSON.parse(JSON.stringify(initialPortfolioData)));
+    // Load portfolio content from localStorage (set by CMS) or fall back to mock data
+    const loadContent = () => {
+      const saved = localStorage.getItem('portfolio-content');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved) as PortfolioContent;
+          if (parsed?.en && parsed?.zh && parsed?.common) {
+            setContent(parsed);
+            setOriginalContent(JSON.parse(JSON.stringify(parsed)));
+            setLoading(false);
+            return;
+          }
+        } catch {
+          // Fall through to default
         }
-      } catch (error) {
-        console.error('Error fetching portfolio:', error);
-        setContent(initialPortfolioData);
-        setOriginalContent(JSON.parse(JSON.stringify(initialPortfolioData)));
-      } finally {
-        setLoading(false);
       }
+      // Use default mock data
+      setContent(initialPortfolioData);
+      setOriginalContent(JSON.parse(JSON.stringify(initialPortfolioData)));
+      setLoading(false);
     };
 
-    // Socket.io for real-time analytics
-    socketRef.current = io();
-    socketRef.current.on('analytics_update', (data: AnalyticsData) => {
-      setAnalytics(data);
-    });
+    loadContent();
 
-    fetchData();
-    fetchMessages();
-    fetchTemplates();
-    fetchUsers();
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
+    return () => {};
   }, [navigate]);
 
   const fetchUsers = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const response = await fetch('/api/users', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error);
+    // Users are managed locally
+    const saved = localStorage.getItem('cms-users');
+    if (saved) {
+      try { setUsers(JSON.parse(saved)); } catch {}
     }
   };
 
-  const handleAddUser = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(newUser),
-      });
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'User added successfully!' });
-        setNewUser({ username: '', password: '', role: 'editor' });
-        setShowUserForm(false);
-        fetchUsers();
-      } else {
-        const data = await response.json();
-        setMessage({ type: 'error', text: data.message || 'Failed to add user.' });
-      }
-    } catch (error) {
-      console.error('Error adding user:', error);
-      setMessage({ type: 'error', text: 'Failed to add user.' });
+  const handleAddUser = () => {
+    if (!newUser.username || !newUser.password) {
+      setMessage({ type: 'error', text: 'Username and password are required.' });
+      setTimeout(() => setMessage(null), 3000);
+      return;
     }
+    const newUserObj: UserType = {
+      _id: Date.now().toString(),
+      username: newUser.username,
+      role: newUser.role,
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...users, newUserObj];
+    setUsers(updated);
+    localStorage.setItem('cms-users', JSON.stringify(updated));
+    setMessage({ type: 'success', text: 'User added successfully!' });
+    setNewUser({ username: '', password: '', role: 'editor' });
+    setShowUserForm(false);
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleUpdateUser = async () => {
+  const handleUpdateUser = () => {
     if (!editingUser) return;
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const response = await fetch(`/api/users/${editingUser._id}`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          username: editingUser.username,
-          role: editingUser.role,
-        }),
-      });
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'User updated successfully!' });
-        setEditingUser(null);
-        fetchUsers();
-      } else {
-        const data = await response.json();
-        setMessage({ type: 'error', text: data.message || 'Failed to update user.' });
-      }
-    } catch (error) {
-      console.error('Error updating user:', error);
-      setMessage({ type: 'error', text: 'Failed to update user.' });
-    }
+    const updated = users.map(u => u._id === editingUser._id ? editingUser : u);
+    setUsers(updated);
+    localStorage.setItem('cms-users', JSON.stringify(updated));
+    setMessage({ type: 'success', text: 'User updated successfully!' });
+    setEditingUser(null);
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleDeleteUser = async (id: string) => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const response = await fetch(`/api/users/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'User deleted successfully!' });
-        fetchUsers();
-      } else {
-        const data = await response.json();
-        setMessage({ type: 'error', text: data.message || 'Failed to delete user.' });
-      }
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      setMessage({ type: 'error', text: 'Failed to delete user.' });
-    }
+  const handleDeleteUser = (id: string) => {
+    const updated = users.filter(u => u._id !== id);
+    setUsers(updated);
+    localStorage.setItem('cms-users', JSON.stringify(updated));
+    setMessage({ type: 'success', text: 'User deleted successfully!' });
     setTimeout(() => setMessage(null), 3000);
   };
 
   const hasUnsavedChanges = JSON.stringify(content) !== JSON.stringify(originalContent);
 
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch('/api/messages');
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data);
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
+  const fetchMessages = () => {
+    const saved = localStorage.getItem('cms-messages');
+    if (saved) {
+      try { setMessages(JSON.parse(saved)); } catch {}
     }
   };
 
-  const fetchTemplates = async () => {
-    try {
-      const response = await fetch('/api/templates');
-      if (response.ok) {
-        const data = await response.json();
-        setTemplates(data);
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
+  const fetchTemplates = () => {
+    const saved = localStorage.getItem('cms-templates');
+    if (saved) {
+      try { setTemplates(JSON.parse(saved)); } catch {}
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!content) return;
 
     // Validation using Zod on frontend
@@ -280,13 +209,10 @@ export default function CMSDashboard() {
           const path = err.path.join('.');
           return `${path}: ${err.message}`;
         });
-        
-        // Show the first error in the message, but log all to console
         setMessage({ 
           type: 'error', 
           text: `Validation Error: ${errorMessages[0]}${errorMessages.length > 1 ? ` (+${errorMessages.length - 1} more)` : ''}` 
         });
-        
         console.error('Zod Validation Errors:', error.issues);
         setTimeout(() => setMessage(null), 8000);
         return;
@@ -294,49 +220,16 @@ export default function CMSDashboard() {
     }
 
     setSaving(true);
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      setMessage({ type: 'error', text: 'Session expired. Please log in again.' });
-      setSaving(false);
-      setTimeout(() => navigate('/admin'), 2000);
-      return;
-    }
-
-    console.log('Saving content:', content);
+    // Save to localStorage — Portfolio.tsx reads from here
     try {
-      const response = await fetch('/api/portfolio', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(content),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Received saved data:', data);
-        
-        // Ensure we received valid data before updating state
-        if (data && (data.en || data.zh || data.common)) {
-          setContent(data);
-          setOriginalContent(JSON.parse(JSON.stringify(data)));
-          setMessage({ type: 'success', text: 'Content updated successfully in MongoDB!' });
-        } else {
-          console.error('Received invalid/empty data from server:', data);
-          throw new Error('Received invalid data from server');
-        }
-      } else {
-        const errorData = await response.json();
-        console.error('Save failed:', errorData);
-        throw new Error(errorData.error || 'Failed to save to MongoDB');
-      }
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
-      console.error('Error saving content:', error);
-      setMessage({ type: 'error', text: 'Failed to save content.' });
+      localStorage.setItem('portfolio-content', JSON.stringify(content));
+      setOriginalContent(JSON.parse(JSON.stringify(content)));
+      setMessage({ type: 'success', text: 'Content saved! Changes will appear on the portfolio.' });
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to save content locally.' });
     }
     setSaving(false);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   const handleLogOut = () => {
@@ -451,41 +344,18 @@ export default function CMSDashboard() {
     }
   };
 
-  const seedDatabase = async () => {
+  const seedDatabase = () => {
     setSaving(true);
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      setMessage({ type: 'error', text: 'Session expired. Please log in again.' });
-      setSaving(false);
-      setTimeout(() => navigate('/admin'), 2000);
-      return;
-    }
-
     try {
-      const response = await fetch('/api/portfolio', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(initialPortfolioData),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setContent(data);
-        setOriginalContent(JSON.parse(JSON.stringify(data)));
-        setMessage({ type: 'success', text: 'Content reset to blank template!' });
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to seed MongoDB');
-      }
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
-      console.error('Error seeding data:', error);
+      localStorage.setItem('portfolio-content', JSON.stringify(initialPortfolioData));
+      setContent(initialPortfolioData);
+      setOriginalContent(JSON.parse(JSON.stringify(initialPortfolioData)));
+      setMessage({ type: 'success', text: 'Content reset to default mock data!' });
+    } catch {
       setMessage({ type: 'error', text: 'Failed to reset data.' });
     }
     setSaving(false);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   if (loading) {

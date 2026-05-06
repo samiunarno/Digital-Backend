@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PortfolioContent, Language } from '../types';
-import { io } from 'socket.io-client';
 import { 
   ArrowRight, Github, Linkedin, Mail, Instagram, Cpu, Globe, Shield, 
   Code, Terminal, Layers, Activity, Database, Layout, 
@@ -11,12 +10,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
-import Loader from './Loader';
 import CodeBackground from './CodeBackground';
 import CodeTerminal from './CodeTerminal';
 import ProjectModal from './ProjectModal';
 import GeminiChat from './GeminiChat';
-import { analytics } from '../services/analytics';
 import { useSectionTracking, useInteractionTracking } from '../hooks/useAnalytics';
 import { initialPortfolioData } from '../data/portfolioData';
 import { AnimatePresence, motion } from 'motion/react';
@@ -84,9 +81,26 @@ const TechIcon = ({ name, size = 24 }: { name: string; size?: number }) => {
 };
 
 export default function Portfolio() {
-  const [content, setContent] = useState<PortfolioContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Content comes entirely from local mock data — no server calls needed.
+  // To update portfolio content, edit: src/data/portfolioData.ts
+  const [content, setContent] = useState<PortfolioContent>(initialPortfolioData);
+  const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
+
+  // Check localStorage for any CMS edits saved locally
+  useEffect(() => {
+    const saved = localStorage.getItem('portfolio-content');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as PortfolioContent;
+        if (parsed?.en && parsed?.zh && parsed?.common) {
+          setContent(parsed);
+        }
+      } catch {
+        // If parsing fails, use default mock data
+      }
+    }
+  }, []);
 
   // Reset testimonial index when language changes to prevent out-of-bounds errors
   useEffect(() => {
@@ -97,46 +111,13 @@ export default function Portfolio() {
     }
   }, [language, content]);
 
-  const getTechStack = (lang: Language) => {
+  const getTechStack = (_lang: Language) => {
     if (!content?.common?.techStack) return [];
     return content.common.techStack.map(tech => ({
       ...tech,
       icon: <TechIcon name={tech.iconName} size={24} />
     }));
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/portfolio');
-        if (response.ok) {
-          const data = await response.json();
-          setContent(data);
-        } else {
-          setContent(initialPortfolioData);
-        }
-      } catch (error) {
-        console.error('Error fetching portfolio:', error);
-        setContent(initialPortfolioData);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const socket = io();
-
-    socket.on('portfolio_update', (data: PortfolioContent) => {
-      console.log('Real-time portfolio update received:', data);
-      setContent(data);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('portfolio-theme');
@@ -309,7 +290,7 @@ export default function Portfolio() {
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic email validation
@@ -321,51 +302,27 @@ export default function Portfolio() {
     }
 
     setFormStatus('sending');
-    
-    analytics.track('form_submission', 'contact_form', {
-      name: formData.name,
-      email: formData.email,
-    });
 
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+    // Simulate sending — no server call. Open mailto link instead.
+    const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`);
+    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
+    window.open(`mailto:${content.common.contact?.email || ''}?subject=${subject}&body=${body}`, '_blank');
 
-      if (response.ok) {
-        setFormStatus('success');
-        setToast({ message: UI_TRANSLATIONS[language].contact.received, type: 'success' });
-        setFormData({ name: '', email: '', message: '' });
-        setTimeout(() => {
-          setFormStatus('idle');
-          setToast(null);
-        }, 3000);
-      } else {
-        throw new Error('Failed to send message');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setFormStatus('idle');
-      setToast({ message: 'Failed to send message. Please try again.', type: 'error' });
-      setTimeout(() => setToast(null), 3000);
-    }
+    setTimeout(() => {
+      setFormStatus('success');
+      setToast({ message: UI_TRANSLATIONS[language].contact.received, type: 'success' });
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => {
+        setFormStatus('idle');
+        setToast(null);
+      }, 3000);
+    }, 800);
   };
 
   if (loading) {
-    return <Loader />;
-  }
-
-  if (!content) {
     return (
-      <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-8 text-center">
-        <Database size={64} className="text-accent mb-6 opacity-20" />
-        <h1 className="text-4xl font-bold uppercase mb-4">Database_Empty</h1>
-        <p className="text-muted mb-8 max-w-md">The portfolio database has not been initialized. Please visit the CMS Dashboard to seed the database.</p>
-        <Link to="/cms" className="bg-accent text-bg px-8 py-4 rounded-full font-bold uppercase text-xs tracking-widest hover:scale-105 transition-transform">
-          Go to CMS Dashboard
-        </Link>
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -380,11 +337,7 @@ export default function Portfolio() {
 
   return (
     <div className="relative min-h-screen selection:bg-accent/30 selection:text-white">
-      <AnimatePresence>
-        {loading && <Loader key="loader" />}
-      </AnimatePresence>
-
-      {!loading && content && content[language] && content[language].hero && (
+      {content && content[language] && content[language].hero && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
