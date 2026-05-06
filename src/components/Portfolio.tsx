@@ -380,7 +380,7 @@ export default function Portfolio() {
       <CodeBackground />
 
       {/* 1. Navigation */}
-      <nav className="fixed top-0 left-0 w-full p-4 md:p-6 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 z-50 border-b border-border bg-bg/80 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 w-full px-4 py-3 md:px-6 md:py-4 flex flex-col justify-between items-center z-50 border-b border-border bg-bg/90 backdrop-blur-xl">
         <div className="flex items-center gap-3 sm:gap-4 max-w-7xl mx-auto w-full justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="w-6 h-6 sm:w-8 sm:h-8 bg-accent rounded-sm flex items-center justify-center text-bg font-bold text-xs sm:text-base">S</div>
@@ -422,7 +422,7 @@ export default function Portfolio() {
           </div>
         </div>
         {/* Mobile Nav Links */}
-        <div className="flex md:hidden gap-3 sm:gap-4 font-mono text-[8px] uppercase tracking-widest mt-2 border-t border-border pt-2 w-full justify-center">
+        <div className="flex md:hidden gap-4 font-mono text-[8px] uppercase tracking-widest mt-2 border-t border-border/50 pt-2 w-full justify-center flex-wrap">
           <a href="#about" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.about}</a>
           <a href="#services" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.services}</a>
           <a href="#work" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.work}</a>
@@ -432,7 +432,7 @@ export default function Portfolio() {
       </nav>
 
       {/* 2. Hero Section */}
-      <section ref={heroRef} className="min-h-screen flex flex-col justify-center px-6 md:px-[10%] pt-48 sm:pt-32 pb-20 relative z-10 overflow-hidden">
+      <section ref={heroRef} className="min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-[10%] pt-44 sm:pt-36 lg:pt-24 pb-20 relative z-10 overflow-hidden">
         {/* Background Decorative Element */}
         <div className="absolute top-0 right-0 w-full lg:w-1/2 h-full opacity-10 md:opacity-20 pointer-events-none hero-reveal z-0">
           <div className="absolute inset-0 bg-accent/5 [mask-image:linear-gradient(to_left,black,transparent)]" />
@@ -460,7 +460,7 @@ export default function Portfolio() {
             <span className="text-muted/40 ml-4 hidden md:inline">{UI_TRANSLATIONS[language].hero.node}: {Math.random().toString(36).substring(7).toUpperCase()}</span>
           </div>
 
-          <h1 className="hero-reveal font-display font-bold text-[clamp(2.5rem,12vw,9rem)] leading-[0.9] md:leading-[0.85] tracking-tighter md:tracking-[-0.04em] mb-10 uppercase relative z-10">
+          <h1 className="hero-reveal font-display font-bold text-[clamp(2rem,10vw,9rem)] leading-[0.85] tracking-tight md:tracking-[-0.04em] mb-8 md:mb-10 uppercase relative z-10">
             <span className="block">
               <span className="block">{firstName}</span>
             </span>
@@ -518,15 +518,15 @@ export default function Portfolio() {
       <MarqueeBanner skills={common.skills} />
 
       {/* 3. About Section */}
-      <section id="about" ref={aboutRef} className="py-32 px-6 md:px-[10%] relative z-10 border-y border-border bg-white/[0.01]">
+      <section id="about" ref={aboutRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-y border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
           <div className="mono-label mb-12 section-reveal">{UI_TRANSLATIONS[language].about.label}</div>
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Main Content Card */}
-            <div className="lg:col-span-7 section-reveal bg-bg border border-border p-6 sm:p-8 md:p-16 relative overflow-hidden group">
+            <div className="lg:col-span-7 section-reveal bg-bg border border-border p-5 sm:p-8 md:p-12 lg:p-16 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors" />
-              <h2 className="text-4xl sm:text-6xl md:text-8xl font-bold uppercase mb-12 leading-[0.85] font-display tracking-tighter">
+              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase mb-8 sm:mb-12 leading-[0.85] font-display tracking-tighter">
                 {language === 'en' ? 'The' : ''} <span className={cn("text-accent pr-4", theme === 'light' && "italic font-serif normal-case")}>{UI_TRANSLATIONS[language].about.title}</span>
               </h2>
               <p className="text-lg sm:text-xl md:text-3xl font-light leading-relaxed text-muted mb-16 max-w-2xl">
@@ -630,12 +630,12 @@ export default function Portfolio() {
       </section>
 
       {/* ── STATS COUNTER SECTION ── */}
-      <section className="py-24 px-6 md:px-[10%] relative z-10 border-b border-border overflow-hidden bg-accent">
+      <section className="py-12 sm:py-16 md:py-20 relative z-10 border-b border-border overflow-hidden bg-white/[0.015]">
         <StatsSection language={language} />
       </section>
 
       {/* 4. Services Section */}
-      <section id="services" ref={servicesRef} className="py-32 px-6 md:px-[10%] relative z-10 border-b border-border">
+      <section id="services" ref={servicesRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-b border-border">
         <div className="max-w-7xl mx-auto">
           <div className="mono-label section-reveal mb-4">{UI_TRANSLATIONS[language].services.label}</div>
           <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal">{language === 'en' ? 'Strategic' : ''} <span className="text-accent">{UI_TRANSLATIONS[language].services.title}</span></h2>
@@ -773,7 +773,7 @@ export default function Portfolio() {
       <ProcessSection language={language} />
 
       {/* 6. Experience Section */}
-      <section id="experience" className="py-32 px-6 md:px-[10%] relative z-10">
+      <section id="experience" className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="mono-label section-reveal mb-4">04 / {language === 'en' ? 'Experience' : '经验'}</div>
           <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal">{language === 'en' ? 'Career' : '职业'} <span className="text-accent">{language === 'en' ? 'Log' : '日志'}</span></h2>
@@ -800,12 +800,12 @@ export default function Portfolio() {
       </section>
 
       {/* 7. Projects Section */}
-      <section id="work" ref={workRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
+      <section id="work" ref={workRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="section-reveal">
               <div className="mono-label mb-4">{UI_TRANSLATIONS[language].projects.label}</div>
-              <h2 className="text-4xl sm:text-6xl md:text-8xl font-bold uppercase leading-none">{language === 'en' ? 'Selected' : ''}<br/><span className="text-accent">{UI_TRANSLATIONS[language].projects.title}</span></h2>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-none">{language === 'en' ? 'Selected' : ''}<br/><span className="text-accent">{UI_TRANSLATIONS[language].projects.title}</span></h2>
             </div>
             <p className="section-reveal max-w-xs text-muted font-light italic">
               {language === 'en' ? 'A showcase of technical complexity and architectural integrity.' : '技术复杂性和架构完整性的展示。'}
@@ -826,7 +826,7 @@ export default function Portfolio() {
                   <div className="absolute inset-0 bg-accent/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500" />
                   
                   {/* Tech Tags Overlay */}
-                  <div className="absolute bottom-4 left-4 flex gap-2">
+                  <div className="absolute bottom-4 left-4 flex flex-wrap gap-1.5 max-w-[90%]">
                     {(common.projectTech[project.id] || []).map(tech => (
                       <span key={tech} className="text-[10px] font-mono uppercase tracking-widest bg-bg/80 backdrop-blur-md border border-border px-3 py-1 text-white">
                         {tech}
@@ -957,7 +957,7 @@ export default function Portfolio() {
       </section>
 
       {/* 9. Education Section */}
-      <section ref={educationRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
+      <section ref={educationRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
           <div className="mono-label mb-4 section-reveal">{UI_TRANSLATIONS[language].education.label}</div>
           <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{UI_TRANSLATIONS[language].education.title}</h2>
@@ -1149,7 +1149,7 @@ export default function Portfolio() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 md:px-[10%] relative z-10 border-t border-border">
+      <footer className="py-8 sm:py-12 px-4 sm:px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 mono-label opacity-40 text-[10px]">
           <p>© {new Date().getFullYear()} {heroName}. {UI_TRANSLATIONS[language].footer.rights}</p>
           <div className="flex gap-6">
@@ -1175,7 +1175,7 @@ export default function Portfolio() {
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 50, x: '-50%' }}
             className={cn(
-              "fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-full font-mono text-[10px] uppercase tracking-widest shadow-2xl border backdrop-blur-xl",
+              "fixed bottom-6 sm:bottom-12 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[100] px-5 sm:px-8 py-3 sm:py-4 rounded-full font-mono text-[10px] uppercase tracking-widest shadow-2xl border backdrop-blur-xl text-center",
               toast.type === 'success' ? "bg-accent/10 border-accent text-accent" : "bg-red-500/10 border-red-500 text-red-500"
             )}
           >
@@ -1582,6 +1582,22 @@ function ActivityHeatmap({ language }: { language: 'en' | 'zh' }) {
 }
 
 // ─── Stats Counter Section Component ─────────────────────────────────────────
+// ─── Ring Gauge SVG helper ───────────────────────────────────────────────────
+function RingGauge({ pct, size = 80, stroke = 6 }: { pct: number; size?: number; stroke?: number }) {
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const dash = (pct / 100) * circ;
+  return (
+    <svg width={size} height={size} className="rotate-[-90deg]">
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(var(--accent-rgb),0.12)" strokeWidth={stroke} />
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--accent)" strokeWidth={stroke}
+        strokeDasharray={`${dash} ${circ - dash}`} strokeLinecap="round"
+        style={{ transition: 'stroke-dasharray 1.8s cubic-bezier(0.16,1,0.3,1)' }} />
+    </svg>
+  );
+}
+
+// ─── Stats Section — System Monitor Dashboard ────────────────────────────────
 function StatsSection({ language }: { language: 'en' | 'zh' }) {
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -1589,40 +1605,60 @@ function StatsSection({ language }: { language: 'en' | 'zh' }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.3 }
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
-  const stats = language === 'en'
+  const metrics = language === 'en'
     ? [
-        { value: 5, suffix: '+', label: 'Years Experience', sub: 'In Production Environments' },
-        { value: 50, suffix: '+', label: 'Projects Shipped', sub: 'Across Web & Mobile' },
-        { value: 99, suffix: '%', label: 'Client Satisfaction', sub: 'Across All Engagements' },
-        { value: 12, suffix: 'k+', label: 'Commits Pushed', sub: 'On GitHub & GitLab' },
+        { id: 'exp',      value: 5,  max: 10,  suffix: '+', unit: 'yrs', label: 'Experience',     sub: 'In Production',       pct: 50,  icon: '⚙' },
+        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: 'Shipped',        sub: 'Web · Mobile · API',  pct: 50,  icon: '🚀' },
+        { id: 'sat',      value: 99, max: 100, suffix: '%', unit: 'nps',  label: 'Satisfaction',   sub: 'All Engagements',     pct: 99,  icon: '✦' },
+        { id: 'commits',  value: 12, max: 20,  suffix: 'k+', unit: 'git', label: 'Commits',        sub: 'GitHub · GitLab',     pct: 60,  icon: '⌥' },
       ]
     : [
-        { value: 5, suffix: '+', label: '年经验', sub: '在生产环境中' },
-        { value: 50, suffix: '+', label: '已交付项目', sub: '跨Web与移动端' },
-        { value: 99, suffix: '%', label: '客户满意度', sub: '所有项目' },
-        { value: 12, suffix: 'k+', label: '代码提交', sub: '在 GitHub & GitLab' },
+        { id: 'exp',      value: 5,  max: 10,  suffix: '+', unit: 'yrs', label: '年经验',   sub: '生产环境',     pct: 50,  icon: '⚙' },
+        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: '已交付',  sub: 'Web · 移动端', pct: 50,  icon: '🚀' },
+        { id: 'sat',      value: 99, max: 100, suffix: '%', unit: 'nps',  label: '满意度',  sub: '所有项目',     pct: 99,  icon: '✦' },
+        { id: 'commits',  value: 12, max: 20,  suffix: 'k+', unit: 'git', label: '代码提交', sub: 'GitHub · GitLab', pct: 60, icon: '⌥' },
       ];
 
   return (
-    <div ref={ref} className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-bg/20">
-        {stats.map((stat, i) => (
-          <StatCard key={i} stat={stat} visible={visible} delay={i * 200} />
+    <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 md:px-0">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-6 sm:mb-10">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
+            {language === 'en' ? 'sys.metrics — live' : 'sys.metrics — 实时'}
+          </span>
+        </div>
+        <span className="font-mono text-[9px] text-muted/40 hidden sm:block">
+          pid:{Math.floor(Math.random()*9000+1000)} · uptime:99.9%
+        </span>
+      </div>
+
+      {/* Bento grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {metrics.map((m, i) => (
+          <MetricCard key={m.id} m={m} visible={visible} delay={i * 150} />
         ))}
       </div>
     </div>
   );
 }
 
-function StatCard({ stat, visible, delay }: { stat: { value: number; suffix: string; label: string; sub: string }; visible: boolean; delay: number }) {
+function MetricCard({
+  m, visible, delay
+}: {
+  m: { id: string; value: number; max: number; suffix: string; unit: string; label: string; sub: string; pct: number; icon: string };
+  visible: boolean;
+  delay: number;
+}) {
   const [started, setStarted] = useState(false);
   useEffect(() => {
     if (visible) {
@@ -1630,24 +1666,70 @@ function StatCard({ stat, visible, delay }: { stat: { value: number; suffix: str
       return () => clearTimeout(t);
     }
   }, [visible, delay]);
-  const count = useCountUp(stat.value, 1800, started);
+  const count = useCountUp(m.value, 1800, started);
+  const ringPct = started ? m.pct : 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: delay / 1000 }}
-      className="p-8 md:p-12 bg-accent group hover:bg-bg/10 transition-colors duration-500 cursor-default"
+      transition={{ duration: 0.6, delay: delay / 1000, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative bg-bg border border-border hover:border-accent/50 transition-all duration-500 p-5 sm:p-6 overflow-hidden cursor-default"
     >
-      <div className="text-5xl md:text-7xl font-bold text-bg leading-none mb-4 tabular-nums">
-        {count}{stat.suffix}
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-accent/30 group-hover:border-accent transition-colors duration-300" />
+      <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-accent/30 group-hover:border-accent transition-colors duration-300" />
+
+      {/* Subtle bg glow */}
+      <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/[0.03] transition-colors duration-500" />
+
+      {/* Top row: icon + unit badge */}
+      <div className="flex items-start justify-between mb-4 relative z-10">
+        <span className="text-2xl leading-none">{m.icon}</span>
+        <span className="font-mono text-[9px] uppercase tracking-widest text-accent/60 border border-accent/20 px-2 py-0.5">
+          {m.unit}
+        </span>
       </div>
-      <div className="text-bg font-bold uppercase text-sm tracking-widest mb-1">{stat.label}</div>
-      <div className="text-bg/50 font-mono text-[10px] uppercase tracking-widest">{stat.sub}</div>
-      <div className="mt-6 w-8 h-[2px] bg-bg/30 group-hover:w-full transition-all duration-700" />
+
+      {/* Ring + number */}
+      <div className="flex items-center gap-4 mb-4 relative z-10">
+        <div className="relative flex-shrink-0">
+          <RingGauge pct={ringPct} size={64} stroke={5} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="font-mono text-[9px] text-accent/60">{m.pct}%</span>
+          </div>
+        </div>
+        <div>
+          <div className="font-display font-bold text-3xl sm:text-4xl leading-none tabular-nums text-ink group-hover:text-accent transition-colors duration-300">
+            {count}{m.suffix}
+          </div>
+          <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted/50 mt-1">{m.sub}</div>
+        </div>
+      </div>
+
+      {/* Label row */}
+      <div className="relative z-10 pt-3 border-t border-border/60">
+        <div className="flex items-center justify-between">
+          <span className="font-bold uppercase text-xs sm:text-sm tracking-wider">{m.label}</span>
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="w-1 bg-accent transition-all duration-300"
+                style={{
+                  height: started ? `${8 + Math.sin(i * 1.3 + m.pct) * 8}px` : '2px',
+                  opacity: started ? 0.3 + i * 0.15 : 0.1,
+                  transitionDelay: `${i * 80 + delay}ms`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
+
 
 // ─── Process / Workflow Section Component ─────────────────────────────────────
 function ProcessSection({ language }: { language: 'en' | 'zh' }) {
