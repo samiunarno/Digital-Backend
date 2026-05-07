@@ -470,7 +470,7 @@ export default function Portfolio() {
               
               {/* Floating Badge */}
               <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 bg-accent text-bg p-3 sm:p-4 font-mono text-[8px] sm:text-[10px] uppercase tracking-widest z-20 shadow-2xl">
-                System_Online<br/>v1.0.4
+                {content[language].ui.hero.systemBadge.split('<br/>').map((txt: string, i: number) => <React.Fragment key={i}>{txt}{i === 0 && <br/>}</React.Fragment>)}
               </div>
             </div>
           </div>
@@ -512,13 +512,13 @@ export default function Portfolio() {
                   </div>
                   <ul className="space-y-4 text-xs font-light tracking-wide text-muted/80">
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
-                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> Distributed Systems Architecture
+                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> {content[language].ui.about.competenciesList[0]}
                     </li>
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
-                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> Cloud-Native Infrastructure
+                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> {content[language].ui.about.competenciesList[1]}
                     </li>
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
-                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> High-Performance Computing
+                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> {content[language].ui.about.competenciesList[2]}
                     </li>
                   </ul>
                 </div>
@@ -529,13 +529,13 @@ export default function Portfolio() {
                   </div>
                   <ul className="space-y-4 text-xs font-light tracking-wide text-muted/80">
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
-                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> Architectural Integrity First
+                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> {content[language].ui.about.philosophyList[0]}
                     </li>
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
-                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> Operational Excellence
+                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> {content[language].ui.about.philosophyList[1]}
                     </li>
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
-                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> User-Centric System Design
+                      <div className="w-1.5 h-1.5 bg-accent/40 rotate-45" /> {content[language].ui.about.philosophyList[2]}
                     </li>
                   </ul>
                 </div>
@@ -546,12 +546,18 @@ export default function Portfolio() {
             <div className="lg:col-span-5 flex flex-col gap-8">
               {/* Visual Card */}
               <div className="flex-1 section-reveal relative group overflow-hidden border border-border bg-white/[0.02] flex flex-col items-center justify-center p-8 sm:p-12 min-h-[350px] md:min-h-[400px]">
+                <div className="absolute top-6 right-6 z-20">
+                  <a href="/resume.pdf" target="_blank" className="px-4 py-2 border border-accent text-accent text-[10px] uppercase tracking-widest hover:bg-accent hover:text-bg transition-colors duration-300 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)] block">
+                    {content[language].ui.about.resume}
+                  </a>
+                </div>
+
                 <div className="relative">
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden border-2 border-accent/20 group-hover:border-accent transition-colors duration-500 z-10 relative">
+                  <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden border-2 border-accent/20 transition-colors duration-500 z-10 relative">
                     <img 
                       src={common.heroImage} 
                       alt="Portrait" 
-                      className="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000"
+                      className="w-full h-full object-cover transition-all duration-1000"
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -561,7 +567,7 @@ export default function Portfolio() {
                 </div>
                 
                 <div className="mt-10 text-center relative z-10">
-                  <div className="mono-label text-[10px] text-accent mb-2 tracking-[0.3em]">System_Operator</div>
+                  <div className="mono-label text-[10px] text-accent mb-2 tracking-[0.3em]">{content[language].ui.about.systemOperator}</div>
                   <div className="text-2xl font-bold uppercase tracking-[0.2em]">{heroName}</div>
                 </div>
 
@@ -584,7 +590,7 @@ export default function Portfolio() {
               <div className="section-reveal bg-accent p-8 flex flex-col justify-between min-h-[200px] group">
                 <div className="flex justify-between items-start">
                   <Terminal size={24} className="text-bg" />
-                  <div className="mono-label text-bg/40 text-[10px]">Joyi_OS // v2.5</div>
+                  <div className="mono-label text-bg/40 text-[10px]">{content[language].ui.about.osVersion}</div>
                 </div>
                 <div className="space-y-2">
                   <div className="text-bg font-bold text-3xl uppercase tracking-tighter leading-none">
@@ -602,7 +608,7 @@ export default function Portfolio() {
 
       {/* ── STATS COUNTER SECTION ── */}
       <section className="py-12 sm:py-16 md:py-20 relative z-10 border-b border-border overflow-hidden bg-white/[0.015]">
-        <StatsSection language={language} />
+        <StatsSection content={content} language={language} />
       </section>
 
       {/* 4. Services Section */}
@@ -738,10 +744,10 @@ export default function Portfolio() {
       </section>
 
       {/* ── MANIFESTO SECTION ── */}
-      <ManifestoSection language={language} />
+      <ManifestoSection content={content} language={language} />
 
       {/* ── PROCESS SECTION ── */}
-      <ProcessSection language={language} />
+      <ProcessSection content={content} language={language} />
 
       {/* 6. Experience Section — Vertical Timeline */}
       <section id="experience" className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 overflow-hidden">
@@ -749,9 +755,9 @@ export default function Portfolio() {
         <div className="absolute left-[calc(10%+1.75rem)] top-0 bottom-0 w-px bg-border hidden md:block" />
 
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label section-reveal mb-3">04 / {language === 'en' ? 'Experience' : '经验'}</div>
+          <div className="mono-label section-reveal mb-3">{content[language].ui.experience.label}</div>
           <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase mb-16 sm:mb-20 section-reveal leading-none">
-            {language === 'en' ? 'Career ' : '职业'}<span className="text-accent">{language === 'en' ? 'Log' : '日志'}</span>
+            {content[language].ui.experience.titlePrefix}<span className="text-accent">{content[language].ui.experience.titleHighlight}</span>
           </h2>
 
           <div className="relative">
@@ -818,7 +824,7 @@ export default function Portfolio() {
               <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-none"><span className="text-accent">{content[language].ui.projects.title}</span></h2>
             </div>
             <p className="section-reveal max-w-xs text-muted font-light italic">
-              {language === 'en' ? 'A showcase of technical complexity and architectural integrity.' : '技术复杂性和架构完整性的展示。'}
+              {content[language].ui.projects.desc}
             </p>
           </div>
 
@@ -966,31 +972,6 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 9. Education Section */}
-      <section ref={educationRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-t border-border">
-        <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-4 section-reveal">{content[language].ui.education.label}</div>
-          <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{content[language].ui.education.title}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {(t.education || []).map((edu, i) => (
-              <div key={i} className="group flex gap-6 items-start p-8 border border-border bg-bg section-reveal hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
-                <div className="p-3 bg-accent/10 text-accent group-hover:bg-accent group-hover:text-bg transition-all duration-500">
-                  <Terminal size={20} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold uppercase group-hover:text-accent transition-colors duration-500">{edu.school}</h4>
-                  <p className="text-accent mono-label mt-1">{edu.degree}</p>
-                  <p className="text-xs text-muted mt-4 opacity-40 group-hover:opacity-100 transition-opacity duration-500">{edu.year}</p>
-                </div>
-                
-                {/* Decorative Background Accent */}
-                <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors duration-700" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 10. Achievements Section */}
       <section ref={achievementsRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
@@ -1012,8 +993,6 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── SYSTEM CORE TELEMETRY ── */}
-      <SystemCoreTelemetry language={language} />
 
       {/* 11. Gallery / Memories Section */}
       <section ref={galleryRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
@@ -1297,7 +1276,7 @@ function MarqueeBanner({ skills }: { skills: string[] }) {
 }
 
 // ─── Engineering Philosophy — Agent Tree ──────────────────────────────────────
-function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
+function ManifestoSection({ content, language }: { content: any, language: 'en' | 'zh' }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -1313,17 +1292,7 @@ function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
     return () => obs.disconnect();
   }, []);
 
-  const branches = language === 'en'
-    ? [
-        { id: 'perf', label: 'Performance', desc: 'Sub-100ms p99', leaves: ['Lazy Loading', 'Edge Cache'] },
-        { id: 'arch', label: 'Architecture', desc: 'Scale-first design', leaves: ['Domain-Driven', 'Event-Sourced'] },
-        { id: 'rel',  label: 'Reliability',  desc: '99.99% uptime',   leaves: ['Circuit Breaker', 'Observability'] },
-      ]
-    : [
-        { id: 'perf', label: '性能', desc: 'P99低于100ms', leaves: ['懒加载', '边缘缓存'] },
-        { id: 'arch', label: '架构', desc: '扩展优先设计', leaves: ['领域驱动', '事件溯源'] },
-        { id: 'rel',  label: '可靠性', desc: '99.99%可用', leaves: ['熔断器', '可观测性'] },
-      ];
+  const branches = content[language].ui.manifesto.branches;
 
   const Stem = ({ delay }: { delay: number }) => (
     <motion.div
@@ -1343,7 +1312,7 @@ function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
         <motion.h2 initial={{ opacity: 0, y: 24 }} animate={visible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
           className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase mb-16">
-          {language === 'en' ? 'How I ' : ''}<span className="text-accent">{language === 'en' ? 'Think' : '思维框架'}</span>
+          {content[language].ui.manifesto.titlePrefix}<span className="text-accent">{content[language].ui.manifesto.titleHighlight}</span>
         </motion.h2>
 
         <div className="flex flex-col items-center">
@@ -1354,7 +1323,7 @@ function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
           >
             <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-accent animate-pulse" />
             <div className="text-xs sm:text-sm font-bold uppercase tracking-widest">
-              {language === 'en' ? 'ENGINEERING_PHILOSOPHY' : '工程哲学'}
+              {content[language].ui.manifesto.label}
             </div>
             <div className="text-[9px] opacity-50 mt-0.5 uppercase tracking-wider">{'// core runtime'}</div>
           </motion.div>
@@ -1419,129 +1388,13 @@ function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
         <motion.p initial={{ opacity: 0 }} animate={visible ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}
           className="mt-10 font-mono text-[9px] uppercase tracking-widest text-muted/30 flex items-center gap-2">
           <span className="w-1.5 h-1.5 bg-accent/40 rotate-45 animate-pulse inline-block" />
-          {language === 'en' ? 'Hover any node to activate' : '悬停任意节点激活'}
+          {content[language].ui.manifesto.hoverHint}
         </motion.p>
       </div>
     </section>
   );
 }
 
-// ─── System Core Telemetry ───────────────────────────────────────────────────
-function SystemCoreTelemetry({ language }: { language: 'en' | 'zh' }) {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const [logs, setLogs] = useState<string[]>([]);
-
-  useEffect(() => {
-    const initialLogs = Array.from({length: 8}).map((_, i) => 
-      `[${new Date(Date.now() - i * 5000).toISOString().split('T')[1].slice(0,-1)}] Sys_OP_OK // Node_${Math.floor(Math.random()*1000)} routing stable.`
-    );
-    setLogs(initialLogs);
-
-    const interval = setInterval(() => {
-      setLogs(prev => {
-        const newLog = `[${new Date().toISOString().split('T')[1].slice(0,-1)}] Sys_OP_OK // Node_${Math.floor(Math.random()*1000)} routing stable.`;
-        return [newLog, ...prev.slice(0, 7)];
-      });
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
-  
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.2 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  return (
-    <section ref={ref} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border overflow-hidden bg-white/[0.02]">
-      <div className="absolute inset-0 bg-accent/5 opacity-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-bg to-bg pointer-events-none z-0" />
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="mono-label mb-4 section-reveal">
-          {language === 'en' ? '11 / Core_Telemetry' : '11 / 核心遥测'}
-        </div>
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 section-reveal">
-          <h2 className="text-5xl md:text-7xl font-bold uppercase">
-            {language === 'en' ? 'System' : '系统'}{' '}
-            <span className="text-accent">{language === 'en' ? 'Core' : '核心'}</span>
-          </h2>
-          <div className="flex gap-8 text-right">
-            <div>
-              <div className="text-3xl font-bold tabular-nums text-accent animate-pulse">
-                99.9%
-              </div>
-              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Uptime' : '正常运行时间'}</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold tabular-nums">0.2ms</div>
-              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Latency' : '延迟'}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-          <div className="order-2 lg:order-1 h-64 border border-border bg-bg/50 p-6 overflow-hidden relative font-mono text-[10px] leading-relaxed section-reveal shadow-inner">
-            <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-bg to-transparent z-10" />
-            <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-bg to-transparent z-10" />
-            <div className="flex flex-col gap-3 opacity-80 transition-all duration-500">
-              {logs.map((log, i) => (
-                <div key={i} className="flex gap-2 whitespace-nowrap animate-[pulse_2s_ease-in-out]">
-                  <span className="text-accent/80">{log.split('] ')[0]}]</span>
-                  <span className="text-muted/80">{log.split('] ')[1]}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="order-1 lg:order-2 flex justify-center items-center h-80 relative section-reveal">
-            <div className="absolute w-64 h-64 border border-dashed border-accent/20 rounded-full animate-[spin_20s_linear_infinite]" />
-            <div className="absolute w-52 h-52 border border-accent/30 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
-            <div className="absolute w-40 h-40 border-2 border-dotted border-accent/40 rounded-full animate-[spin_10s_linear_infinite]" />
-            
-            <div className="relative w-20 h-20 bg-accent/10 border border-accent flex justify-center items-center rotate-45 shadow-[0_0_40px_rgba(var(--accent-rgb),0.3)] group hover:scale-110 transition-transform duration-700">
-              <div className="absolute inset-0 bg-accent/20 animate-ping" />
-              <div className="w-10 h-10 border border-bg rotate-45 flex justify-center items-center bg-accent text-bg shadow-[0_0_20px_rgba(var(--accent-rgb),0.6)]">
-                <Cpu size={20} className="-rotate-45" />
-              </div>
-            </div>
-
-            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-accent/40 to-transparent -translate-y-1/2 -z-10" />
-            <div className="absolute left-1/2 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-accent/40 to-transparent -translate-x-1/2 -z-10" />
-          </div>
-
-          <div className="order-3 lg:order-3 space-y-8 section-reveal">
-            {[
-              { label: language === 'en' ? 'CPU Load' : 'CPU 负载', val: 32 },
-              { label: language === 'en' ? 'Memory' : '内存', val: 64 },
-              { label: language === 'en' ? 'Network' : '网络', val: 88 }
-            ].map((metric, i) => (
-              <div key={i} className="group">
-                <div className="flex justify-between font-mono text-[10px] uppercase mb-3 text-muted/60">
-                  <span>{metric.label}</span>
-                  <span className="text-accent tracking-widest">{metric.val}%</span>
-                </div>
-                <div className="h-[2px] bg-white/5 relative overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={visible ? { width: `${metric.val}%` } : {}}
-                    transition={{ duration: 1.5, delay: i * 0.2, ease: "easeOut" }}
-                    className="absolute top-0 left-0 h-full bg-accent group-hover:shadow-[0_0_10px_rgba(var(--accent-rgb),0.8)]"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ─── Stats Counter Section Component ─────────────────────────────────────────
 // ─── Ring Gauge SVG helper ───────────────────────────────────────────────────
@@ -1560,7 +1413,7 @@ function RingGauge({ pct, size = 80, stroke = 6 }: { pct: number; size?: number;
 }
 
 // ─── Stats Section — System Monitor Dashboard ────────────────────────────────
-function StatsSection({ language }: { language: 'en' | 'zh' }) {
+function StatsSection({ content, language }: { content: any, language: 'en' | 'zh' }) {
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -1575,17 +1428,7 @@ function StatsSection({ language }: { language: 'en' | 'zh' }) {
     return () => obs.disconnect();
   }, []);
 
-  const metrics = language === 'en'
-    ? [
-        { id: 'exp',      value: 5,  max: 10, suffix: '+', unit: 'yrs',  label: 'Experience',   sub: 'Production environments', pct: 50, icon: '⚙' },
-        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: 'Projects',     sub: 'Web · Mobile · API',      pct: 50, icon: '🚀' },
-        { id: 'comp',     value: 20, max: 30,  suffix: '+', unit: 'wins', label: 'Competitions', sub: 'Hackathons & contests',    pct: 80, icon: '🏆' },
-      ]
-    : [
-        { id: 'exp',      value: 5,  max: 10, suffix: '+', unit: 'yrs',  label: '年经验',   sub: '生产环境',     pct: 50, icon: '⚙' },
-        { id: 'projects', value: 50, max: 100, suffix: '+', unit: 'apps', label: '项目',     sub: 'Web · 移动端', pct: 50, icon: '🚀' },
-        { id: 'comp',     value: 20, max: 30,  suffix: '+', unit: 'wins', label: '竞赛',     sub: '黑客马拉松',   pct: 80, icon: '🏆' },
-      ];
+  const metrics = content[language].ui.stats.metrics;
 
   return (
     <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 md:px-0">
@@ -1594,7 +1437,7 @@ function StatsSection({ language }: { language: 'en' | 'zh' }) {
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
-            {language === 'en' ? 'sys.metrics — live' : 'sys.metrics — 实时'}
+            {content[language].ui.stats.label}
           </span>
         </div>
         <span className="font-mono text-[9px] text-muted/40 hidden sm:block">
@@ -1692,73 +1535,21 @@ function MetricCard({
 
 
 // ─── Process / Workflow Section Component ─────────────────────────────────────
-function ProcessSection({ language }: { language: 'en' | 'zh' }) {
+function ProcessSection({ content, language }: { content: any, language: 'en' | 'zh' }) {
   const [activeStep, setActiveStep] = useState<number | null>(null);
 
-  const steps = language === 'en'
-    ? [
-        {
-          num: '01',
-          icon: <Search size={28} />,
-          title: 'Discovery',
-          short: 'Understanding the problem space deeply.',
-          detail: 'I conduct thorough stakeholder interviews, competitor analysis, and technical audits to map every constraint before writing a single line of code.'
-        },
-        {
-          num: '02',
-          icon: <LightbulbIcon size={28} />,
-          title: 'Architecture',
-          short: 'Designing scalable system blueprints.',
-          detail: 'Every system starts with its data model. I design API contracts, database schemas, and component hierarchies before opening an IDE.'
-        },
-        {
-          num: '03',
-          icon: <Wrench size={28} />,
-          title: 'Build',
-          short: 'Iterative, test-driven development.',
-          detail: 'Feature branches, pull requests, and CI/CD pipelines from day one. I write code that the next engineer will thank me for.'
-        },
-        {
-          num: '04',
-          icon: <GitCommit size={28} />,
-          title: 'Integrate',
-          short: 'Seamless API & service integration.',
-          detail: 'Third-party services, webhooks, real-time sync, payment gateways — I wire up complex integrations with bulletproof error handling.'
-        },
-        {
-          num: '05',
-          icon: <CheckCheck size={28} />,
-          title: 'Test & QA',
-          short: 'Zero bugs in production is the goal.',
-          detail: 'Unit tests, integration tests, E2E automation, load testing and security auditing. Nothing ships without passing the gauntlet.'
-        },
-        {
-          num: '06',
-          icon: <Rocket size={28} />,
-          title: 'Deploy',
-          short: 'Zero-downtime production releases.',
-          detail: 'Blue-green deployments, automated rollbacks, monitoring dashboards and on-call runbooks. Launch day is just another Tuesday.'
-        },
-      ]
-    : [
-        { num: '01', icon: <Search size={28} />, title: '发现', short: '深入了解问题空间。', detail: '我进行深入的利益相关者访谈、竞争对手分析和技术审计，在编写任何代码之前映射每个约束。' },
-        { num: '02', icon: <LightbulbIcon size={28} />, title: '架构', short: '设计可扩展的系统蓝图。', detail: '每个系统都从其数据模型开始。我在打开IDE之前设计API合同、数据库模式和组件层次结构。' },
-        { num: '03', icon: <Wrench size={28} />, title: '构建', short: '迭代的测试驱动开发。', detail: '从第一天起就有功能分支、拉取请求和CI/CD管道。我写的代码让下一个工程师感谢我。' },
-        { num: '04', icon: <GitCommit size={28} />, title: '集成', short: '无缝API和服务集成。', detail: '第三方服务、webhooks、实时同步、支付网关——我用防弹错误处理来连接复杂的集成。' },
-        { num: '05', icon: <CheckCheck size={28} />, title: '测试', short: '零错误是目标。', detail: '单元测试、集成测试、E2E自动化、负载测试和安全审计。没有通过测试的东西不会发布。' },
-        { num: '06', icon: <Rocket size={28} />, title: '部署', short: '零停机生产发布。', detail: '蓝绿部署、自动回滚、监控仪表板和值班手册。发布日只是另一个星期二。' },
-      ];
+  const steps = content[language].ui.process.steps;
 
   return (
     <section className="py-32 px-6 md:px-[10%] relative z-10 border-b border-border bg-white/[0.01]">
       <div className="max-w-7xl mx-auto">
         <div className="mono-label section-reveal mb-4">
-          {language === 'en' ? '06 / Process' : '06 / 流程'}
+          {content[language].ui.process.label}
         </div>
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 section-reveal">
           <h2 className="text-5xl md:text-7xl font-bold uppercase leading-none">
             {language === 'en' ? 'How I' : ''}{' '}
-            <span className="text-accent">{language === 'en' ? 'Work' : '工作方式'}</span>
+            <span className="text-accent">{content[language].ui.process.titleHighlight}</span>
           </h2>
           <p className="max-w-xs text-muted font-light italic text-sm">
             {language === 'en'
@@ -1790,7 +1581,7 @@ function ProcessSection({ language }: { language: 'en' | 'zh' }) {
                   ? 'bg-accent text-bg border-accent'
                   : 'border-border text-accent group-hover:border-accent/50'
               )}>
-                {step.icon}
+                <TechIcon name={step.iconName || 'Code'} size={28} />
               </div>
 
               <h3 className={cn(
@@ -1830,7 +1621,7 @@ function ProcessSection({ language }: { language: 'en' | 'zh' }) {
 
         <div className="mt-8 flex items-center gap-3 text-muted/40 font-mono text-[10px] uppercase tracking-widest section-reveal">
           <div className="w-2 h-2 bg-accent/40 rotate-45 animate-pulse" />
-          {language === 'en' ? 'Click any step to expand details' : '点击任意步骤展开详情'}
+          {content[language].ui.process.clickHint}
         </div>
       </div>
     </section>

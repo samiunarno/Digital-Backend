@@ -4,87 +4,124 @@ export const initialPortfolioData: PortfolioContent = {
   en: {
     ui: {
       "nav": {
-            "about": "About",
-            "services": "Services",
-            "work": "Work",
-            "experience": "Experience",
-            "contact": "Contact",
-            "terminal": "Terminal",
-            "studio": "Studio"
+        "about": "About",
+        "services": "Services",
+        "work": "Work",
+        "experience": "Experience",
+        "contact": "Contact",
+        "terminal": "Terminal",
+        "studio": "Studio"
+      },
+      "experience": { "label": "04 / Experience", "titlePrefix": "Career ", "titleHighlight": "Log" },
+      "projects": { "title": "Selected Works", "desc": "A showcase of technical complexity and architectural integrity." },
+      "telemetry": { "label": "11 / Core_Telemetry", "titlePrefix": "System", "titleHighlight": "Core", "uptime": "Uptime", "latency": "Latency", "cpu": "CPU Load", "memory": "Memory", "network": "Network" },
+      "stats": {
+
+        "metrics": [
+          { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "yrs", "label": "Experience", "sub": "Production environments", "pct": 50, "icon": "⚙" },
+          { "id": "projects", "value": 50, "max": 100, "suffix": "+", "unit": "apps", "label": "Projects", "sub": "Web · Mobile · API", "pct": 50, "icon": "🚀" },
+          { "id": "comp", "value": 20, "max": 30, "suffix": "+", "unit": "wins", "label": "Competitions", "sub": "Hackathons & contests", "pct": 80, "icon": "🏆" }
+        ]
+        , "label": "sys.metrics — live"
+      },
+      "manifesto": {
+
+        "branches": [
+          { "id": "perf", "label": "Performance", "desc": "Sub-100ms p99", "leaves": ["Lazy Loading", "Edge Cache"] },
+          { "id": "arch", "label": "Architecture", "desc": "Scale-first design", "leaves": ["Domain-Driven", "Event-Sourced"] },
+          { "id": "rel", "label": "Reliability", "desc": "99.99% uptime", "leaves": ["Circuit Breaker", "Observability"] }
+        ]
+        , "label": "ENGINEERING_PHILOSOPHY", "titlePrefix": "How I ", "titleHighlight": "Think", "hoverHint": "Hover any node to activate"
+      },
+      "process": {
+
+        "steps": [
+          { "num": "01", "iconName": "Search", "title": "Discovery", "short": "Understanding the problem space deeply.", "detail": "I conduct thorough stakeholder interviews, competitor analysis, and technical audits to map every constraint before writing a single line of code." },
+          { "num": "02", "iconName": "Zap", "title": "Architecture", "short": "Designing scalable system blueprints.", "detail": "Every system starts with its data model. I design API contracts, database schemas, and component hierarchies before opening an IDE." },
+          { "num": "03", "iconName": "Wrench", "title": "Build", "short": "Iterative, test-driven development.", "detail": "Feature branches, pull requests, and CI/CD pipelines from day one. I write code that the next engineer will thank me for." },
+          { "num": "04", "iconName": "GitBranch", "title": "Integrate", "short": "Seamless API & service integration.", "detail": "Third-party services, webhooks, real-time sync, payment gateways — I wire up complex integrations with bulletproof error handling." },
+          { "num": "05", "iconName": "Shield", "title": "Test & QA", "short": "Zero bugs in production is the goal.", "detail": "Unit tests, integration tests, E2E automation, load testing and security auditing. Nothing ships without passing the gauntlet." },
+          { "num": "06", "iconName": "Rocket", "title": "Deploy", "short": "Zero-downtime production releases.", "detail": "Blue-green deployments, automated rollbacks, monitoring dashboards and on-call runbooks. Launch day is just another Tuesday." }
+        ]
+        , "label": "06 / Process", "titlePrefix": "How I", "titleHighlight": "Work", "clickHint": "Click any step to expand details"
       },
       "hero": {
-            "status": "Status: Operational",
-            "node": "Node_ID",
-            "viewProjects": "View Projects",
-            "contact": "Contact",
-            "scroll": "Scroll to Explore",
-            "system": "System.Core.Architecture"
+
+        "systemBadge": "System_Online<br/>v1.0.4",
+
+        "status": "Status: Operational",
+        "node": "Node_ID",
+        "viewProjects": "View Projects",
+        "contact": "Contact",
+        "scroll": "Scroll to Explore",
+        "system": "System.Core.Architecture"
       },
       "about": {
-            "label": "01 / Profile_Module",
-            "title": "The Architect",
-            "competencies": "Core_Competencies",
-            "resume": "Download CV",
-            "stats": {
-                  "node": "Node_Status",
-                  "active": "Active",
-                  "exp": "5+ Years_Exp"
-            },
-            "goals": "Strategic_Goals",
-            "optimization": "Optimizing for Scalability"
+
+        "competenciesList": ["Distributed Systems Architecture", "Cloud-Native Infrastructure", "High-Performance Computing"],
+        "philosophyList": ["Architectural Integrity First", "Operational Excellence", "User-Centric System Design"],
+        "systemOperator": "System_Operator",
+        "osVersion": "Joyi_OS // v2.5",
+
+        "label": "01 / Profile_Module",
+        "title": "The Architect",
+        "competencies": "Core_Competencies",
+        "resume": "Download CV",
+        "stats": {
+          "node": "Node_Status",
+          "active": "Active",
+          "exp": "5+ Years_Exp"
+        },
+        "goals": "Strategic_Goals",
+        "optimization": "Optimizing for Scalability"
       },
       "services": {
-            "label": "02 / Expertise",
-            "title": "Strategic Services"
+        "label": "02 / Expertise",
+        "title": "Strategic Services"
       },
       "tech": {
-            "label": "03 / Core_Modules",
-            "title": "Technical Arsenal",
-            "status": "System_Status: Operational"
-      },
-      "projects": {
-            "label": "04 / Portfolio",
-            "title": "Selected Works",
-            "view": "View Project"
+        "label": "03 / Core_Modules",
+        "title": "Technical Arsenal",
+        "status": "System_Status: Operational"
       },
       "testimonials": {
-            "label": "05 / Feedback",
-            "title": "Client Insights"
+        "label": "05 / Feedback",
+        "title": "Client Insights"
       },
       "education": {
-            "label": "07 / Foundation",
-            "title": "Education"
+        "label": "07 / Foundation",
+        "title": "Education"
       },
       "achievements": {
-            "label": "08 / Milestones",
-            "title": "Achievements"
+        "label": "08 / Milestones",
+        "title": "Achievements"
       },
       "gallery": {
-            "label": "09 / Archives",
-            "title": "Memories & Moments",
-            "desc": "Capturing the journey through seminars, workshops, and collaborative sessions."
+        "label": "09 / Archives",
+        "title": "Memories & Moments",
+        "desc": "Capturing the journey through seminars, workshops, and collaborative sessions."
       },
       "contact": {
-            "label": "10 / Connection",
-            "title": "Initialize Contact",
-            "desc": "Have a project in mind or just want to say hello? Drop a message and let's build something exceptional together.",
-            "email": "Direct_Email",
-            "name": "Full_Name",
-            "emailLabel": "Email_Address",
-            "message": "Message_Payload",
-            "placeholderName": "John Doe",
-            "placeholderMessage": "Describe your project requirements...",
-            "transmit": "Transmit Message",
-            "transmitting": "Transmitting...",
-            "received": "Message Received"
+        "label": "10 / Connection",
+        "title": "Initialize Contact",
+        "desc": "Have a project in mind or just want to say hello? Drop a message and let's build something exceptional together.",
+        "email": "Direct_Email",
+        "name": "Full_Name",
+        "emailLabel": "Email_Address",
+        "message": "Message_Payload",
+        "placeholderName": "John Doe",
+        "placeholderMessage": "Describe your project requirements...",
+        "transmit": "Transmit Message",
+        "transmitting": "Transmitting...",
+        "received": "Message Received"
       },
       "footer": {
-            "rights": "All Rights Reserved.",
-            "cms": "CMS Dashboard",
-            "built": "Built for Scalability & Performance"
+        "rights": "All Rights Reserved.",
+        "cms": "CMS Dashboard",
+        "built": "Built for Scalability & Performance"
       }
-},
-        hero: {
+    },
+    hero: {
       name: "Dong Xiao Xuan",
       role: "Software Engineer",
       tagline: "Architecting high-performance digital ecosystems with precision and purpose."
@@ -170,87 +207,116 @@ export const initialPortfolioData: PortfolioContent = {
   zh: {
     ui: {
       "nav": {
-            "about": "关于",
-            "services": "服务",
-            "work": "作品",
-            "experience": "经验",
-            "contact": "联系",
-            "terminal": "终端",
-            "studio": "工作室"
+        "about": "关于",
+        "services": "服务",
+        "work": "作品",
+        "experience": "经验",
+        "contact": "联系",
+        "terminal": "终端",
+        "studio": "工作室"
+      },
+      "experience": { "label": "04 / 经验", "titlePrefix": "职业", "titleHighlight": "日志" },
+      "projects": { "title": "精选作品", "desc": "技术复杂性和架构完整性的展示。" },
+      "telemetry": { "label": "11 / 核心遥测", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "正常运行时间", "latency": "延迟", "cpu": "CPU 负载", "memory": "内存", "network": "网络" },
+      "stats": { "label": "sys.metrics — 实时" },
+      "manifesto": {
+
+        "branches": [
+          { "id": "perf", "label": "性能", "desc": "P99低于100ms", "leaves": ["懒加载", "边缘缓存"] },
+          { "id": "arch", "label": "架构", "desc": "扩展优先设计", "leaves": ["领域驱动", "事件溯源"] },
+          { "id": "rel", "label": "可靠性", "desc": "99.99%可用", "leaves": ["熔断器", "可观测性"] }
+        ]
+        , "label": "工程哲学", "titlePrefix": "", "titleHighlight": "思维框架", "hoverHint": "悬停任意节点激活"
+      },
+      "process": {
+
+        "steps": [
+          { "num": "01", "iconName": "Search", "title": "发现", "short": "深入了解问题空间。", "detail": "我进行深入的利益相关者访谈、竞争对手分析和技术审计，在编写任何代码之前映射每个约束。" },
+          { "num": "02", "iconName": "Zap", "title": "架构", "short": "设计可扩展的系统蓝图。", "detail": "每个系统都从其数据模型开始。我在打开IDE之前设计API合同、数据库模式和组件层次结构。" },
+          { "num": "03", "iconName": "Wrench", "title": "构建", "short": "迭代的测试驱动开发。", "detail": "从第一天起就有功能分支、拉取请求和CI/CD管道。我写的代码让下一个工程师感谢我。" },
+          { "num": "04", "iconName": "GitBranch", "title": "集成", "short": "无缝API和服务集成。", "detail": "第三方服务、webhooks、实时同步、支付网关——我用防弹错误处理来连接复杂的集成。" },
+          { "num": "05", "iconName": "Shield", "title": "测试", "short": "零错误是目标。", "detail": "单元测试、集成测试、E2E自动化、负载测试和安全审计。没有通过测试的东西不会发布。" },
+          { "num": "06", "iconName": "Rocket", "title": "部署", "short": "零停机生产发布。", "detail": "蓝绿部署、自动回滚、监控仪表板和值班手册。发布日只是另一个星期二。" }
+        ]
+        , "label": "06 / 流程", "titlePrefix": "", "titleHighlight": "工作方式", "clickHint": "点击任意步骤展开详情"
       },
       "hero": {
-            "status": "状态：运行中",
-            "node": "节点_ID",
-            "viewProjects": "查看项目",
-            "contact": "联系我",
-            "scroll": "向下滚动探索",
-            "system": "系统.核心.架构"
+
+        "systemBadge": "系统在线<br/>v1.0.4",
+
+        "status": "状态：运行中",
+        "node": "节点_ID",
+        "viewProjects": "查看项目",
+        "contact": "联系我",
+        "scroll": "向下滚动探索",
+        "system": "系统.核心.架构"
       },
       "about": {
-            "label": "01 / 个人资料模块",
-            "title": "架构师",
-            "competencies": "核心能力",
-            "resume": "下载简历",
-            "stats": {
-                  "node": "节点状态",
-                  "active": "活跃",
-                  "exp": "5年以上经验"
-            },
-            "goals": "战略目标",
-            "optimization": "优化可扩展性"
+
+        "competenciesList": ["分布式系统架构", "云原生基础设施", "高性能计算"],
+        "philosophyList": ["架构完整性优先", "卓越运营", "以用户为中心的系统设计"],
+        "systemOperator": "系统_操作员",
+        "osVersion": "Joyi_OS // v2.5",
+
+        "label": "01 / 个人资料模块",
+        "title": "架构师",
+        "competencies": "核心能力",
+        "resume": "下载简历",
+        "stats": {
+          "node": "节点状态",
+          "active": "活跃",
+          "exp": "5年以上经验"
+        },
+        "goals": "战略目标",
+        "optimization": "优化可扩展性"
       },
       "services": {
-            "label": "02 / 专业知识",
-            "title": "战略服务"
+        "label": "02 / 专业知识",
+        "title": "战略服务"
       },
       "tech": {
-            "label": "03 / 核心模块",
-            "title": "技术军械库",
-            "status": "系统状态：正常运行"
-      },
-      "projects": {
-            "label": "04 / 作品集",
-            "title": "精选作品",
-            "view": "查看项目"
+        "label": "03 / 核心模块",
+        "title": "技术军械库",
+        "status": "系统状态：正常运行"
       },
       "testimonials": {
-            "label": "05 / 反馈",
-            "title": "客户见解"
+        "label": "05 / 反馈",
+        "title": "客户见解"
       },
       "education": {
-            "label": "07 / 基础",
-            "title": "教育背景"
+        "label": "07 / 基础",
+        "title": "教育背景"
       },
       "achievements": {
-            "label": "08 / 里程碑",
-            "title": "成就"
+        "label": "08 / 里程碑",
+        "title": "成就"
       },
       "gallery": {
-            "label": "09 / 档案",
-            "title": "回忆与时刻",
-            "desc": "通过研讨会、工作坊和协作会议记录旅程。"
+        "label": "09 / 档案",
+        "title": "回忆与时刻",
+        "desc": "通过研讨会、工作坊和协作会议记录旅程。"
       },
       "contact": {
-            "label": "10 / 连接",
-            "title": "初始化联系",
-            "desc": "有项目想法或只是想打个招呼？发个消息，让我们一起打造卓越的作品。",
-            "email": "直接邮箱",
-            "name": "全名",
-            "emailLabel": "电子邮箱",
-            "message": "消息内容",
-            "placeholderName": "张三",
-            "placeholderMessage": "描述您的项目需求...",
-            "transmit": "发送消息",
-            "transmitting": "正在发送...",
-            "received": "消息已收到"
+        "label": "10 / 连接",
+        "title": "初始化联系",
+        "desc": "有项目想法或只是想打个招呼？发个消息，让我们一起打造卓越的作品。",
+        "email": "直接邮箱",
+        "name": "全名",
+        "emailLabel": "电子邮箱",
+        "message": "消息内容",
+        "placeholderName": "张三",
+        "placeholderMessage": "描述您的项目需求...",
+        "transmit": "发送消息",
+        "transmitting": "正在发送...",
+        "received": "消息已收到"
       },
       "footer": {
-            "rights": "保留所有权利。",
-            "cms": "CMS 控制面板",
-            "built": "为可扩展性和性能而构建"
+        "rights": "保留所有权利。",
+        "cms": "CMS 控制面板",
+        "built": "为可扩展性和性能而构建"
       }
-},
-        hero: {
+    },
+    hero: {
       name: "董小轩",
       role: "软件工程师",
       tagline: "精准且富有目的地构建高性能数字生态系统。"
@@ -334,13 +400,14 @@ export const initialPortfolioData: PortfolioContent = {
     ]
   },
   common: {
-    heroImage: "https://picsum.photos/seed/joyi/1920/1080",
+    heroImage: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778131174/joyce_josokz.jpg",
     skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "Three.js", "GSAP", "Docker", "AWS"],
     techStack: [
       { name: "React", iconName: "Code", category: "Frontend", level: 95, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1" },
       { name: "Node.js", iconName: "Server", category: "Backend", level: 90, desc: "Scalable server-side applications and microservices.", span: "md:col-span-1" },
       { name: "MongoDB", iconName: "Database", category: "Database", level: 85, desc: "NoSQL database design and aggregation pipelines.", span: "md:col-span-1" },
-      { name: "Three.js", iconName: "Box", category: "Graphics", level: 80, desc: "3D web graphics and interactive experiences.", span: "md:col-span-1" }
+      { name: "Three.js", iconName: "Box", category: "Graphics", level: 80, desc: "3D web graphics and interactive experiences.", span: "md:col-span-1" },
+      
     ],
     projectImages: {
       1: "https://picsum.photos/seed/neural/800/600",
