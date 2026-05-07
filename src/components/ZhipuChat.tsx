@@ -70,8 +70,8 @@ export default function ZhipuChat() {
   const handleSendMessage = async () => {
     if ((!input.trim() && !selectedImage) || isLoading) return;
 
-    const userMessage: ChatMessage = { 
-      role: 'user', 
+    const userMessage: ChatMessage = {
+      role: 'user',
       text: input,
       image: selectedImage || undefined
     };
@@ -117,7 +117,7 @@ export default function ZhipuChat() {
       const data = await response.json();
       const responseText = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that request.";
       const isGlitchy = Math.random() > 0.85;
-      
+
       setMessages(prev => [...prev, { role: 'model', text: responseText, isGlitchy }]);
     } catch (error: any) {
       console.error('Zhipu Error:', error);
@@ -149,9 +149,9 @@ export default function ZhipuChat() {
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0, 
+            animate={{
+              opacity: 1,
+              y: 0,
               scale: 1,
               height: isMinimized ? '64px' : '500px'
             }}
@@ -176,13 +176,13 @@ export default function ZhipuChat() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   onClick={() => setIsMinimized(!isMinimized)}
                   className="p-2 text-muted hover:text-white transition-colors"
                 >
                   {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
                 </button>
-                <button 
+                <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 text-muted hover:text-white transition-colors"
                 >
@@ -194,7 +194,7 @@ export default function ZhipuChat() {
             {!isMinimized && (
               <>
                 {/* Messages */}
-                <div 
+                <div
                   ref={scrollRef}
                   className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide"
                 >
@@ -202,7 +202,7 @@ export default function ZhipuChat() {
                     <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
                       <Bot size={48} className="text-accent" />
                       <p className="text-[8px] text-center mt-3 text-muted uppercase tracking-widest font-mono">
-                        Neural interface initialized. How can I assist you? <br/>
+                        Neural interface initialized. How can I assist you? <br />
                         神经接口已初始化。我能为您提供什么帮助？
                       </p>
                     </div>
@@ -225,8 +225,8 @@ export default function ZhipuChat() {
                       </div>
                       <div className={cn(
                         "max-w-[80%] p-4 rounded-2xl text-xs leading-relaxed relative overflow-hidden",
-                        msg.role === 'user' 
-                          ? "bg-accent text-bg rounded-tr-none" 
+                        msg.role === 'user'
+                          ? "bg-accent text-bg rounded-tr-none"
                           : "bg-white/5 border border-white/10 rounded-tl-none text-ink",
                         msg.isGlitchy && "animate-pulse border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
                       )}>
@@ -234,9 +234,9 @@ export default function ZhipuChat() {
                           <div className="absolute inset-0 bg-red-500/5 pointer-events-none mix-blend-overlay" />
                         )}
                         {msg.image && (
-                          <img 
-                            src={msg.image} 
-                            alt="Uploaded content" 
+                          <img
+                            src={msg.image}
+                            alt="Uploaded content"
                             className="w-full h-auto rounded-lg mb-3 border border-white/10"
                             referrerPolicy="no-referrer"
                           />
@@ -259,7 +259,7 @@ export default function ZhipuChat() {
                         <div className="flex items-center gap-2">
                           <Loader2 size={14} className="animate-spin text-accent" />
                           <span className="text-[8px] font-mono text-accent uppercase tracking-widest animate-pulse">
-                            Processing Engineering Logic... <br/>
+                            Processing Engineering Logic... <br />
                             正在处理工程逻辑...
                           </span>
                         </div>
@@ -272,13 +272,13 @@ export default function ZhipuChat() {
                 <div className="p-4 bg-white/5 border-t border-white/10">
                   {selectedImage && (
                     <div className="mb-3 relative inline-block">
-                      <img 
-                        src={selectedImage} 
-                        alt="Preview" 
+                      <img
+                        src={selectedImage}
+                        alt="Preview"
                         className="w-16 h-16 object-cover rounded-lg border border-accent"
                         referrerPolicy="no-referrer"
                       />
-                      <button 
+                      <button
                         onClick={() => setSelectedImage(null)}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg"
                       >
@@ -287,7 +287,7 @@ export default function ZhipuChat() {
                     </div>
                   )}
                   <div className="relative flex items-center gap-2">
-                    <input 
+                    <input
                       type="file"
                       ref={fileInputRef}
                       onChange={handleImageSelect}
