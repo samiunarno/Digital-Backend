@@ -102,9 +102,9 @@ export default function Portfolio() {
     }
   }, [language, content]);
 
-  const getTechStack = (_lang: Language) => {
-    if (!content?.common?.techStack) return [];
-    return content.common.techStack.map(tech => ({
+  const getTechStack = (lang: Language) => {
+    if (!content?.[lang]?.techStack) return [];
+    return content[lang].techStack.map(tech => ({
       ...tech,
       icon: <TechIcon name={tech.iconName} size={24} />
     }));

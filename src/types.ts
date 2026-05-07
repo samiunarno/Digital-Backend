@@ -39,6 +39,7 @@ export interface TranslatableContent {
     date: string;
     description: string;
   }[];
+  techStack: TechStackItem[];
 }
 
 export interface TechStackItem {
@@ -56,7 +57,6 @@ export interface PortfolioContent {
   common: {
     heroImage: string;
     skills: string[];
-    techStack: TechStackItem[];
     projectImages: { [id: number]: string };
     projectTech: { [id: number]: string[] };
     serviceIcons: { [id: number]: string };

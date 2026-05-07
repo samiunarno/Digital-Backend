@@ -1167,15 +1167,15 @@ export default function CMSDashboard() {
                   Core_Technical_Arsenal (Common)
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {(content.common.techStack || []).map((tech, index) => (
+                  {(content.en.techStack || []).map((tech, index) => (
                     <div key={index} className="p-6 bg-bg border border-white/10 rounded-2xl relative group hover:border-accent/30 transition-all">
                       <button 
                         onClick={() => {
                           setContent(prev => {
                             if (!prev) return null;
-                            const newStack = [...(prev.common.techStack || [])];
+                            const newStack = [...(prev.en.techStack || [])];
                             newStack.splice(index, 1);
-                            return {...prev, common: {...prev.common, techStack: newStack}};
+                            return {...prev, en: {...prev.en, techStack: newStack}};
                           });
                         }}
                         className="absolute top-4 right-4 text-red-500/40 hover:text-red-500 transition-colors"
@@ -1193,9 +1193,9 @@ export default function CMSDashboard() {
                               const val = e.target.value;
                               setContent(prev => {
                                 if (!prev) return null;
-                                const newStack = [...(prev.common.techStack || [])];
+                                const newStack = [...(prev.en.techStack || [])];
                                 newStack[index] = { ...newStack[index], name: val };
-                                return {...prev, common: {...prev.common, techStack: newStack}};
+                                return {...prev, en: {...prev.en, techStack: newStack}};
                               });
                             }}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-accent/50"
@@ -1208,12 +1208,12 @@ export default function CMSDashboard() {
                             value={tech.iconName}
                             onChange={(e) => {
                               const val = e.target.value;
-                              setContent(prev => {
-                                if (!prev) return null;
-                                const newStack = [...(prev.common.techStack || [])];
-                                newStack[index] = { ...newStack[index], iconName: val };
-                                return {...prev, common: {...prev.common, techStack: newStack}};
-                              });
+                                setContent(prev => {
+                                  if (!prev) return null;
+                                  const newStack = [...(prev.en.techStack || [])];
+                                  newStack[index] = { ...newStack[index], iconName: val };
+                                  return {...prev, en: {...prev.en, techStack: newStack}};
+                                });
                             }}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-accent/50"
                           />
@@ -1225,12 +1225,12 @@ export default function CMSDashboard() {
                             value={tech.category}
                             onChange={(e) => {
                               const val = e.target.value;
-                              setContent(prev => {
-                                if (!prev) return null;
-                                const newStack = [...(prev.common.techStack || [])];
-                                newStack[index] = { ...newStack[index], category: val };
-                                return {...prev, common: {...prev.common, techStack: newStack}};
-                              });
+                                setContent(prev => {
+                                  if (!prev) return null;
+                                  const newStack = [...(prev.en.techStack || [])];
+                                  newStack[index] = { ...newStack[index], category: val };
+                                  return {...prev, en: {...prev.en, techStack: newStack}};
+                                });
                             }}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-accent/50"
                           />
@@ -1242,12 +1242,12 @@ export default function CMSDashboard() {
                             value={tech.level}
                             onChange={(e) => {
                               const val = parseInt(e.target.value);
-                              setContent(prev => {
-                                if (!prev) return null;
-                                const newStack = [...(prev.common.techStack || [])];
-                                newStack[index] = { ...newStack[index], level: val };
-                                return {...prev, common: {...prev.common, techStack: newStack}};
-                              });
+                                setContent(prev => {
+                                  if (!prev) return null;
+                                  const newStack = [...(prev.en.techStack || [])];
+                                  newStack[index] = { ...newStack[index], level: val };
+                                  return {...prev, en: {...prev.en, techStack: newStack}};
+                                });
                             }}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-accent/50"
                           />
@@ -1258,12 +1258,12 @@ export default function CMSDashboard() {
                             value={tech.desc}
                             onChange={(e) => {
                               const val = e.target.value;
-                              setContent(prev => {
-                                if (!prev) return null;
-                                const newStack = [...(prev.common.techStack || [])];
-                                newStack[index] = { ...newStack[index], desc: val };
-                                return {...prev, common: {...prev.common, techStack: newStack}};
-                              });
+                                setContent(prev => {
+                                  if (!prev) return null;
+                                  const newStack = [...(prev.en.techStack || [])];
+                                  newStack[index] = { ...newStack[index], desc: val };
+                                  return {...prev, en: {...prev.en, techStack: newStack}};
+                                });
                             }}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-accent/50 min-h-[80px]"
                           />
@@ -1275,12 +1275,12 @@ export default function CMSDashboard() {
                             value={tech.span || ""}
                             onChange={(e) => {
                               const val = e.target.value;
-                              setContent(prev => {
-                                if (!prev) return null;
-                                const newStack = [...(prev.common.techStack || [])];
-                                newStack[index] = { ...newStack[index], span: val };
-                                return {...prev, common: {...prev.common, techStack: newStack}};
-                              });
+                                setContent(prev => {
+                                  if (!prev) return null;
+                                  const newStack = [...(prev.en.techStack || [])];
+                                  newStack[index] = { ...newStack[index], span: val };
+                                  return {...prev, en: {...prev.en, techStack: newStack}};
+                                });
                             }}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-accent/50"
                           />
@@ -1292,7 +1292,7 @@ export default function CMSDashboard() {
                     onClick={() => setContent(prev => {
                       if (!prev) return null;
                       const newTech = { name: "New Tech", iconName: "Code", category: "Language", level: 80, desc: "Description here", span: "md:col-span-1" };
-                      return {...prev, common: {...prev.common, techStack: [...(prev.common.techStack || []), newTech]}};
+                      return {...prev, en: {...prev.en, techStack: [...(prev.en.techStack || []), newTech]}};
                     })}
                     className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/10 rounded-2xl hover:border-accent/50 hover:bg-accent/5 transition-all group"
                   >

@@ -203,6 +203,14 @@ export const initialPortfolioData: PortfolioContent = {
         date: "2026",
         description: "Awarded for outstanding performance in the national Blue Bridge Coding Competition."
       }
+    ],
+    techStack: [
+      { name: "React", iconName: "Code", category: "Frontend", level: 95, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1" },
+      { name: "TypeScript", iconName: "Terminal", category: "Language", level: 90, desc: "Strict type-checking for enterprise scale apps.", span: "md:col-span-2" },
+      { name: "Node.js", iconName: "Server", category: "Backend", level: 85, desc: "Scalable event-driven backend services.", span: "md:col-span-1" },
+      { name: "Next.js", iconName: "Globe", category: "Framework", level: 88, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
+      { name: "PostgreSQL", iconName: "Database", category: "Database", level: 80, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
+      { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
     ]
   },
   zh: {
@@ -216,9 +224,9 @@ export const initialPortfolioData: PortfolioContent = {
         "terminal": "终端模式",
         "studio": "工作室模式"
       },
-      "experience": { "label": "04 / 工作经历", "titlePrefix": "职业", "titleHighlight": "轨迹" },
+      "experience": { "label": "〇四 / 工作经历", "titlePrefix": "职业", "titleHighlight": "轨迹" },
       "projects": { "titlePrefix": "精选", "titleHighlight": "项目", "desc": "展示技术深度与代码架构能力的代表作品。" },
-      "telemetry": { "label": "11 / 系统监控", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "运行时间", "latency": "延迟", "cpu": "CPU使用率", "memory": "内存", "network": "网络吞吐" },
+      "telemetry": { "label": "一一 / 系统监控", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "运行时间", "latency": "延迟", "cpu": "CPU使用率", "memory": "内存", "network": "网络吞吐" },
       "stats": { 
         "metrics": [
           { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "年", "label": "开发经验", "sub": "生产环境实践", "pct": 50, "icon": "⚙" },
@@ -237,14 +245,14 @@ export const initialPortfolioData: PortfolioContent = {
       },
       "process": {
         "steps": [
-          { "num": "01", "iconName": "Search", "title": "需求分析", "short": "深入理解业务与痛点。", "detail": "在编写任何代码之前，我会进行详细的需求分析、梳理业务边界，并与利益相关者进行充分沟通。" },
-          { "num": "02", "iconName": "Zap", "title": "系统设计", "short": "构建高可扩展的系统蓝图。", "detail": "设计数据库表结构、API接口规范和组件层级，确保系统的底层基础坚如磐石。" },
-          { "num": "03", "iconName": "Wrench", "title": "代码实现", "short": "敏捷迭代与测试驱动开发。", "detail": "遵循最佳实践，利用现代框架和严格的类型检查，编写整洁、可维护的高质量代码。" },
-          { "num": "04", "iconName": "GitBranch", "title": "系统集成", "short": "无缝对接API与第三方服务。", "detail": "整合第三方服务和支付网关，并配备完善的异常处理机制，保障集成环节的稳定性。" },
-          { "num": "05", "iconName": "Shield", "title": "测试与质检", "short": "追求生产环境零Bug。", "detail": "通过单元测试、集成测试和E2E自动化测试，确保每一行提交的代码都能通过CI/CD流水线的严格检验。" },
-          { "num": "06", "iconName": "Rocket", "title": "部署上线", "short": "实现零停机的平滑发布。", "detail": "配置自动化部署、应用监控与性能分析，让每一次产品发布都从容自信。" }
+          { "num": "〇一", "iconName": "Search", "title": "需求分析", "short": "深入理解业务与痛点。", "detail": "在编写任何代码之前，我会进行详细的需求分析、梳理业务边界，并与利益相关者进行充分沟通。" },
+          { "num": "〇二", "iconName": "Zap", "title": "系统设计", "short": "构建高可扩展的系统蓝图。", "detail": "设计数据库表结构、API接口规范和组件层级，确保系统的底层基础坚如磐石。" },
+          { "num": "〇三", "iconName": "Wrench", "title": "代码实现", "short": "敏捷迭代与测试驱动开发。", "detail": "遵循最佳实践，利用现代框架和严格的类型检查，编写整洁、可维护的高质量代码。" },
+          { "num": "〇四", "iconName": "GitBranch", "title": "系统集成", "short": "无缝对接API与第三方服务。", "detail": "整合第三方服务和支付网关，并配备完善的异常处理机制，保障集成环节的稳定性。" },
+          { "num": "〇五", "iconName": "Shield", "title": "测试与质检", "short": "追求生产环境零Bug。", "detail": "通过单元测试、集成测试和E2E自动化测试，确保每一行提交的代码都能通过CI/CD流水线的严格检验。" },
+          { "num": "〇六", "iconName": "Rocket", "title": "部署上线", "short": "实现零停机的平滑发布。", "detail": "配置自动化部署、应用监控与性能分析，让每一次产品发布都从容自信。" }
         ],
-        "label": "06 / 开发流程", "titlePrefix": "我的", "titleHighlight": "工作流", "clickHint": "点击任意步骤展开详情"
+        "label": "〇六 / 开发流程", "titlePrefix": "我的", "titleHighlight": "工作流", "clickHint": "点击任意步骤展开详情"
       },
       "hero": {
         "systemBadge": "开放<br/>新机会",
@@ -260,7 +268,7 @@ export const initialPortfolioData: PortfolioContent = {
         "philosophyList": ["践行整洁代码规范", "测试驱动开发 (TDD)", "以用户体验为导向"],
         "systemOperator": "专业人士",
         "osVersion": "核心技术栈",
-        "label": "01 / 个人档案",
+        "label": "〇一 / 个人档案",
         "titlePrefix": "科技",
         "titleHighlight": "创新者",
         "competencies": "核心能力",
@@ -274,39 +282,39 @@ export const initialPortfolioData: PortfolioContent = {
         "optimization": "持续优化系统性能"
       },
       "services": {
-        "label": "02 / 核心优势",
+        "label": "〇二 / 核心优势",
         "titlePrefix": "核心",
         "titleHighlight": "技能"
       },
       "tech": {
-        "label": "03 / 技术栈",
+        "label": "〇三 / 技术栈",
         "titlePrefix": "技术",
         "titleHighlight": "生态",
         "status": "持续学习与进化"
       },
       "testimonials": {
-        "label": "05 / 同行评价",
+        "label": "〇五 / 同行评价",
         "titlePrefix": "同行",
         "titleHighlight": "评价"
       },
       "education": {
-        "label": "07 / 学历背景",
+        "label": "〇七 / 学历背景",
         "titlePrefix": "教育",
         "titleHighlight": "经历"
       },
       "achievements": {
-        "label": "08 / 荣誉奖项",
+        "label": "〇八 / 荣誉奖项",
         "titlePrefix": "核心",
         "titleHighlight": "成就"
       },
       "gallery": {
-        "label": "09 / 精彩瞬间",
+        "label": "〇九 / 精彩瞬间",
         "titlePrefix": "高光",
         "titleHighlight": "时刻",
         "desc": "记录在黑客马拉松、团队建设和开源贡献中的点滴旅程。"
       },
       "contact": {
-        "label": "10 / 建立联系",
+        "label": "一〇 / 建立联系",
         "titlePrefix": "建立",
         "titleHighlight": "联系",
         "desc": "正在为您的下一个项目寻找经验丰富的工程师？发送信息，让我们共同打造出色的产品。",
@@ -404,22 +412,22 @@ export const initialPortfolioData: PortfolioContent = {
     achievements: [
       {
         title: "蓝桥杯全国软件和信息技术专业人才大赛",
-        date: "2026",
+        date: "二〇二六",
         description: "在蓝桥杯编程竞赛中展现出色的算法与编码能力，并荣获奖项。"
       }
+    ],
+    techStack: [
+      { name: "React", iconName: "Code", category: "前端", level: 95, desc: "使用 Hooks 和 Context API 构建复杂用户界面", span: "md:col-span-1" },
+      { name: "TypeScript", iconName: "Terminal", category: "语言", level: 90, desc: "为企业级应用提供严格类型检查", span: "md:col-span-2" },
+      { name: "Node.js", iconName: "Server", category: "后端", level: 85, desc: "构建可扩展的事件驱动后端服务", span: "md:col-span-1" },
+      { name: "Next.js", iconName: "Globe", category: "框架", level: 88, desc: "服务端渲染 (SSR) 与静态站点生成 (SSG)", span: "md:col-span-1" },
+      { name: "PostgreSQL", iconName: "Database", category: "数据库", level: 80, desc: "关系型数据建模与复杂查询优化", span: "md:col-span-1" },
+      { name: "Docker", iconName: "Cpu", category: "运维", level: 75, desc: "容器化部署与开发环境一致性保障", span: "md:col-span-2" }
     ]
   },
   common: {
     heroImage: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778131174/joyce_josokz.jpg",
     skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "REST API"],
-    techStack: [
-      { name: "React", iconName: "Code", category: "Frontend", level: 95, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1" },
-      { name: "TypeScript", iconName: "Terminal", category: "Language", level: 90, desc: "Strict type-checking for enterprise scale apps.", span: "md:col-span-2" },
-      { name: "Node.js", iconName: "Server", category: "Backend", level: 85, desc: "Scalable event-driven backend services.", span: "md:col-span-1" },
-      { name: "Next.js", iconName: "Globe", category: "Framework", level: 88, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
-      { name: "PostgreSQL", iconName: "Database", category: "Database", level: 80, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
-      { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
-    ],
     serviceIcons: {
       1: "Layout",
       2: "Terminal",
