@@ -5,6 +5,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ThreeBackground from './components/ThreeBackground';
+import AIChatPage from './components/AIChatPage';
 import Portfolio from './components/Portfolio';
 import Dashboard from './components/Dashboard';
 import CMSDashboard from './components/CMSDashboard';
@@ -21,7 +22,8 @@ export default function App() {
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/register" element={<AdminRegister />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/cms" element={<CMSDashboard />} />
+          <Route path="/ai" element={<AIChatPage />} />
+          
         </Routes>
       </main>
     </Router>

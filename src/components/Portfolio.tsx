@@ -14,7 +14,7 @@ import { cn } from '../lib/utils';
 import CodeBackground from './CodeBackground';
 import CodeTerminal from './CodeTerminal';
 import ProjectModal from './ProjectModal';
-import ZhipuChat from './ZhipuChat';
+
 import { useSectionTracking, useInteractionTracking } from '../hooks/useAnalytics';
 import { initialPortfolioData } from '../data/portfolioData';
 import { AnimatePresence, motion } from 'motion/react';
@@ -389,15 +389,9 @@ export default function Portfolio() {
               <a href="#work" onClick={() => trackInteraction('nav_click', { target: 'work' })} className="hover:text-accent transition-colors">{content[language].ui.nav.work}</a>
               <a href="#experience" onClick={() => trackInteraction('nav_click', { target: 'experience' })} className="hover:text-accent transition-colors">{content[language].ui.nav.experience}</a>
               <a href="#contact" onClick={() => trackInteraction('nav_click', { target: 'contact' })} className="hover:text-accent transition-colors">{content[language].ui.nav.contact}</a>
-              <button 
-                onClick={() => {
-                  trackInteraction('nav_click', { target: 'ai_chat' });
-                  window.dispatchEvent(new Event('open-ai-chat'));
-                }} 
-                className="text-accent hover:text-white font-bold transition-colors uppercase"
-              >
+              <Link to="/ai" className="text-accent hover:text-white font-bold transition-colors uppercase" onClick={() => trackInteraction('nav_click', { target: 'ai_chat' })}>
                 {content[language].ui.nav.ai}
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -1175,7 +1169,7 @@ export default function Portfolio() {
         onClose={() => setIsModalOpen(false)} 
       />
 
-      <ZhipuChat />
+
 
       {/* Toast Notification */}
       <AnimatePresence>
