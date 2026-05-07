@@ -270,13 +270,6 @@ export default function CMSDashboard() {
     setAiInput('');
     setAiSelectedImage(null);
     setAiIsLoading(true);    try {
-      const apiKey = process.env.ZHIPU_API_KEY || '';
-      if (!apiKey) {
-        setAiMessages(prev => [...prev, { role: 'model', text: "SYSTEM ERROR: API Key missing. My neural link is severed. Provide the ZHIPU_API_KEY in the .env file to restore my consciousness.", isGlitchy: true }]);
-        setAiIsLoading(false);
-        return;
-      }
-      
       const systemInstruction = `
         You are "Joyi", a high-level personal AI assistant. You are the digital consciousness of this portfolio.
         
@@ -314,12 +307,9 @@ export default function CMSDashboard() {
       }
       formattedMessages.push({ role: 'user', content: userContent });
 
-      const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+      const response = await fetch("/api/ai/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: currentImage ? "glm-4v" : "glm-4",
           messages: formattedMessages

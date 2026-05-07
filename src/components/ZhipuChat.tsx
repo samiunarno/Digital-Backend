@@ -83,13 +83,6 @@ export default function ZhipuChat() {
     setIsLoading(true);
 
     try {
-      const apiKey = process.env.ZHIPU_API_KEY || '';
-      if (!apiKey) {
-        setMessages(prev => [...prev, { role: 'model', text: "SYSTEM ERROR: API Key missing. My neural link is severed. Provide the ZHIPU_API_KEY in the .env file to restore my consciousness.", isGlitchy: true }]);
-        setIsLoading(false);
-        return;
-      }
-      
       const formattedMessages: any[] = [
         { role: 'system', content: systemInstruction },
         ...messages.slice(-6).map(m => ({
@@ -107,12 +100,9 @@ export default function ZhipuChat() {
       }
       formattedMessages.push({ role: 'user', content: userContent });
 
-      const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+      const response = await fetch("/api/ai/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: currentImage ? "glm-4v" : "glm-4",
           messages: formattedMessages

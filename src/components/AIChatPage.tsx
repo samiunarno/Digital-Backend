@@ -250,8 +250,6 @@ export default function AIChatPage() {
     setSelectedImage(null);
     setIsLoading(true);
     try {
-      const apiKey = process.env.ZHIPU_API_KEY || '';
-      if (!apiKey) throw new Error('ZHIPU_API_KEY missing');
       const body: any = {
         model: 'glm-4',
         messages: [
@@ -269,9 +267,9 @@ export default function AIChatPage() {
         body.model = 'glm-4v';
         body.images = [{ format: 'png', data: base64 }];
       }
-      const resp = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+      const resp = await fetch('/api/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
       const data = await resp.json();
