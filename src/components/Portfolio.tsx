@@ -460,11 +460,11 @@ export default function Portfolio() {
             <span className="text-muted/40 ml-4 hidden md:inline">{UI_TRANSLATIONS[language].hero.node}: {Math.random().toString(36).substring(7).toUpperCase()}</span>
           </div>
 
-          <h1 className="hero-reveal font-display font-bold text-[clamp(2rem,10vw,9rem)] leading-[0.85] tracking-tight md:tracking-[-0.04em] mb-8 md:mb-10 uppercase relative z-10">
+          <h1 className="hero-reveal font-display font-bold text-[clamp(2rem,10vw,9rem)] leading-[0.85] tracking-tight md:tracking-[-0.04em] mb-4 md:mb-6 uppercase relative z-10">
             <span className="block">
               <span className="block">{firstName}</span>
             </span>
-            <span className="block mt-2">
+            <span className="block mt-1">
               <span className={cn(
                 "block", 
                 theme === 'dark' ? "text-stroke" : "text-accent font-serif italic normal-case tracking-tight"
