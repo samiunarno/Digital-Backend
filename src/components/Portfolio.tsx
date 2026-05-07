@@ -14,7 +14,7 @@ import { cn } from '../lib/utils';
 import CodeBackground from './CodeBackground';
 import CodeTerminal from './CodeTerminal';
 import ProjectModal from './ProjectModal';
-import GeminiChat from './GeminiChat';
+import ZhipuChat from './ZhipuChat';
 import { useSectionTracking, useInteractionTracking } from '../hooks/useAnalytics';
 import { initialPortfolioData } from '../data/portfolioData';
 import { AnimatePresence, motion } from 'motion/react';
@@ -389,6 +389,15 @@ export default function Portfolio() {
               <a href="#work" onClick={() => trackInteraction('nav_click', { target: 'work' })} className="hover:text-accent transition-colors">{content[language].ui.nav.work}</a>
               <a href="#experience" onClick={() => trackInteraction('nav_click', { target: 'experience' })} className="hover:text-accent transition-colors">{content[language].ui.nav.experience}</a>
               <a href="#contact" onClick={() => trackInteraction('nav_click', { target: 'contact' })} className="hover:text-accent transition-colors">{content[language].ui.nav.contact}</a>
+              <button 
+                onClick={() => {
+                  trackInteraction('nav_click', { target: 'ai_chat' });
+                  window.dispatchEvent(new Event('open-ai-chat'));
+                }} 
+                className="text-accent hover:text-white font-bold transition-colors uppercase"
+              >
+                {content[language].ui.nav.ai}
+              </button>
             </div>
           </div>
         </div>
@@ -399,6 +408,12 @@ export default function Portfolio() {
           <a href="#work" className="hover:text-accent transition-colors">{content[language].ui.nav.work}</a>
           <a href="#experience" className="hover:text-accent transition-colors">{content[language].ui.nav.experience}</a>
           <a href="#contact" className="hover:text-accent transition-colors">{content[language].ui.nav.contact}</a>
+          <button 
+            onClick={() => window.dispatchEvent(new Event('open-ai-chat'))} 
+            className="text-accent hover:text-white font-bold transition-colors uppercase"
+          >
+            {content[language].ui.nav.ai}
+          </button>
         </div>
       </nav>
 
@@ -486,7 +501,7 @@ export default function Portfolio() {
       </section>
 
       {/* ── MARQUEE TECH BANNER ── */}
-      <MarqueeBanner skills={common.skills} />
+      <MarqueeBanner skills={content[language].skills} />
 
       {/* 3. About Section */}
       <section id="about" ref={aboutRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-y border-border bg-white/[0.01]">
@@ -580,7 +595,7 @@ export default function Portfolio() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-accent font-bold text-2xl leading-none">5+</div>
+                    <div className="text-accent font-bold text-2xl leading-none">{content[language].ui.about.stats.expValue}</div>
                     <div className="mono-label text-[8px] opacity-40 uppercase">{content[language].ui.about.stats.exp}</div>
                   </div>
                 </div>
@@ -834,7 +849,7 @@ export default function Portfolio() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12">
             {(t.projects || []).map((project) => (
               <div key={project.id} className="section-reveal group bg-white/[0.02] border border-border flex flex-col hover:border-accent/30 transition-all duration-500 relative overflow-hidden rounded-2xl">
                 {/* Project Image Header */}
@@ -848,9 +863,9 @@ export default function Portfolio() {
                   <div className="absolute inset-0 bg-accent/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500" />
                   
                   {/* Tech Tags Overlay */}
-                  <div className="absolute bottom-4 left-4 flex flex-wrap gap-1.5 max-w-[90%]">
-                    {(common.projectTech[project.id] || []).map(tech => (
-                      <span key={tech} className="text-[10px] font-mono uppercase tracking-widest bg-bg/80 backdrop-blur-md border border-border px-3 py-1 text-white">
+                  <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 max-w-[90%]">
+                    {(content[language].projectTech[project.id] || []).map(tech => (
+                      <span key={tech} className="text-[10px] font-mono uppercase tracking-widest bg-bg/90 backdrop-blur-md border border-border px-3 py-1 text-white shadow-lg">
                         {tech}
                       </span>
                     ))}
@@ -873,7 +888,7 @@ export default function Portfolio() {
                         setSelectedProject({
                           ...project,
                           image: common.projectImages[project.id],
-                          tech: common.projectTech[project.id]
+                          tech: content[language].projectTech[project.id] || []
                         });
                         setIsModalOpen(true);
                         trackInteraction('view_case_study', { project_title: project.title });
@@ -1160,7 +1175,7 @@ export default function Portfolio() {
         onClose={() => setIsModalOpen(false)} 
       />
 
-      <GeminiChat />
+      <ZhipuChat />
 
       {/* Toast Notification */}
       <AnimatePresence>
@@ -1454,19 +1469,28 @@ function StatsSection({ content, language }: { content: any, language: 'en' | 'z
       {/* Bento grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {metrics.map((m, i) => (
-          <MetricCard key={m.id} m={m} visible={visible} delay={i * 150} />
+          <MetricCard key={m.id} m={m} visible={visible} delay={i * 150} language={language} />
         ))}
       </div>
     </div>
   );
 }
 
+const toChineseNum = (n: number) => {
+  const chars = ['零','一','二','三','四','五','六','七','八','九'];
+  if (n < 10) return chars[n];
+  if (n < 20) return '十' + (n % 10 === 0 ? '' : chars[n % 10]);
+  if (n < 100) return chars[Math.floor(n / 10)] + '十' + (n % 10 === 0 ? '' : chars[n % 10]);
+  return n.toString();
+};
+
 function MetricCard({
-  m, visible, delay
+  m, visible, delay, language
 }: {
-  m: { id: string; value: number; max: number; suffix: string; unit: string; label: string; sub: string; pct: number; icon: string };
+  m: { id: string; value: number; max: number; suffix: string; unit: string; label: string; sub: string; pct: number };
   visible: boolean;
   delay: number;
+  language: Language;
 }) {
   const [started, setStarted] = useState(false);
   useEffect(() => {
@@ -1492,9 +1516,8 @@ function MetricCard({
       {/* Subtle bg glow */}
       <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/[0.03] transition-colors duration-500" />
 
-      {/* Top row: icon + unit badge */}
-      <div className="flex items-start justify-between mb-4 relative z-10">
-        <span className="text-2xl leading-none">{m.icon}</span>
+      {/* Top row: unit badge */}
+      <div className="flex items-start justify-end mb-4 relative z-10">
         <span className="font-mono text-[9px] uppercase tracking-widest text-accent/60 border border-accent/20 px-2 py-0.5">
           {m.unit}
         </span>
@@ -1509,8 +1532,8 @@ function MetricCard({
           </div>
         </div>
         <div>
-          <div className="font-display font-bold text-3xl sm:text-4xl leading-none tabular-nums text-ink group-hover:text-accent transition-colors duration-300">
-            {count}{m.suffix}
+          <div className={cn("font-bold text-3xl sm:text-4xl leading-none text-ink group-hover:text-accent transition-colors duration-300", language === 'zh' ? "font-sans" : "font-display tabular-nums")}>
+            {language === 'zh' ? toChineseNum(count) : count}{m.suffix}
           </div>
           <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted/50 mt-1">{m.sub}</div>
         </div>

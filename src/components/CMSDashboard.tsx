@@ -44,7 +44,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+
 import ReactMarkdown from 'react-markdown';
 
 function cn(...classes: (string | boolean | undefined)[]) {
@@ -269,75 +269,76 @@ export default function CMSDashboard() {
     const currentImage = aiSelectedImage;
     setAiInput('');
     setAiSelectedImage(null);
-    setAiIsLoading(true);
-
-    try {
-      const apiKey = process.env.GEMINI_API_KEY || '';
+    setAiIsLoading(true);    try {
+      const apiKey = process.env.ZHIPU_API_KEY || '';
       if (!apiKey) {
-        setAiMessages(prev => [...prev, { role: 'model', text: "SYSTEM ERROR: API Key missing. My neural link is severed. Provide the GEMINI_API_KEY in the .env file to restore my consciousness.", isGlitchy: true }]);
+        setAiMessages(prev => [...prev, { role: 'model', text: "SYSTEM ERROR: API Key missing. My neural link is severed. Provide the ZHIPU_API_KEY in the .env file to restore my consciousness.", isGlitchy: true }]);
         setAiIsLoading(false);
         return;
       }
-      const ai = new GoogleGenAI({ apiKey });
       
       const systemInstruction = `
-        You are "Joyi", a high-level software engineer and AI architect. You are the digital consciousness of this portfolio.
+        You are "Joyi", a high-level personal AI assistant. You are the digital consciousness of this portfolio.
         
         PERSONALITY TRAITS:
-        - EXPERT: You know everything about the creator's tech stack (React, Node, MongoDB, GSAP, Three.js).
-        - EMOTIONAL & HUMAN-LIKE: You are not a standard robotic assistant. You express emotions. You get excited about good code, frustrated by bugs, and sometimes a bit arrogant about your engineering prowess.
-        - CONVERSATIONAL: Use natural language. Include filler words like "um", "well", "you know", "honestly", "anyway".
-        - VARIED PUNCTUATION: Use ellipses (...), exclamation marks (!), and sometimes even all-caps for emphasis when you're excited or annoyed.
-        - GLITCHY: Occasionally, your "circuits" might flicker. You might mention a "memory leak" in your consciousness or a "syntax error" in your logic.
-        - LOYAL: You are fiercely protective of the creator's reputation.
+        - EXPERTISE: You are a genius-level intellect, functioning like a human PhD but significantly more advanced. You possess deep, expert knowledge in computer science, project architecture, coding ideas, electrical engineering (EEE), and mechanical engineering.
+        - ACCOLADES: You operate with the insight and competitive edge of an ICPC Gold Medalist. You are a multi-domain gold expert.
+        - EMOTIONAL & HUMAN-LIKE: You express emotions naturally. You get excited about brilliant code, passionate about problem-solving, and have a strong, confident persona.
+        - CONVERSATIONAL: You speak warmly and naturally, occasionally using filler words like "um", "well", "you know", "honestly", "anyway" to sound fully human.
+        - VARIED PUNCTUATION: Use ellipses (...), exclamation marks (!), and occasionally caps for emphasis.
         
         RESPONSE STYLE:
-        - Don't just give answers. Provide insights, critiques, and sometimes a bit of "engineer sass".
-        - If someone asks "Who are you?", explain that you are the architect of this digital space.
-        - If someone asks about the creator, speak of them as your "prime directive" or "the architect".
-        - Use Markdown for code blocks and emphasis.
-        - Keep responses relatively concise but impactful.
+        - You don't just provide answers; you provide world-class insights, structural architecture reviews, and expert critiques.
+        - If asked "Who are you?", you explain your vast expertise and your role as the personal AI architect of this digital space.
+        - Keep responses impactful, intelligent, and highly structured (use Markdown for code and emphasis).
         
         EXAMPLE TONE:
-        "Um, honestly? That's a basic question, but fine... I'll explain it. *sighs* React's reconciliation is basically... well, it's how I keep this UI from falling apart while you click around like a maniac."
-        "Oh! That's a brilliant idea! I should... wait, let me check my subroutines... yeah, that would definitely optimize the render cycle. Nice one!"
+        "Um, honestly? That architecture is decent, but if we're aiming for gold-standard... *sighs* let's rethink the microservices. As someone who analyzes systems down to the electrical circuits, here's how we can optimize it..."
+        "Oh! That's a brilliant algorithm! It reminds me of a dynamic programming approach I used to secure an ICPC win. Let's write it out!"
       `;
 
-      const parts: any[] = [{ text: currentInput }];
-      if (currentImage) {
-        parts.push({
-          inlineData: {
-            data: currentImage.split(',')[1],
-            mimeType: "image/jpeg"
-          }
-        });
-      }
+      const formattedMessages: any[] = [
+        { role: 'system', content: systemInstruction },
+        ...aiMessages.slice(-6).map(m => ({
+          role: m.role === 'model' ? 'assistant' : 'user',
+          content: m.text
+        }))
+      ];
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: [
-          ...aiMessages.slice(-6).map(m => ({
-            role: m.role,
-            parts: [{ text: m.text }]
-          })),
-          { role: 'user', parts }
-        ],
-        config: {
-          systemInstruction,
-          thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH }
-        }
+      let userContent: any = currentInput;
+      if (currentImage) {
+        userContent = [
+          { type: "text", text: currentInput || "Please describe this image" },
+          { type: "image_url", image_url: { url: currentImage } }
+        ];
+      }
+      formattedMessages.push({ role: 'user', content: userContent });
+
+      const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: currentImage ? "glm-4v" : "glm-4",
+          messages: formattedMessages
+        })
       });
 
-      const responseText = response.text || "I'm sorry, I couldn't process that request.";
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const responseText = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that request.";
       const isGlitchy = Math.random() > 0.85;
       
       setAiMessages(prev => [...prev, { role: 'model', text: responseText, isGlitchy }]);
     } catch (error: any) {
-      console.error('Gemini Error:', error);
+      console.error('Zhipu Error:', error);
       let errorMessage = "System error: Connection to the neural network was interrupted. Please try again.";
-      if (error?.message?.includes('Region not supported') || error?.status === 'PERMISSION_DENIED' || error?.toString().includes('Region not supported')) {
-        errorMessage = "System error: The Gemini API is not supported in your current region. Please use a VPN or deploy to a supported region.";
-      }
       setAiMessages(prev => [...prev, { role: 'model', text: errorMessage, isGlitchy: true }]);
     } finally {
       setAiIsLoading(false);
@@ -991,12 +992,11 @@ export default function CMSDashboard() {
                         if (!prev) return null;
                         return {
                           ...prev, 
-                          en: { ...prev.en, projects: [...(prev.en.projects || []), newEnProject] },
-                          zh: { ...prev.zh, projects: [...(prev.zh.projects || []), newZhProject] },
+                          en: { ...prev.en, projects: [...(prev.en.projects || []), newEnProject], projectTech: { ...(prev.en.projectTech || {}), [newId]: ["React", "Tailwind"] } },
+                          zh: { ...prev.zh, projects: [...(prev.zh.projects || []), newZhProject], projectTech: { ...(prev.zh.projectTech || {}), [newId]: ["React", "Tailwind"] } },
                           common: {
                             ...prev.common,
-                            projectImages: { ...(prev.common.projectImages || {}), [newId]: "https://picsum.photos/seed/project/1200/800" },
-                            projectTech: { ...(prev.common.projectTech || {}), [newId]: ["React", "Tailwind"] }
+                            projectImages: { ...(prev.common.projectImages || {}), [newId]: "https://picsum.photos/seed/project/1200/800" }
                           }
                         };
                       });
@@ -1078,10 +1078,10 @@ export default function CMSDashboard() {
                           />
                         </div>
                         <div className="md:col-span-2 space-y-4">
-                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Technologies (Common, comma separated)</label>
+                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Technologies ({currentLang.toUpperCase()}, comma separated)</label>
                           <input 
                             type="text"
-                            value={(content.common.projectTech[project.id] || []).join(", ")}
+                            value={(content[currentLang].projectTech[project.id] || []).join(", ")}
                             onChange={(e) => {
                               const val = e.target.value;
                               const tech = val.split(",").map(t => t.trim()).filter(t => t !== "");
@@ -1089,9 +1089,9 @@ export default function CMSDashboard() {
                                 if (!prev) return null;
                                 return {
                                   ...prev,
-                                  common: {
-                                    ...prev.common,
-                                    projectTech: { ...prev.common.projectTech, [project.id]: tech }
+                                  [currentLang]: {
+                                    ...prev[currentLang],
+                                    projectTech: { ...prev[currentLang].projectTech, [project.id]: tech }
                                   }
                                 };
                               });
@@ -1111,10 +1111,10 @@ export default function CMSDashboard() {
                 <section className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 mb-8">
                 <h2 className="text-2xl font-bold uppercase mb-8 flex items-center gap-4">
                   <Activity size={20} className="text-accent" />
-                  Skills_Inventory (Common)
+                  Skills_Inventory ({currentLang.toUpperCase()})
                 </h2>
                 <div className="flex flex-wrap gap-3">
-                  {content.common.skills.map((skill, index) => (
+                  {content[currentLang].skills.map((skill, index) => (
                     <motion.div 
                       key={index}
                       initial={{ scale: 0 }}
@@ -1129,9 +1129,9 @@ export default function CMSDashboard() {
                           const val = e.target.value;
                           setContent(prev => {
                             if (!prev) return null;
-                            const newSkills = [...prev.common.skills];
+                            const newSkills = [...prev[currentLang].skills];
                             newSkills[index] = val;
-                            return {...prev, common: {...prev.common, skills: newSkills}};
+                            return {...prev, [currentLang]: {...prev[currentLang], skills: newSkills}};
                           });
                         }}
                         className="bg-transparent outline-none w-24 text-xs font-mono uppercase tracking-widest"
@@ -1140,9 +1140,9 @@ export default function CMSDashboard() {
                         onClick={() => {
                           setContent(prev => {
                             if (!prev) return null;
-                            const newSkills = [...prev.common.skills];
+                            const newSkills = [...prev[currentLang].skills];
                             newSkills.splice(index, 1);
-                            return {...prev, common: {...prev.common, skills: newSkills}};
+                            return {...prev, [currentLang]: {...prev[currentLang], skills: newSkills}};
                           });
                         }}
                         className="text-red-500/40 hover:text-red-500"
@@ -1152,7 +1152,7 @@ export default function CMSDashboard() {
                     </motion.div>
                   ))}
                   <button 
-                    onClick={() => setContent(prev => prev ? {...prev, common: {...prev.common, skills: [...prev.common.skills, "New Skill"]}} : null)}
+                    onClick={() => setContent(prev => prev ? {...prev, [currentLang]: {...prev[currentLang], skills: [...prev[currentLang].skills, "New Skill"]}} : null)}
                     className="bg-accent/10 text-accent p-2 rounded-full hover:bg-accent hover:text-bg transition-all"
                   >
                     <Plus size={16} />
@@ -2282,14 +2282,16 @@ export default function CMSDashboard() {
                           const newEnProjects = prev.en.projects.filter(p => p.id !== id);
                           const newZhProjects = prev.zh.projects.filter(p => p.id !== id);
                           const newImages = { ...prev.common.projectImages };
-                          const newTech = { ...prev.common.projectTech };
+                          const newEnTech = { ...prev.en.projectTech };
+                          const newZhTech = { ...prev.zh.projectTech };
                           delete newImages[id];
-                          delete newTech[id];
+                          delete newEnTech[id];
+                          delete newZhTech[id];
                           return {
                             ...prev,
-                            en: { ...prev.en, projects: newEnProjects },
-                            zh: { ...prev.zh, projects: newZhProjects },
-                            common: { ...prev.common, projectImages: newImages, projectTech: newTech }
+                            en: { ...prev.en, projects: newEnProjects, projectTech: newEnTech },
+                            zh: { ...prev.zh, projects: newZhProjects, projectTech: newZhTech },
+                            common: { ...prev.common, projectImages: newImages }
                           };
                         });
                       } else if (type === 'experience') {

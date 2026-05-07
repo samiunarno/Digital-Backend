@@ -7,19 +7,20 @@ export const initialPortfolioData: PortfolioContent = {
         "about": "About",
         "services": "Services",
         "work": "Projects",
-        "experience": "Experience",
+        "experience": "Education",
         "contact": "Contact",
         "terminal": "Terminal",
-        "studio": "Studio"
+        "studio": "Studio",
+        "ai": "Personal AI"
       },
-      "experience": { "label": "04 / Experience", "titlePrefix": "Career ", "titleHighlight": "Log" },
+      "experience": { "label": "04 / Education", "titlePrefix": "Academic ", "titleHighlight": "History" },
       "projects": { "titlePrefix": "Selected ", "titleHighlight": "Works", "desc": "A showcase of technical complexity and clean architecture." },
       "telemetry": { "label": "11 / Core_Telemetry", "titlePrefix": "System", "titleHighlight": "Core", "uptime": "Uptime", "latency": "Latency", "cpu": "CPU Load", "memory": "Memory", "network": "Network" },
       "stats": {
         "metrics": [
-          { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "yrs", "label": "Experience", "sub": "Production environments", "pct": 50, "icon": "⚙" },
-          { "id": "projects", "value": 50, "max": 100, "suffix": "+", "unit": "apps", "label": "Projects", "sub": "Web · Mobile · API", "pct": 50, "icon": "🚀" },
-          { "id": "comp", "value": 20, "max": 30, "suffix": "+", "unit": "wins", "label": "Competitions", "sub": "Hackathons & contests", "pct": 80, "icon": "🏆" }
+          { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "yrs", "label": "Experience", "sub": "Production environments", "pct": 50 },
+          { "id": "apps", "value": 50, "max": 100, "suffix": "+", "unit": "apps", "label": "Projects", "sub": "Web · Mobile · API", "pct": 50 },
+          { "id": "wins", "value": 20, "max": 40, "suffix": "+", "unit": "wins", "label": "Competitions", "sub": "Hackathons & contests", "pct": 80 }
         ],
         "label": "sys.metrics — live"
       },
@@ -64,7 +65,8 @@ export const initialPortfolioData: PortfolioContent = {
         "stats": {
           "node": "Availability",
           "active": "Open to Work",
-          "exp": "5+ Years Experience"
+          "exp": "5+ Years Experience",
+          "expValue": "5+"
         },
         "goals": "Strategic Goals",
         "optimization": "Optimizing for Scalability"
@@ -132,16 +134,22 @@ export const initialPortfolioData: PortfolioContent = {
     },
     experience: [
       {
-        company: "Tech Solutions Inc.",
-        role: "Full Stack Software Engineer",
-        period: "2022 - Present",
-        desc: "Developed and maintained highly scalable web applications using React and Node.js. Improved database query performance by 40% and implemented CI/CD pipelines."
+        company: "Jilin University",
+        role: "B.Sc. in Software Engineering",
+        period: "Present",
+        desc: "Currently pursuing a Bachelor of Science degree in Software Engineering, focusing on core computer science principles and modern software development practices."
       },
       {
-        company: "Digital Innovations",
-        role: "Frontend Developer",
-        period: "2020 - 2022",
-        desc: "Built dynamic, interactive user interfaces for enterprise clients. Collaborated with designers to implement responsive layouts and optimize core web vitals."
+        company: "Yantai Economic and Technological Development Zone Senior High School",
+        role: "Senior High School Student",
+        period: "Graduated",
+        desc: "Completed senior high school education with a strong foundation in science and mathematics."
+      },
+      {
+        company: "Yantai Economic and Technological Development Zone Experimental School",
+        role: "Junior High School Student",
+        period: "Graduated",
+        desc: "Completed junior high school education with excellence."
       }
     ],
     projects: [
@@ -211,7 +219,12 @@ export const initialPortfolioData: PortfolioContent = {
       { name: "Next.js", iconName: "Globe", category: "Framework", level: 88, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
       { name: "PostgreSQL", iconName: "Database", category: "Database", level: 80, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
       { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
-    ]
+    ],
+    skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "REST API"],
+    projectTech: {
+      1: ["React", "Node.js", "PostgreSQL", "Redis"],
+      2: ["Express", "TypeScript", "Jest", "Docker"]
+    }
   },
   zh: {
     ui: {
@@ -219,19 +232,20 @@ export const initialPortfolioData: PortfolioContent = {
         "about": "关于我",
         "services": "专业技能",
         "work": "项目经验",
-        "experience": "工作经历",
+        "experience": "教育经历",
         "contact": "联系我",
         "terminal": "终端模式",
-        "studio": "工作室模式"
+        "studio": "工作室模式",
+        "ai": "个人AI助理"
       },
-      "experience": { "label": "〇四 / 工作经历", "titlePrefix": "职业", "titleHighlight": "轨迹" },
+      "experience": { "label": "〇四 / 教育经历", "titlePrefix": "教育", "titleHighlight": "历程" },
       "projects": { "titlePrefix": "精选", "titleHighlight": "项目", "desc": "展示技术深度与代码架构能力的代表作品。" },
       "telemetry": { "label": "一一 / 系统监控", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "运行时间", "latency": "延迟", "cpu": "CPU使用率", "memory": "内存", "network": "网络吞吐" },
       "stats": { 
         "metrics": [
-          { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "年", "label": "开发经验", "sub": "生产环境实践", "pct": 50, "icon": "⚙" },
-          { "id": "projects", "value": 50, "max": 100, "suffix": "+", "unit": "个", "label": "项目交付", "sub": "Web · 移动端 · API", "pct": 50, "icon": "🚀" },
-          { "id": "comp", "value": 20, "max": 30, "suffix": "+", "unit": "次", "label": "竞赛获奖", "sub": "黑客马拉松与编程竞赛", "pct": 80, "icon": "🏆" }
+          { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "年", "label": "开发经验", "sub": "生产环境实践", "pct": 50 },
+          { "id": "apps", "value": 50, "max": 100, "suffix": "+", "unit": "项目", "label": "完成项目", "sub": "Web · 移动端 · 接口", "pct": 50 },
+          { "id": "wins", "value": 20, "max": 40, "suffix": "+", "unit": "奖项", "label": "竞赛获奖", "sub": "黑客马拉松与比赛", "pct": 80 }
         ],
         "label": "系统指标 — 实时" 
       },
@@ -276,7 +290,8 @@ export const initialPortfolioData: PortfolioContent = {
         "stats": {
           "node": "当前状态",
           "active": "寻求机会",
-          "exp": "5年以上专业经验"
+          "exp": "5年以上专业经验",
+          "expValue": "五+"
         },
         "goals": "职业目标",
         "optimization": "持续优化系统性能"
@@ -344,16 +359,22 @@ export const initialPortfolioData: PortfolioContent = {
     },
     experience: [
       {
-        company: "科技创新有限公司",
-        role: "全栈软件工程师",
-        period: "2022 - 至今",
-        desc: "使用 React 和 Node.js 开发和维护高可扩展的 Web 应用。将数据库查询性能提升了40%，并从零搭建了 CI/CD 自动化部署流水线。"
+        company: "吉林大学",
+        role: "软件工程 学士",
+        period: "在读",
+        desc: "目前攻读软件工程专业学士学位，主修计算机科学核心课程与现代软件开发实践。"
       },
       {
-        company: "数字前沿网络",
-        role: "前端开发工程师",
-        period: "2020 - 2022",
-        desc: "为企业级客户构建动态交互式的用户界面。与设计团队紧密协作，实现复杂的响应式布局并持续优化 Web 核心性能指标 (Core Web Vitals)。"
+        company: "烟台经济技术开发区高级中学",
+        role: "高中",
+        period: "毕业",
+        desc: "完成高中学业，打下了扎实的理科与数学基础。"
+      },
+      {
+        company: "烟台经济技术开发区实验中学",
+        role: "初中",
+        period: "毕业",
+        desc: "以优异的成绩完成初中学业。"
       }
     ],
     projects: [
@@ -423,11 +444,15 @@ export const initialPortfolioData: PortfolioContent = {
       { name: "Next.js", iconName: "Globe", category: "框架", level: 88, desc: "服务端渲染 (SSR) 与静态站点生成 (SSG)", span: "md:col-span-1" },
       { name: "PostgreSQL", iconName: "Database", category: "数据库", level: 80, desc: "关系型数据建模与复杂查询优化", span: "md:col-span-1" },
       { name: "Docker", iconName: "Cpu", category: "运维", level: 75, desc: "容器化部署与开发环境一致性保障", span: "md:col-span-2" }
-    ]
+    ],
+    skills: ["React 开发", "Next.js 框架", "TypeScript 核心", "Node.js 后端", "MongoDB", "Tailwind CSS", "PostgreSQL 数据库", "Docker 容器化", "Git 版本控制", "REST API 设计"],
+    projectTech: {
+      1: ["React", "Node.js 后端", "PostgreSQL", "Redis 缓存"],
+      2: ["Express", "TypeScript", "Jest 测试", "Docker"]
+    }
   },
   common: {
     heroImage: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778131174/joyce_josokz.jpg",
-    skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "REST API"],
     serviceIcons: {
       1: "Layout",
       2: "Terminal",
@@ -437,10 +462,6 @@ export const initialPortfolioData: PortfolioContent = {
     projectImages: {
       1: "https://picsum.photos/seed/p1/800/600",
       2: "https://picsum.photos/seed/p2/800/600"
-    },
-    projectTech: {
-      1: ["React", "Node.js", "PostgreSQL", "Redis"],
-      2: ["Express", "TypeScript", "Jest", "Docker"]
     },
     contact: {
       email: "contact@example.com",
