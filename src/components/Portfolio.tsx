@@ -14,6 +14,7 @@ import { cn } from '../lib/utils';
 import CodeBackground from './CodeBackground';
 import CodeTerminal from './CodeTerminal';
 import ProjectModal from './ProjectModal';
+import PortfolioChatbot from './PortfolioChatbot';
 
 import { useSectionTracking, useInteractionTracking } from '../hooks/useAnalytics';
 import { initialPortfolioData } from '../data/portfolioData';
@@ -1169,7 +1170,7 @@ export default function Portfolio() {
         onClose={() => setIsModalOpen(false)} 
       />
 
-
+      <PortfolioChatbot />
 
       {/* Toast Notification */}
       <AnimatePresence>
