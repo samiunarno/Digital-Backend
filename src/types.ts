@@ -40,6 +40,8 @@ export interface TranslatableContent {
     description: string;
   }[];
   techStack: TechStackItem[];
+  skills: string[];
+  projectTech: { [id: number]: string[] };
 }
 
 export interface TechStackItem {
@@ -56,9 +58,7 @@ export interface PortfolioContent {
   zh: TranslatableContent;
   common: {
     heroImage: string;
-    skills: string[];
     projectImages: { [id: number]: string };
-    projectTech: { [id: number]: string[] };
     serviceIcons: { [id: number]: string };
     contact: {
       email: string;
