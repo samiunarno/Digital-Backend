@@ -8,7 +8,7 @@ export const initialPortfolioData: PortfolioContent = {
       tagline: "Architecting high-performance digital ecosystems with precision and purpose."
     },
     about: {
-      text: "I am a dedicated software architect with over 8 years of experience in building scalable web applications. My expertise lies at the intersection of robust backend systems and immersive frontend experiences. I thrive on solving complex technical challenges and pushing the boundaries of what's possible on the web."
+      text: "I am a dedicated software engineer with over 1 year of experience in building scalable web applications. My expertise lies at the intersection of robust backend systems and immersive frontend experiences. I thrive on solving complex technical challenges and pushing the boundaries of what's possible on the web."
     },
     experience: [
       {
@@ -40,12 +40,12 @@ export const initialPortfolioData: PortfolioContent = {
       {
         name: "Sarah Jenkins",
         role: "CTO, InnovateX",
-        text: "Joyi is a rare talent who understands both the business logic and the technical intricacies required to build world-class software."
+        text: "Dong is a rare talent who understands both the business logic and the technical intricacies required to build world-class software."
       },
       {
         name: "Marcus Thorne",
         role: "Product Director",
-        text: "The level of detail and performance Joyi brings to every project is truly remarkable. A true professional in every sense."
+        text: "The level of detail and performance Dong brings to every project is truly remarkable. A true professional in every sense."
       }
     ],
     education: [
@@ -82,90 +82,90 @@ export const initialPortfolioData: PortfolioContent = {
         title: "Blue Bridge Competition",
         date: "2026",
         description: "Awarded for outstanding performance in the Blue Bridge Coding Competition."
-      },
-      // {
-      //   title: "Tech Innovation Award",
-      //   date: "2023",
-      //   description: "Recognized for developing a novel algorithm for real-time data compression."
-      // }
+      }
     ]
   },
   zh: {
     hero: {
-      name: "艾哈迈德",
-      role: "高级全栈工程师",
-      tagline: "以精准和目标构建高性能数字生态系统。"
+      name: "董小轩",
+      role: "软件工程师",
+      tagline: "精准且富有目的地构建高性能数字生态系统。"
     },
     about: {
-      text: "我是一名敬业的软件架构师，在构建可扩展的 Web 应用程序方面拥有超过 8 年的经验。我的专业知识在于强大的后端系统和沉浸式前端体验的交汇处。我热衷于解决复杂的技术挑战并突破 Web 的可能性边界。"
+      text: "我是一名敬业的软件工程师，在构建可扩展的 Web 应用方面拥有超过 8 年的经验。我擅长将强大的后端系统与沉浸式的前端体验相结合，热衷于解决复杂的技术难题，不断探索 Web 技术的边界。"
     },
     experience: [
       {
         company: "量子动力",
-        role: "首席全栈开发人员",
-        period: "2022 - 至今",
-        desc: "领导云原生分析平台的开发。优化数据库查询，性能提升 40%。指导 12 名工程师团队。"
+        role: "首席全栈开发",
+        period: "2022 – 至今",
+        desc: "主导云原生分析平台的开发，优化数据库查询，性能提升 40%；带领 12 人工程师团队。"
       },
       {
         company: "Nexus 数字",
         role: "高级前端工程师",
-        period: "2019 - 2022",
-        desc: "为财富 500 强客户开发高保真交互式用户界面。实施了用于 5 个主要产品线的自定义设计系统。"
+        period: "2019 – 2022",
+        desc: "为财富 500 强客户开发高保真交互界面，设计并实现了一套被 5 条主要产品线采用的自定义设计系统。"
       }
     ],
     projects: [
       {
         id: 1,
         title: "NeuralLink 仪表板",
-        description: "一个 AI 驱动的数据可视化平台，使用 WebWorkers 和 Canvas API 实时处理数百万个数据点。"
+        description: "基于 AI 的数据可视化平台，借助 WebWorkers 和 Canvas API 实时处理数百万数据点。"
       },
       {
         id: 2,
         title: "Aether 3D 引擎",
-        description: "一个基于 WebGL 的自定义渲染引擎，用于交互式建筑漫游，使用 Three.js 和自定义 GLSL 着色器构建。"
+        description: "基于 WebGL 的自定义渲染引擎，用于交互式建筑漫游，使用 Three.js 和自定义 GLSL 着色器实现。"
       }
     ],
     testimonials: [
       {
-        name: "莎拉·詹金斯",
+        name: "张莎拉",
         role: "InnovateX 首席技术官",
-        text: "艾哈迈德是一位罕见的人才，他既了解业务逻辑，也了解构建世界级软件所需的技术复杂性。"
+        text: "董小轩是一位难得的人才，既能理解业务逻辑，又深谙构建世界级软件所需的技术细节。"
       },
       {
         name: "马库斯·索恩",
         role: "产品总监",
-        text: "艾哈迈德为每个项目带来的细节水平和性能确实令人瞩目。在任何意义上都是真正的专业人士。"
+        text: "董小轩为每个项目带来的细致程度和性能表现令人惊叹，无论在哪个层面都是真正的专业人士。"
       }
     ],
     education: [
       {
-        school: "全球理工学院",
-        degree: "软件工程硕士",
-        year: "2019"
+        school: "吉林大学",
+        degree: "软件工程 学士学位",
+        year: "在读"
       }
     ],
     services: [
       {
         id: 1,
-        title: "全栈开发",
-        description: "端到端开发强大、可扩展且安全的 Web 应用程序。"
+        title: "问题解决",
+        description: "擅长诊断技术问题并在全栈范围内实施有效解决方案。"
       },
       {
         id: 2,
-        title: "技术架构",
-        description: "设计专为增长和性能而构建的复杂系统架构。"
+        title: "全栈 Web 开发",
+        description: "端到端开发响应式、可扩展、安全的 Web 应用，使用现代前端和后端技术。"
+      },
+      {
+        id: 3,
+        title: "技术架构设计",
+        description: "设计面向增长和高性能的复杂系统架构。"
+      },
+      {
+        id: 4,
+        title: "人工智能应用",
+        description: "利用 AI/ML 技术构建智能应用，实现流程自动化。"
       }
     ],
     achievements: [
       {
-        title: "年度开源贡献者",
-        date: "2024",
-        description: "因对 React 和 Three.js 生态系统的重大贡献而获奖。"
-      },
-      {
-        title: "技术创新奖",
-        date: "2023",
-        description: "因开发了一种实时数据压缩的新算法而获得认可。"
+        title: "蓝桥杯竞赛",
+        date: "2026",
+        description: "在蓝桥杯编程竞赛中取得优异成绩并获得奖项。"
       }
     ]
   },
@@ -191,11 +191,11 @@ export const initialPortfolioData: PortfolioContent = {
       2: "Layers"
     },
     contact: {
-      email: "joyi.ahmed@example.com",
+      email: "dong.xiaoxuan@example.com",
       social: {
-        github: "https://github.com/joyiahmed",
-        linkedin: "https://linkedin.com/in/joyiahmed",
-        instagram: "https://instagram.com/joyiahmed"
+        github: "https://github.com/dongxiaoxuan",
+        linkedin: "https://linkedin.com/in/dongxiaoxuan",
+        instagram: "https://instagram.com/dongxiaoxuan"
       }
     }
   }
