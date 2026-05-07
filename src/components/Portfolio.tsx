@@ -626,6 +626,12 @@ export default function Portfolio() {
                   case 'Users': return <Activity size={32} />;
                   case 'Code': return <Code size={32} />;
                   case 'Palette': return <Palette size={32} />;
+                  case 'Layout': return <Layout size={32} />;
+                  case 'Terminal': return <Terminal size={32} />;
+                  case 'Layers': return <Layers size={32} />;
+                  case 'Workflow': return <Workflow size={32} />;
+                  case 'Database': return <Database size={32} />;
+                  case 'Rocket': return <Rocket size={32} />;
                   default: return <Server size={32} />;
                 }
               };

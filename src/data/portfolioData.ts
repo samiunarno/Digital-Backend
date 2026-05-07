@@ -421,10 +421,10 @@ export const initialPortfolioData: PortfolioContent = {
       { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
     ],
     serviceIcons: {
-      1: "Code",
-      2: "Server",
-      3: "Database",
-      4: "Rocket"
+      1: "Layout",
+      2: "Terminal",
+      3: "Layers",
+      4: "Workflow"
     },
     projectImages: {
       1: "https://picsum.photos/seed/p1/800/600",
