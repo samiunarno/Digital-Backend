@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Image as ImageIcon, Send, Sparkles, Bot, User2, Zap, Activity, Cpu, Database, Wifi, Server, MemoryStick } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon, Send, Sparkles, Bot, User2, Zap, Activity, Cpu, Database, Wifi, Server, MemoryStick, Copy, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -57,6 +57,28 @@ const TypingDots = () => (
     <span className="text-xs text-gray-500 ml-2 font-mono">thinking...</span>
   </div>
 );
+
+/* ──────────────── Copy Button ──────────────── */
+const CopyButton = ({ text }: { text: string }) => {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-1.5 mt-2 text-[10px] text-gray-500 hover:text-cyan-400 transition-colors font-mono group"
+    >
+      {copied ? (
+        <><Check size={12} className="text-emerald-400" /><span className="text-emerald-400">Copied!</span></>
+      ) : (
+        <><Copy size={12} className="group-hover:text-cyan-400" /><span>Copy</span></>
+      )}
+    </button>
+  );
+};
 
 /* ──────────────── Live System Metrics ──────────────── */
 const useLiveMetrics = () => {
@@ -330,45 +352,67 @@ export default function AIChatPage() {
         </header>
 
         {/* Messages or Welcome */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {messages.length === 0 && !isLoading ? (
             <WelcomeScreen />
           ) : (
-            <div className="max-w-3xl mx-auto space-y-4">
+            <div className="flex flex-col">
               <AnimatePresence>
                 {messages.map((msg, idx) => (
                   <motion.div
                     key={idx}
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -16 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
                     className={cn(
-                      'flex gap-3',
-                      msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      'w-full px-4 sm:px-6 py-5 border-b border-white/[0.04]',
+                      msg.role === 'assistant' ? 'bg-white/[0.02]' : 'bg-transparent'
                     )}
                   >
-                    {msg.role === 'assistant' && (
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-lg shadow-cyan-500/20">
-                        <Bot size={16} />
+                    <div className="max-w-3xl mx-auto flex gap-4">
+                      {/* Avatar */}
+                      <div className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5',
+                        msg.role === 'assistant'
+                          ? 'bg-gradient-to-br from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/20'
+                          : 'bg-white/10 border border-white/20'
+                      )}>
+                        {msg.role === 'assistant' ? <Bot size={16} /> : <User2 size={16} className="text-gray-400" />}
                       </div>
-                    )}
-                    <div className={cn(
-                      'max-w-lg rounded-2xl px-4 py-3',
-                      msg.role === 'assistant'
-                        ? 'bg-white/[0.06] border border-white/10 backdrop-blur-sm'
-                        : 'bg-gradient-to-br from-cyan-600/80 to-indigo-600/80 border border-cyan-500/20'
-                    )}>
-                      <div className="text-sm leading-relaxed">
-                        <ReactMarkdown>{msg.text}</ReactMarkdown>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-xs font-semibold text-white">
+                            {msg.role === 'assistant' ? 'Joyi' : 'You'}
+                          </span>
+                          <span className="text-[10px] text-gray-500 font-mono">{msg.time}</span>
+                        </div>
+                        <div className={cn(
+                          'text-sm leading-7 text-gray-200',
+                          '[&_p]:mb-3 [&_p:last-child]:mb-0',
+                          '[&_strong]:text-white [&_strong]:font-semibold',
+                          '[&_em]:text-cyan-300 [&_em]:italic',
+                          '[&_code]:bg-white/10 [&_code]:text-cyan-300 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono',
+                          '[&_pre]:bg-black/40 [&_pre]:border [&_pre]:border-white/10 [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:my-3 [&_pre]:overflow-x-auto',
+                          '[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-300',
+                          '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ul]:my-2',
+                          '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_ol]:my-2',
+                          '[&_li]:text-gray-300',
+                          '[&_h1]:text-xl [&_h1]:font-bold [&_h1]:text-white [&_h1]:mt-4 [&_h1]:mb-2',
+                          '[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-white [&_h2]:mt-3 [&_h2]:mb-2',
+                          '[&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-white [&_h3]:mt-3 [&_h3]:mb-1',
+                          '[&_blockquote]:border-l-2 [&_blockquote]:border-cyan-500/40 [&_blockquote]:pl-4 [&_blockquote]:text-gray-400 [&_blockquote]:italic [&_blockquote]:my-2',
+                          '[&_a]:text-cyan-400 [&_a]:underline [&_a]:underline-offset-2',
+                          '[&_hr]:border-white/10 [&_hr]:my-4',
+                          '[&_table]:w-full [&_table]:my-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-gray-400 [&_th]:pb-2 [&_th]:border-b [&_th]:border-white/10 [&_td]:text-xs [&_td]:py-1.5 [&_td]:border-b [&_td]:border-white/5',
+                        )}>
+                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        </div>
+                        {msg.role === 'assistant' && <CopyButton text={msg.text} />}
                       </div>
-                      <span className="block text-[10px] text-gray-500 mt-2 text-right font-mono">{msg.time}</span>
                     </div>
-                    {msg.role === 'user' && (
-                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 mt-1">
-                        <User2 size={16} className="text-gray-400" />
-                      </div>
-                    )}
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -376,13 +420,15 @@ export default function AIChatPage() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex gap-3"
+                  className="w-full px-4 sm:px-6 py-5 bg-white/[0.02]"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-lg shadow-cyan-500/20">
-                    <Bot size={16} />
-                  </div>
-                  <div className="rounded-2xl px-4 py-3 bg-white/[0.06] border border-white/10">
-                    <TypingDots />
+                  <div className="max-w-3xl mx-auto flex gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-cyan-500/20">
+                      <Bot size={16} />
+                    </div>
+                    <div className="pt-1">
+                      <TypingDots />
+                    </div>
                   </div>
                 </motion.div>
               )}
