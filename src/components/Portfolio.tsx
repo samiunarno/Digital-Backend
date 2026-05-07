@@ -40,36 +40,7 @@ function useCountUp(end: number, duration = 2000, start = false) {
   return count;
 }
 
-const UI_TRANSLATIONS = {
-  en: {
-    nav: { about: "About", services: "Services", work: "Work", experience: "Experience", contact: "Contact", terminal: "Terminal", studio: "Studio" },
-    hero: { status: "Status: Operational", node: "Node_ID", viewProjects: "View Projects", contact: "Contact", scroll: "Scroll to Explore", system: "System.Core.Architecture" },
-    about: { label: "01 / Profile_Module", title: "The Architect", competencies: "Core_Competencies", resume: "Download CV", stats: { node: "Node_Status", active: "Active", exp: "5+ Years_Exp" }, goals: "Strategic_Goals", optimization: "Optimizing for Scalability" },
-    services: { label: "02 / Expertise", title: "Strategic Services" },
-    tech: { label: "03 / Core_Modules", title: "Technical Arsenal", status: "System_Status: Operational" },
-    projects: { label: "04 / Portfolio", title: "Selected Works", view: "View Project" },
-    testimonials: { label: "05 / Feedback", title: "Client Insights" },
-    education: { label: "07 / Foundation", title: "Education" },
-    achievements: { label: "08 / Milestones", title: "Achievements" },
-    gallery: { label: "09 / Archives", title: "Memories & Moments", desc: "Capturing the journey through seminars, workshops, and collaborative sessions." },
-    contact: { label: "10 / Connection", title: "Initialize Contact", desc: "Have a project in mind or just want to say hello? Drop a message and let's build something exceptional together.", email: "Direct_Email", name: "Full_Name", emailLabel: "Email_Address", message: "Message_Payload", placeholderName: "John Doe", placeholderMessage: "Describe your project requirements...", transmit: "Transmit Message", transmitting: "Transmitting...", received: "Message Received" },
-    footer: { rights: "All Rights Reserved.", cms: "CMS Dashboard", built: "Built for Scalability & Performance" }
-  },
-  zh: {
-    nav: { about: "关于", services: "服务", work: "作品", experience: "经验", contact: "联系", terminal: "终端", studio: "工作室" },
-    hero: { status: "状态：运行中", node: "节点_ID", viewProjects: "查看项目", contact: "联系我", scroll: "向下滚动探索", system: "系统.核心.架构" },
-    about: { label: "01 / 个人资料模块", title: "架构师", competencies: "核心能力", resume: "下载简历", stats: { node: "节点状态", active: "活跃", exp: "5年以上经验" }, goals: "战略目标", optimization: "优化可扩展性" },
-    services: { label: "02 / 专业知识", title: "战略服务" },
-    tech: { label: "03 / 核心模块", title: "技术军械库", status: "系统状态：正常运行" },
-    projects: { label: "04 / 作品集", title: "精选作品", view: "查看项目" },
-    testimonials: { label: "05 / 反馈", title: "客户见解" },
-    education: { label: "07 / 基础", title: "教育背景" },
-    achievements: { label: "08 / 里程碑", title: "成就" },
-    gallery: { label: "09 / 档案", title: "回忆与时刻", desc: "通过研讨会、工作坊和协作会议记录旅程。" },
-    contact: { label: "10 / 连接", title: "初始化联系", desc: "有项目想法或只是想打个招呼？发个消息，让我们一起打造卓越的作品。", email: "直接邮箱", name: "全名", emailLabel: "电子邮箱", message: "消息内容", placeholderName: "张三", placeholderMessage: "描述您的项目需求...", transmit: "发送消息", transmitting: "正在发送...", received: "消息已收到" },
-    footer: { rights: "保留所有权利。", cms: "CMS 控制面板", built: "为可扩展性和性能而构建" }
-  }
-};
+
 
 const TechIcon = ({ name, size = 24 }: { name: string; size?: number }) => {
   const icons: { [key: string]: React.ReactNode } = {
@@ -330,7 +301,7 @@ export default function Portfolio() {
 
     setTimeout(() => {
       setFormStatus('success');
-      setToast({ message: UI_TRANSLATIONS[language].contact.received, type: 'success' });
+      setToast({ message: content[language].ui.contact.received, type: 'success' });
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => {
         setFormStatus('idle');
@@ -409,25 +380,25 @@ export default function Portfolio() {
             >
               {theme === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
               <span className="hidden xs:inline ml-1">
-                {theme === 'dark' ? UI_TRANSLATIONS[language].nav.terminal : UI_TRANSLATIONS[language].nav.studio}
+                {theme === 'dark' ? content[language].ui.nav.terminal : content[language].ui.nav.studio}
               </span>
             </button>
             <div className="hidden md:flex gap-4 md:gap-6 font-mono text-[9px] md:text-[10px] uppercase tracking-[0.1em] md:tracking-[0.2em]">
-              <a href="#about" onClick={() => trackInteraction('nav_click', { target: 'about' })} className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.about}</a>
-              <a href="#services" onClick={() => trackInteraction('nav_click', { target: 'services' })} className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.services}</a>
-              <a href="#work" onClick={() => trackInteraction('nav_click', { target: 'work' })} className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.work}</a>
-              <a href="#experience" onClick={() => trackInteraction('nav_click', { target: 'experience' })} className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.experience}</a>
-              <a href="#contact" onClick={() => trackInteraction('nav_click', { target: 'contact' })} className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.contact}</a>
+              <a href="#about" onClick={() => trackInteraction('nav_click', { target: 'about' })} className="hover:text-accent transition-colors">{content[language].ui.nav.about}</a>
+              <a href="#services" onClick={() => trackInteraction('nav_click', { target: 'services' })} className="hover:text-accent transition-colors">{content[language].ui.nav.services}</a>
+              <a href="#work" onClick={() => trackInteraction('nav_click', { target: 'work' })} className="hover:text-accent transition-colors">{content[language].ui.nav.work}</a>
+              <a href="#experience" onClick={() => trackInteraction('nav_click', { target: 'experience' })} className="hover:text-accent transition-colors">{content[language].ui.nav.experience}</a>
+              <a href="#contact" onClick={() => trackInteraction('nav_click', { target: 'contact' })} className="hover:text-accent transition-colors">{content[language].ui.nav.contact}</a>
             </div>
           </div>
         </div>
         {/* Mobile Nav Links */}
         <div className="flex md:hidden gap-4 font-mono text-[8px] uppercase tracking-widest mt-2 border-t border-border/50 pt-2 w-full justify-center flex-wrap">
-          <a href="#about" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.about}</a>
-          <a href="#services" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.services}</a>
-          <a href="#work" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.work}</a>
-          <a href="#experience" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.experience}</a>
-          <a href="#contact" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].nav.contact}</a>
+          <a href="#about" className="hover:text-accent transition-colors">{content[language].ui.nav.about}</a>
+          <a href="#services" className="hover:text-accent transition-colors">{content[language].ui.nav.services}</a>
+          <a href="#work" className="hover:text-accent transition-colors">{content[language].ui.nav.work}</a>
+          <a href="#experience" className="hover:text-accent transition-colors">{content[language].ui.nav.experience}</a>
+          <a href="#contact" className="hover:text-accent transition-colors">{content[language].ui.nav.contact}</a>
         </div>
       </nav>
 
@@ -445,7 +416,7 @@ export default function Portfolio() {
         {/* Vertical Rail Text */}
         <div className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 hidden xl:block hero-reveal">
           <div className="writing-vertical-rl rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-muted/40">
-            {UI_TRANSLATIONS[language].hero.system} // v2.5.0 // {new Date().getFullYear()}
+            {content[language].ui.hero.system} // v2.5.0 // {new Date().getFullYear()}
           </div>
         </div>
 
@@ -456,8 +427,8 @@ export default function Portfolio() {
               <div className="w-1 h-4 bg-accent/40 animate-[pulse_1.5s_infinite_0.3s]" />
               <div className="w-1 h-4 bg-accent/20 animate-[pulse_1.5s_infinite_0.6s]" />
             </div>
-            <span className="tracking-[0.3em] text-[8px] sm:text-[10px]">{UI_TRANSLATIONS[language].hero.status}</span>
-            <span className="text-muted/40 ml-4 hidden md:inline">{UI_TRANSLATIONS[language].hero.node}: {Math.random().toString(36).substring(7).toUpperCase()}</span>
+            <span className="tracking-[0.3em] text-[8px] sm:text-[10px]">{content[language].ui.hero.status}</span>
+            <span className="text-muted/40 ml-4 hidden md:inline">{content[language].ui.hero.node}: {Math.random().toString(36).substring(7).toUpperCase()}</span>
           </div>
 
           <h1 className="hero-reveal font-display font-bold text-[clamp(2rem,10vw,9rem)] leading-[0.85] tracking-tight md:tracking-[-0.04em] mb-4 md:mb-6 uppercase relative z-10">
@@ -483,11 +454,11 @@ export default function Portfolio() {
               <div className="hero-reveal flex flex-wrap gap-4 sm:gap-6">
                 <a href="#work" className="group relative px-8 py-4 sm:px-10 sm:py-5 overflow-hidden border border-accent w-full sm:w-auto text-center">
                   <div className="absolute inset-0 bg-accent transition-transform duration-500 translate-y-full group-hover:translate-y-0" />
-                  <span className="relative z-10 text-accent group-hover:text-bg font-bold uppercase text-[10px] tracking-[0.3em] transition-colors duration-500">{UI_TRANSLATIONS[language].hero.viewProjects}</span>
+                  <span className="relative z-10 text-accent group-hover:text-bg font-bold uppercase text-[10px] tracking-[0.3em] transition-colors duration-500">{content[language].ui.hero.viewProjects}</span>
                 </a>
                 <a href="#contact" className="group relative px-8 py-4 sm:px-10 sm:py-5 border border-border overflow-hidden w-full sm:w-auto text-center">
                   <div className="absolute inset-0 bg-ink translate-x-[-100%] transition-transform duration-500 group-hover:translate-x-0" />
-                  <span className="relative z-10 uppercase text-[10px] tracking-[0.3em] group-hover:text-bg transition-colors duration-500">{UI_TRANSLATIONS[language].hero.contact}</span>
+                  <span className="relative z-10 uppercase text-[10px] tracking-[0.3em] group-hover:text-bg transition-colors duration-500">{content[language].ui.hero.contact}</span>
                 </a>
               </div>
             </div>
@@ -509,7 +480,7 @@ export default function Portfolio() {
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 hero-reveal hidden md:block">
           <div className="flex flex-col items-center gap-4">
             <div className="w-[1px] h-12 bg-gradient-to-b from-accent to-transparent animate-bounce" />
-            <span className="mono-label text-[8px] opacity-40">{UI_TRANSLATIONS[language].hero.scroll}</span>
+            <span className="mono-label text-[8px] opacity-40">{content[language].ui.hero.scroll}</span>
           </div>
         </div>
       </section>
@@ -520,14 +491,14 @@ export default function Portfolio() {
       {/* 3. About Section */}
       <section id="about" ref={aboutRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-y border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-12 section-reveal">{UI_TRANSLATIONS[language].about.label}</div>
+          <div className="mono-label mb-12 section-reveal">{content[language].ui.about.label}</div>
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Main Content Card */}
             <div className="lg:col-span-7 section-reveal bg-bg border border-border p-5 sm:p-8 md:p-12 lg:p-16 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors" />
               <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase mb-8 sm:mb-12 leading-[0.85] font-display tracking-tighter">
-                {language === 'en' ? 'The' : ''} <span className={cn("text-accent pr-4", theme === 'light' && "italic font-serif normal-case")}>{UI_TRANSLATIONS[language].about.title}</span>
+                <span className={cn("text-accent pr-4", theme === 'light' && "italic font-serif normal-case")}>{content[language].ui.about.title}</span>
               </h2>
               <p className="text-lg sm:text-xl md:text-3xl font-light leading-relaxed text-muted mb-16 max-w-2xl">
                 {t.about?.text || ""}
@@ -537,7 +508,7 @@ export default function Portfolio() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-[1px] bg-accent" />
-                    <h4 className="mono-label text-accent text-[10px] uppercase tracking-widest">{UI_TRANSLATIONS[language].about.competencies}</h4>
+                    <h4 className="mono-label text-accent text-[10px] uppercase tracking-widest">{content[language].ui.about.competencies}</h4>
                   </div>
                   <ul className="space-y-4 text-xs font-light tracking-wide text-muted/80">
                     <li className="flex items-center gap-3 hover:text-accent transition-colors cursor-default">
@@ -596,15 +567,15 @@ export default function Portfolio() {
 
                 <div className="absolute bottom-6 left-6 right-6 p-4 glass border border-border backdrop-blur-xl flex justify-between items-center">
                   <div>
-                    <div className="mono-label text-[8px] opacity-40 uppercase">{UI_TRANSLATIONS[language].about.stats.node}</div>
+                    <div className="mono-label text-[8px] opacity-40 uppercase">{content[language].ui.about.stats.node}</div>
                     <div className="text-[10px] font-bold uppercase tracking-widest text-accent flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
-                      {UI_TRANSLATIONS[language].about.stats.active}
+                      {content[language].ui.about.stats.active}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-accent font-bold text-2xl leading-none">5+</div>
-                    <div className="mono-label text-[8px] opacity-40 uppercase">{UI_TRANSLATIONS[language].about.stats.exp}</div>
+                    <div className="mono-label text-[8px] opacity-40 uppercase">{content[language].ui.about.stats.exp}</div>
                   </div>
                 </div>
               </div>
@@ -617,7 +588,7 @@ export default function Portfolio() {
                 </div>
                 <div className="space-y-2">
                   <div className="text-bg font-bold text-3xl uppercase tracking-tighter leading-none">
-                    {UI_TRANSLATIONS[language].about.optimization}
+                    {content[language].ui.about.optimization}
                   </div>
                   <div className="w-full h-1 bg-bg/20 relative overflow-hidden">
                     <div className="absolute top-0 left-0 h-full bg-bg w-2/3 animate-[shimmer_2s_infinite]" />
@@ -637,8 +608,8 @@ export default function Portfolio() {
       {/* 4. Services Section */}
       <section id="services" ref={servicesRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-b border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label section-reveal mb-4">{UI_TRANSLATIONS[language].services.label}</div>
-          <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal">{language === 'en' ? 'Strategic' : ''} <span className="text-accent">{UI_TRANSLATIONS[language].services.title}</span></h2>
+          <div className="mono-label section-reveal mb-4">{content[language].ui.services.label}</div>
+          <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal"><span className="text-accent">{content[language].ui.services.title}</span></h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {(t.services || []).map((service, i) => {
               const iconName = common.serviceIcons[service.id] || 'Server';
@@ -688,10 +659,10 @@ export default function Portfolio() {
           
           <div className="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4 relative z-10">
             <div>
-              <div className="mono-label section-reveal mb-4">{UI_TRANSLATIONS[language].tech.label}</div>
-              <h2 className="text-5xl md:text-7xl font-bold uppercase section-reveal">{language === 'en' ? 'Technical' : ''} <span className="text-accent">{UI_TRANSLATIONS[language].tech.title}</span></h2>
+              <div className="mono-label section-reveal mb-4">{content[language].ui.tech.label}</div>
+              <h2 className="text-5xl md:text-7xl font-bold uppercase section-reveal"><span className="text-accent">{content[language].ui.tech.title}</span></h2>
             </div>
-            <div className="mono-label text-[10px] opacity-40 animate-pulse">{UI_TRANSLATIONS[language].tech.status}</div>
+            <div className="mono-label text-[10px] opacity-40 animate-pulse">{content[language].ui.tech.status}</div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 relative z-10">
@@ -843,8 +814,8 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="section-reveal">
-              <div className="mono-label mb-4">{UI_TRANSLATIONS[language].projects.label}</div>
-              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-none">{language === 'en' ? 'Selected' : ''}<br/><span className="text-accent">{UI_TRANSLATIONS[language].projects.title}</span></h2>
+              <div className="mono-label mb-4">{content[language].ui.projects.label}</div>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-none"><span className="text-accent">{content[language].ui.projects.title}</span></h2>
             </div>
             <p className="section-reveal max-w-xs text-muted font-light italic">
               {language === 'en' ? 'A showcase of technical complexity and architectural integrity.' : '技术复杂性和架构完整性的展示。'}
@@ -900,7 +871,7 @@ export default function Portfolio() {
                       <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center group-hover/btn:bg-accent group-hover/btn:text-bg transition-all duration-500">
                         <ArrowRight size={16} className="-rotate-45 group-hover/btn:rotate-0 transition-transform duration-500" />
                       </div>
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-muted group-hover/btn:text-accent transition-colors">{UI_TRANSLATIONS[language].projects.view}</span>
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-muted group-hover/btn:text-accent transition-colors">{content[language].ui.projects.view}</span>
                     </div>
                   </div>
                 </div>
@@ -916,9 +887,9 @@ export default function Portfolio() {
       {/* 8. Testimonials Section - Carousel Implementation */}
       <section ref={testimonialsRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-4 section-reveal">{UI_TRANSLATIONS[language].testimonials.label}</div>
+          <div className="mono-label mb-4 section-reveal">{content[language].ui.testimonials.label}</div>
           <div className="flex justify-between items-end mb-12 section-reveal">
-            <h2 className="text-5xl font-bold uppercase">{UI_TRANSLATIONS[language].testimonials.title}</h2>
+            <h2 className="text-5xl font-bold uppercase">{content[language].ui.testimonials.title}</h2>
             {t.testimonials && t.testimonials.length > 1 && (
               <div className="flex gap-4">
                 <button 
@@ -998,8 +969,8 @@ export default function Portfolio() {
       {/* 9. Education Section */}
       <section ref={educationRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-4 section-reveal">{UI_TRANSLATIONS[language].education.label}</div>
-          <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{UI_TRANSLATIONS[language].education.title}</h2>
+          <div className="mono-label mb-4 section-reveal">{content[language].ui.education.label}</div>
+          <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{content[language].ui.education.title}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {(t.education || []).map((edu, i) => (
               <div key={i} className="group flex gap-6 items-start p-8 border border-border bg-bg section-reveal hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
@@ -1023,8 +994,8 @@ export default function Portfolio() {
       {/* 10. Achievements Section */}
       <section ref={achievementsRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-4 section-reveal">{UI_TRANSLATIONS[language].achievements.label}</div>
-          <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{UI_TRANSLATIONS[language].achievements.title}</h2>
+          <div className="mono-label mb-4 section-reveal">{content[language].ui.achievements.label}</div>
+          <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{content[language].ui.achievements.title}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {(t.achievements || []).map((ach, i) => (
               <div key={i} className="group p-8 border border-border bg-bg section-reveal hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
@@ -1047,11 +1018,11 @@ export default function Portfolio() {
       {/* 11. Gallery / Memories Section */}
       <section ref={galleryRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-4 section-reveal">{UI_TRANSLATIONS[language].gallery.label}</div>
+          <div className="mono-label mb-4 section-reveal">{content[language].ui.gallery.label}</div>
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <h2 className="text-5xl font-bold uppercase section-reveal">{UI_TRANSLATIONS[language].gallery.title}</h2>
+            <h2 className="text-5xl font-bold uppercase section-reveal">{content[language].ui.gallery.title}</h2>
             <p className="section-reveal max-w-xs text-muted font-light italic text-sm">
-              {UI_TRANSLATIONS[language].gallery.desc}
+              {content[language].ui.gallery.desc}
             </p>
           </div>
           
@@ -1090,19 +1061,19 @@ export default function Portfolio() {
       {/* 12. Contact Section */}
       <section id="contact" ref={contactRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="mono-label section-reveal mb-6">{UI_TRANSLATIONS[language].contact.label}</div>
+          <div className="mono-label section-reveal mb-6">{content[language].ui.contact.label}</div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
             <div className="section-reveal">
               <h2 className="text-5xl sm:text-7xl md:text-8xl font-extrabold uppercase leading-none mb-12 tracking-tighter">
-                {language === 'en' ? 'Initialize' : ''}<br/><span className="text-accent">{UI_TRANSLATIONS[language].contact.title}</span>
+                <span className="text-accent">{content[language].ui.contact.title}</span>
               </h2>
               <p className="text-xl text-muted font-light leading-relaxed mb-12 max-w-md">
-                {UI_TRANSLATIONS[language].contact.desc}
+                {content[language].ui.contact.desc}
               </p>
               
               <div className="space-y-8">
                 <div className="group">
-                  <p className="mono-label text-[10px] text-accent mb-2">{UI_TRANSLATIONS[language].contact.email}</p>
+                  <p className="mono-label text-[10px] text-accent mb-2">{content[language].ui.contact.email}</p>
                   <a 
                     href={`mailto:${common.contact?.email || ""}`} 
                     className="text-2xl md:text-3xl font-light hover:text-accent transition-all duration-500 border-b border-border pb-2 inline-block"
@@ -1133,18 +1104,18 @@ export default function Portfolio() {
             <div className="section-reveal bg-white/[0.02] border border-border p-8 md:p-12 rounded-2xl">
               <form onSubmit={handleFormSubmit} className="space-y-8">
                 <div className="space-y-2">
-                  <label className="mono-label text-[10px] text-muted uppercase tracking-widest">{language === 'en' ? 'Full_Name' : '姓名'}</label>
+                  <label className="mono-label text-[10px] text-muted uppercase tracking-widest">{content[language].ui.contact.name}</label>
                   <input 
                     type="text" 
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     className="w-full bg-transparent border-b border-border py-4 focus:border-accent outline-none transition-colors font-light text-lg"
-                    placeholder={language === 'en' ? "John Doe" : "张三"}
+                    placeholder={content[language].ui.contact.placeholderName}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="mono-label text-[10px] text-muted uppercase tracking-widest">{language === 'en' ? 'Email_Address' : '电子邮箱'}</label>
+                  <label className="mono-label text-[10px] text-muted uppercase tracking-widest">{content[language].ui.contact.emailLabel}</label>
                   <input 
                     type="email" 
                     required
@@ -1155,7 +1126,7 @@ export default function Portfolio() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="mono-label text-[10px] text-muted uppercase tracking-widest">{language === 'en' ? 'Message_Payload' : '消息内容'}</label>
+                  <label className="mono-label text-[10px] text-muted uppercase tracking-widest">{content[language].ui.contact.message}</label>
                   <div className="relative">
                     <textarea 
                       required
@@ -1164,7 +1135,7 @@ export default function Portfolio() {
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
                       className="w-full bg-transparent border-b border-border py-4 focus:border-accent outline-none transition-colors font-light text-lg resize-none pr-16"
-                      placeholder={language === 'en' ? "Describe your project requirements..." : "描述您的项目需求..."}
+                      placeholder={content[language].ui.contact.placeholderMessage}
                     />
                     <div className="absolute right-0 bottom-2 text-[10px] font-mono text-muted/40 pointer-events-none">
                       {formData.message.length}/1000
@@ -1178,7 +1149,7 @@ export default function Portfolio() {
                   className="group relative w-full py-5 overflow-hidden border border-accent bg-accent/5 hover:bg-accent transition-all duration-500"
                 >
                   <span className="relative z-10 text-accent group-hover:text-bg font-bold uppercase text-[10px] tracking-[0.3em]">
-                    {formStatus === 'idle' ? (language === 'en' ? 'Transmit Message' : '发送消息') : formStatus === 'sending' ? (language === 'en' ? 'Transmitting...' : '正在发送...') : (language === 'en' ? 'Message Received' : '消息已收到')}
+                    {formStatus === 'idle' ? content[language].ui.contact.transmit : formStatus === 'sending' ? content[language].ui.contact.transmitting : content[language].ui.contact.received}
                   </span>
                 </button>
               </form>
@@ -1190,10 +1161,10 @@ export default function Portfolio() {
       {/* Footer */}
       <footer className="py-8 sm:py-12 px-4 sm:px-6 md:px-[10%] relative z-10 border-t border-border">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 mono-label opacity-40 text-[10px]">
-          <p>© {new Date().getFullYear()} {heroName}. {UI_TRANSLATIONS[language].footer.rights}</p>
+          <p>© {new Date().getFullYear()} {heroName}. {content[language].ui.footer.rights}</p>
           <div className="flex gap-6">
-            <Link to="/cms" className="hover:text-accent transition-colors">{UI_TRANSLATIONS[language].footer.cms}</Link>
-            <p className="hover:text-accent transition-colors cursor-default">{UI_TRANSLATIONS[language].footer.built}</p>
+            <Link to="/cms" className="hover:text-accent transition-colors">{content[language].ui.footer.cms}</Link>
+            <p className="hover:text-accent transition-colors cursor-default">{content[language].ui.footer.built}</p>
           </div>
         </div>
       </footer>

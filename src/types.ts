@@ -33,6 +33,7 @@ export interface TranslatableContent {
     title: string;
     description: string;
   }[];
+  ui: any;
   achievements: {
     title: string;
     date: string;
