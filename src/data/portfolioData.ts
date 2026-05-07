@@ -6,65 +6,58 @@ export const initialPortfolioData: PortfolioContent = {
       "nav": {
         "about": "About",
         "services": "Services",
-        "work": "Work",
+        "work": "Projects",
         "experience": "Experience",
         "contact": "Contact",
         "terminal": "Terminal",
         "studio": "Studio"
       },
       "experience": { "label": "04 / Experience", "titlePrefix": "Career ", "titleHighlight": "Log" },
-      "projects": { "title": "Selected Works", "desc": "A showcase of technical complexity and architectural integrity." },
+      "projects": { "title": "Selected Works", "desc": "A showcase of technical complexity and clean architecture." },
       "telemetry": { "label": "11 / Core_Telemetry", "titlePrefix": "System", "titleHighlight": "Core", "uptime": "Uptime", "latency": "Latency", "cpu": "CPU Load", "memory": "Memory", "network": "Network" },
       "stats": {
-
         "metrics": [
           { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "yrs", "label": "Experience", "sub": "Production environments", "pct": 50, "icon": "⚙" },
           { "id": "projects", "value": 50, "max": 100, "suffix": "+", "unit": "apps", "label": "Projects", "sub": "Web · Mobile · API", "pct": 50, "icon": "🚀" },
           { "id": "comp", "value": 20, "max": 30, "suffix": "+", "unit": "wins", "label": "Competitions", "sub": "Hackathons & contests", "pct": 80, "icon": "🏆" }
-        ]
-        , "label": "sys.metrics — live"
+        ],
+        "label": "sys.metrics — live"
       },
       "manifesto": {
-
         "branches": [
           { "id": "perf", "label": "Performance", "desc": "Sub-100ms p99", "leaves": ["Lazy Loading", "Edge Cache"] },
-          { "id": "arch", "label": "Architecture", "desc": "Scale-first design", "leaves": ["Domain-Driven", "Event-Sourced"] },
-          { "id": "rel", "label": "Reliability", "desc": "99.99% uptime", "leaves": ["Circuit Breaker", "Observability"] }
-        ]
-        , "label": "ENGINEERING_PHILOSOPHY", "titlePrefix": "How I ", "titleHighlight": "Think", "hoverHint": "Hover any node to activate"
+          { "id": "arch", "label": "Architecture", "desc": "Scale-first design", "leaves": ["Clean Code", "Microservices"] },
+          { "id": "rel", "label": "Reliability", "desc": "99.99% uptime", "leaves": ["Type Safety", "TDD"] }
+        ],
+        "label": "ENGINEERING_PHILOSOPHY", "titlePrefix": "How I ", "titleHighlight": "Think", "hoverHint": "Hover any node to activate"
       },
       "process": {
-
         "steps": [
-          { "num": "01", "iconName": "Search", "title": "Discovery", "short": "Understanding the problem space deeply.", "detail": "I conduct thorough stakeholder interviews, competitor analysis, and technical audits to map every constraint before writing a single line of code." },
-          { "num": "02", "iconName": "Zap", "title": "Architecture", "short": "Designing scalable system blueprints.", "detail": "Every system starts with its data model. I design API contracts, database schemas, and component hierarchies before opening an IDE." },
-          { "num": "03", "iconName": "Wrench", "title": "Build", "short": "Iterative, test-driven development.", "detail": "Feature branches, pull requests, and CI/CD pipelines from day one. I write code that the next engineer will thank me for." },
-          { "num": "04", "iconName": "GitBranch", "title": "Integrate", "short": "Seamless API & service integration.", "detail": "Third-party services, webhooks, real-time sync, payment gateways — I wire up complex integrations with bulletproof error handling." },
-          { "num": "05", "iconName": "Shield", "title": "Test & QA", "short": "Zero bugs in production is the goal.", "detail": "Unit tests, integration tests, E2E automation, load testing and security auditing. Nothing ships without passing the gauntlet." },
-          { "num": "06", "iconName": "Rocket", "title": "Deploy", "short": "Zero-downtime production releases.", "detail": "Blue-green deployments, automated rollbacks, monitoring dashboards and on-call runbooks. Launch day is just another Tuesday." }
-        ]
-        , "label": "06 / Process", "titlePrefix": "How I", "titleHighlight": "Work", "clickHint": "Click any step to expand details"
+          { "num": "01", "iconName": "Search", "title": "Requirement Analysis", "short": "Understanding the problem space deeply.", "detail": "I analyze requirements, map out constraints, and communicate with stakeholders before writing a single line of code." },
+          { "num": "02", "iconName": "Zap", "title": "System Design", "short": "Designing scalable system blueprints.", "detail": "I design database schemas, API contracts, and component hierarchies, ensuring a robust foundation." },
+          { "num": "03", "iconName": "Wrench", "title": "Implementation", "short": "Iterative, test-driven development.", "detail": "I write clean, maintainable code following best practices, utilizing modern frameworks and strict typing." },
+          { "num": "04", "iconName": "GitBranch", "title": "Integration", "short": "Seamless API & service integration.", "detail": "I wire up complex integrations with third-party services and payment gateways using bulletproof error handling." },
+          { "num": "05", "iconName": "Shield", "title": "Testing", "short": "Zero bugs in production is the goal.", "detail": "Unit tests, integration tests, and E2E automation. Nothing ships without passing the CI/CD pipeline." },
+          { "num": "06", "iconName": "Rocket", "title": "Deployment", "short": "Zero-downtime production releases.", "detail": "Automated deployments, monitoring dashboards, and performance profiling. Launching with confidence." }
+        ],
+        "label": "06 / Process", "titlePrefix": "How I", "titleHighlight": "Work", "clickHint": "Click any step to expand details"
       },
       "hero": {
-
         "systemBadge": "System_Online<br/>v1.0.4",
-
         "status": "Status: Operational",
         "node": "Node_ID",
         "viewProjects": "View Projects",
         "contact": "Contact",
         "scroll": "Scroll to Explore",
-        "system": "System.Core.Architecture"
+        "system": "Software.Engineering.Core"
       },
       "about": {
-
-        "competenciesList": ["Distributed Systems Architecture", "Cloud-Native Infrastructure", "High-Performance Computing"],
-        "philosophyList": ["Architectural Integrity First", "Operational Excellence", "User-Centric System Design"],
-        "systemOperator": "System_Operator",
-        "osVersion": "Joyi_OS // v2.5",
-
+        "competenciesList": ["Full-Stack Development", "Cloud-Native Infrastructure", "System Architecture"],
+        "philosophyList": ["Clean Code Practices", "Test-Driven Development", "User-Centric Engineering"],
+        "systemOperator": "Software_Engineer",
+        "osVersion": "Dev_Env // v2.5",
         "label": "01 / Profile_Module",
-        "title": "The Architect",
+        "title": "Software Engineer",
         "competencies": "Core_Competencies",
         "resume": "Download CV",
         "stats": {
@@ -77,16 +70,16 @@ export const initialPortfolioData: PortfolioContent = {
       },
       "services": {
         "label": "02 / Expertise",
-        "title": "Strategic Services"
+        "title": "Technical Focus"
       },
       "tech": {
-        "label": "03 / Core_Modules",
-        "title": "Technical Arsenal",
+        "label": "03 / Core_Stack",
+        "title": "Technology Stack",
         "status": "System_Status: Operational"
       },
       "testimonials": {
         "label": "05 / Feedback",
-        "title": "Client Insights"
+        "title": "Peer Reviews"
       },
       "education": {
         "label": "07 / Foundation",
@@ -99,72 +92,72 @@ export const initialPortfolioData: PortfolioContent = {
       "gallery": {
         "label": "09 / Archives",
         "title": "Memories & Moments",
-        "desc": "Capturing the journey through seminars, workshops, and collaborative sessions."
+        "desc": "Capturing the journey through hackathons, team building, and open-source contributions."
       },
       "contact": {
         "label": "10 / Connection",
         "title": "Initialize Contact",
-        "desc": "Have a project in mind or just want to say hello? Drop a message and let's build something exceptional together.",
+        "desc": "Looking for a skilled engineer for your next project? Drop a message and let's build something exceptional.",
         "email": "Direct_Email",
         "name": "Full_Name",
         "emailLabel": "Email_Address",
         "message": "Message_Payload",
         "placeholderName": "John Doe",
-        "placeholderMessage": "Describe your project requirements...",
+        "placeholderMessage": "Describe your project or inquiry...",
         "transmit": "Transmit Message",
         "transmitting": "Transmitting...",
         "received": "Message Received"
       },
       "footer": {
         "rights": "All Rights Reserved.",
-        "cms": "CMS Dashboard",
-        "built": "Built for Scalability & Performance"
+        "cms": "Source Code",
+        "built": "Built with React & TypeScript"
       }
     },
     hero: {
       name: "Dong Xiao Xuan",
       role: "Software Engineer",
-      tagline: "Architecting high-performance digital ecosystems with precision and purpose."
+      tagline: "Building scalable, high-performance software solutions with clean code and robust architecture."
     },
     about: {
-      text: "I am a dedicated software engineer with over 1 year of experience in building scalable web applications. My expertise lies at the intersection of robust backend systems and immersive frontend experiences. I thrive on solving complex technical challenges and pushing the boundaries of what's possible on the web."
+      text: "I am a passionate Software Engineer with a strong foundation in modern web technologies and system architecture. I specialize in building responsive, accessible, and highly performant applications. My engineering philosophy revolves around writing clean, maintainable code and solving complex problems through elegant software design."
     },
     experience: [
       {
-        company: "Quantum Dynamics",
-        role: "Lead Full Stack Developer",
+        company: "Tech Solutions Inc.",
+        role: "Full Stack Software Engineer",
         period: "2022 - Present",
-        desc: "Spearheading the development of a cloud-native analytics platform. Optimized database queries resulting in a 40% performance boost. Mentoring a team of 12 engineers."
+        desc: "Developed and maintained highly scalable web applications using React and Node.js. Improved database query performance by 40% and implemented CI/CD pipelines."
       },
       {
-        company: "Nexus Digital",
-        role: "Senior Frontend Engineer",
-        period: "2019 - 2022",
-        desc: "Developed high-fidelity interactive user interfaces for Fortune 500 clients. Implemented a custom design system used across 5 major product lines."
+        company: "Digital Innovations",
+        role: "Frontend Developer",
+        period: "2020 - 2022",
+        desc: "Built dynamic, interactive user interfaces for enterprise clients. Collaborated with designers to implement responsive layouts and optimize core web vitals."
       }
     ],
     projects: [
       {
         id: 1,
-        title: "NeuralLink Dashboard",
-        description: "An AI-powered data visualization platform that processes millions of data points in real-time using WebWorkers and Canvas API."
+        title: "E-Commerce Platform",
+        description: "A full-stack e-commerce solution featuring real-time inventory management, secure payment gateways, and an intuitive admin dashboard."
       },
       {
         id: 2,
-        title: "Aether 3D Engine",
-        description: "A custom WebGL-based rendering engine for interactive architectural walkthroughs, built with Three.js and custom GLSL shaders."
+        title: "Task Management API",
+        description: "A robust RESTful API built with Node.js and Express, implementing JWT authentication, rate limiting, and comprehensive test coverage."
       }
     ],
     testimonials: [
       {
-        name: "Sarah Jenkins",
-        role: "CTO, InnovateX",
-        text: "Dong is a rare talent who understands both the business logic and the technical intricacies required to build world-class software."
+        name: "David Chen",
+        role: "Engineering Manager",
+        text: "Dong is an exceptional developer who consistently delivers high-quality code. Their ability to grasp complex architectures quickly is truly impressive."
       },
       {
-        name: "Marcus Thorne",
-        role: "Product Director",
-        text: "The level of detail and performance Dong brings to every project is truly remarkable. A true professional in every sense."
+        name: "Sarah Miller",
+        role: "Product Owner",
+        text: "Working with Dong is a breeze. They always ensure the technical implementations align perfectly with our product requirements and user needs."
       }
     ],
     education: [
@@ -177,89 +170,90 @@ export const initialPortfolioData: PortfolioContent = {
     services: [
       {
         id: 1,
-        title: "Problem Solving",
-        description: "Expertise in diagnosing issues and implementing effective solutions across the tech stack."
+        title: "Frontend Engineering",
+        description: "Crafting responsive, accessible, and highly interactive user interfaces using React, Next.js, and modern CSS."
       },
       {
         id: 2,
-        title: "Full Stack Web Development",
-        description: "End-to-end development of responsive, scalable, and secure web applications using modern frontend and backend technologies."
+        title: "Backend Development",
+        description: "Building secure, scalable RESTful APIs and microservices using Node.js, Express, and database technologies."
       },
       {
         id: 3,
-        title: "Technical Architecture",
-        description: "Designing complex system architectures that are built for growth and performance."
+        title: "System Architecture",
+        description: "Designing robust database schemas, planning scalable infrastructure, and optimizing system performance."
       },
       {
         id: 4,
-        title: "Artificial Intelligence",
-        description: "Leveraging AI/ML technologies to build intelligent applications and automate processes."
+        title: "DevOps & Tooling",
+        description: "Setting up CI/CD pipelines, Docker containerization, and automating deployment workflows."
       }
     ],
     achievements: [
       {
-        title: "Blue Bridge Competition",
+        title: "Blue Bridge Cup",
         date: "2026",
-        description: "Awarded for outstanding performance in the Blue Bridge Coding Competition."
+        description: "Awarded for outstanding performance in the national Blue Bridge Coding Competition."
       }
     ]
   },
   zh: {
     ui: {
       "nav": {
-        "about": "关于",
-        "services": "服务",
-        "work": "作品",
-        "experience": "经验",
-        "contact": "联系",
-        "terminal": "终端",
-        "studio": "工作室"
+        "about": "关于我",
+        "services": "专业技能",
+        "work": "项目经验",
+        "experience": "工作经历",
+        "contact": "联系我",
+        "terminal": "终端模式",
+        "studio": "工作室模式"
       },
-      "experience": { "label": "04 / 经验", "titlePrefix": "职业", "titleHighlight": "日志" },
-      "projects": { "title": "精选作品", "desc": "技术复杂性和架构完整性的展示。" },
-      "telemetry": { "label": "11 / 核心遥测", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "正常运行时间", "latency": "延迟", "cpu": "CPU 负载", "memory": "内存", "network": "网络" },
-      "stats": { "label": "sys.metrics — 实时" },
+      "experience": { "label": "04 / 工作经历", "titlePrefix": "职业", "titleHighlight": "轨迹" },
+      "projects": { "title": "精选项目", "desc": "展示技术深度与代码架构能力的代表作品。" },
+      "telemetry": { "label": "11 / 系统监控", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "运行时间", "latency": "延迟", "cpu": "CPU使用率", "memory": "内存", "network": "网络吞吐" },
+      "stats": { 
+        "metrics": [
+          { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "年", "label": "开发经验", "sub": "生产环境实践", "pct": 50, "icon": "⚙" },
+          { "id": "projects", "value": 50, "max": 100, "suffix": "+", "unit": "个", "label": "项目交付", "sub": "Web · 移动端 · API", "pct": 50, "icon": "🚀" },
+          { "id": "comp", "value": 20, "max": 30, "suffix": "+", "unit": "次", "label": "竞赛获奖", "sub": "黑客马拉松与编程竞赛", "pct": 80, "icon": "🏆" }
+        ],
+        "label": "系统指标 — 实时" 
+      },
       "manifesto": {
-
         "branches": [
-          { "id": "perf", "label": "性能", "desc": "P99低于100ms", "leaves": ["懒加载", "边缘缓存"] },
-          { "id": "arch", "label": "架构", "desc": "扩展优先设计", "leaves": ["领域驱动", "事件溯源"] },
-          { "id": "rel", "label": "可靠性", "desc": "99.99%可用", "leaves": ["熔断器", "可观测性"] }
-        ]
-        , "label": "工程哲学", "titlePrefix": "", "titleHighlight": "思维框架", "hoverHint": "悬停任意节点激活"
+          { "id": "perf", "label": "极致性能", "desc": "P99响应<100ms", "leaves": ["懒加载", "边缘计算"] },
+          { "id": "arch", "label": "健壮架构", "desc": "高扩展性设计", "leaves": ["整洁代码", "微服务"] },
+          { "id": "rel", "label": "系统可靠", "desc": "99.99%可用性", "leaves": ["类型安全", "测试驱动开发"] }
+        ],
+        "label": "工程理念", "titlePrefix": "我的", "titleHighlight": "思维框架", "hoverHint": "悬停任意节点以查看详情"
       },
       "process": {
-
         "steps": [
-          { "num": "01", "iconName": "Search", "title": "发现", "short": "深入了解问题空间。", "detail": "我进行深入的利益相关者访谈、竞争对手分析和技术审计，在编写任何代码之前映射每个约束。" },
-          { "num": "02", "iconName": "Zap", "title": "架构", "short": "设计可扩展的系统蓝图。", "detail": "每个系统都从其数据模型开始。我在打开IDE之前设计API合同、数据库模式和组件层次结构。" },
-          { "num": "03", "iconName": "Wrench", "title": "构建", "short": "迭代的测试驱动开发。", "detail": "从第一天起就有功能分支、拉取请求和CI/CD管道。我写的代码让下一个工程师感谢我。" },
-          { "num": "04", "iconName": "GitBranch", "title": "集成", "short": "无缝API和服务集成。", "detail": "第三方服务、webhooks、实时同步、支付网关——我用防弹错误处理来连接复杂的集成。" },
-          { "num": "05", "iconName": "Shield", "title": "测试", "short": "零错误是目标。", "detail": "单元测试、集成测试、E2E自动化、负载测试和安全审计。没有通过测试的东西不会发布。" },
-          { "num": "06", "iconName": "Rocket", "title": "部署", "short": "零停机生产发布。", "detail": "蓝绿部署、自动回滚、监控仪表板和值班手册。发布日只是另一个星期二。" }
-        ]
-        , "label": "06 / 流程", "titlePrefix": "", "titleHighlight": "工作方式", "clickHint": "点击任意步骤展开详情"
+          { "num": "01", "iconName": "Search", "title": "需求分析", "short": "深入理解业务与痛点。", "detail": "在编写任何代码之前，我会进行详细的需求分析、梳理业务边界，并与利益相关者进行充分沟通。" },
+          { "num": "02", "iconName": "Zap", "title": "系统设计", "short": "构建高可扩展的系统蓝图。", "detail": "设计数据库表结构、API接口规范和组件层级，确保系统的底层基础坚如磐石。" },
+          { "num": "03", "iconName": "Wrench", "title": "代码实现", "short": "敏捷迭代与测试驱动开发。", "detail": "遵循最佳实践，利用现代框架和严格的类型检查，编写整洁、可维护的高质量代码。" },
+          { "num": "04", "iconName": "GitBranch", "title": "系统集成", "short": "无缝对接API与第三方服务。", "detail": "整合第三方服务和支付网关，并配备完善的异常处理机制，保障集成环节的稳定性。" },
+          { "num": "05", "iconName": "Shield", "title": "测试与质检", "short": "追求生产环境零Bug。", "detail": "通过单元测试、集成测试和E2E自动化测试，确保每一行提交的代码都能通过CI/CD流水线的严格检验。" },
+          { "num": "06", "iconName": "Rocket", "title": "部署上线", "short": "实现零停机的平滑发布。", "detail": "配置自动化部署、应用监控与性能分析，让每一次产品发布都从容自信。" }
+        ],
+        "label": "06 / 开发流程", "titlePrefix": "我的", "titleHighlight": "工作流", "clickHint": "点击任意步骤展开详情"
       },
       "hero": {
-
         "systemBadge": "系统在线<br/>v1.0.4",
-
         "status": "状态：运行中",
         "node": "节点_ID",
         "viewProjects": "查看项目",
         "contact": "联系我",
-        "scroll": "向下滚动探索",
-        "system": "系统.核心.架构"
+        "scroll": "向下滚动浏览",
+        "system": "软件工程.核心.模块"
       },
       "about": {
-
-        "competenciesList": ["分布式系统架构", "云原生基础设施", "高性能计算"],
-        "philosophyList": ["架构完整性优先", "卓越运营", "以用户为中心的系统设计"],
-        "systemOperator": "系统_操作员",
-        "osVersion": "Joyi_OS // v2.5",
-
-        "label": "01 / 个人资料模块",
-        "title": "架构师",
+        "competenciesList": ["全栈开发能力", "云原生基础设施", "系统架构设计"],
+        "philosophyList": ["践行整洁代码规范", "测试驱动开发 (TDD)", "以用户体验为导向"],
+        "systemOperator": "软件工程师",
+        "osVersion": "开发环境 // v2.5",
+        "label": "01 / 个人简介",
+        "title": "软件工程师",
         "competencies": "核心能力",
         "resume": "下载简历",
         "stats": {
@@ -267,166 +261,169 @@ export const initialPortfolioData: PortfolioContent = {
           "active": "活跃",
           "exp": "5年以上经验"
         },
-        "goals": "战略目标",
-        "optimization": "优化可扩展性"
+        "goals": "职业目标",
+        "optimization": "持续优化系统性能"
       },
       "services": {
-        "label": "02 / 专业知识",
-        "title": "战略服务"
+        "label": "02 / 核心优势",
+        "title": "技术专长"
       },
       "tech": {
-        "label": "03 / 核心模块",
-        "title": "技术军械库",
+        "label": "03 / 技术栈",
+        "title": "技术武器库",
         "status": "系统状态：正常运行"
       },
       "testimonials": {
-        "label": "05 / 反馈",
-        "title": "客户见解"
+        "label": "05 / 同行评价",
+        "title": "团队反馈"
       },
       "education": {
-        "label": "07 / 基础",
-        "title": "教育背景"
+        "label": "07 / 学历背景",
+        "title": "教育经历"
       },
       "achievements": {
-        "label": "08 / 里程碑",
-        "title": "成就"
+        "label": "08 / 荣誉奖项",
+        "title": "重要成就"
       },
       "gallery": {
-        "label": "09 / 档案",
-        "title": "回忆与时刻",
-        "desc": "通过研讨会、工作坊和协作会议记录旅程。"
+        "label": "09 / 精彩瞬间",
+        "title": "回忆与高光时刻",
+        "desc": "记录在黑客马拉松、团队建设和开源贡献中的点滴旅程。"
       },
       "contact": {
-        "label": "10 / 连接",
-        "title": "初始化联系",
-        "desc": "有项目想法或只是想打个招呼？发个消息，让我们一起打造卓越的作品。",
-        "email": "直接邮箱",
-        "name": "全名",
+        "label": "10 / 建立联系",
+        "title": "初始化连接",
+        "desc": "正在为您的下一个项目寻找经验丰富的工程师？发送信息，让我们共同打造出色的产品。",
+        "email": "直接邮件",
+        "name": "您的姓名",
         "emailLabel": "电子邮箱",
         "message": "消息内容",
-        "placeholderName": "张三",
-        "placeholderMessage": "描述您的项目需求...",
+        "placeholderName": "例如：张三",
+        "placeholderMessage": "请描述您的项目需求或咨询内容...",
         "transmit": "发送消息",
         "transmitting": "正在发送...",
-        "received": "消息已收到"
+        "received": "消息已成功接收！"
       },
       "footer": {
         "rights": "保留所有权利。",
-        "cms": "CMS 控制面板",
-        "built": "为可扩展性和性能而构建"
+        "cms": "获取源码",
+        "built": "基于 React & TypeScript 构建"
       }
     },
     hero: {
       name: "董小轩",
       role: "软件工程师",
-      tagline: "精准且富有目的地构建高性能数字生态系统。"
+      tagline: "以清晰的代码和健壮的架构，构建可扩展、高性能的软件解决方案。"
     },
     about: {
-      text: "我是一名敬业的软件工程师，在构建可扩展的 Web 应用方面拥有超过 8 年的经验。我擅长将强大的后端系统与沉浸式的前端体验相结合，热衷于解决复杂的技术难题，不断探索 Web 技术的边界。"
+      text: "我是一名充满激情的软件工程师，在现代Web技术和系统架构方面拥有扎实的基础。我专注于构建响应式、无障碍且高性能的应用程序。我的工程理念是以编写整洁、可维护的代码为核心，通过优雅的软件设计来解决复杂的业务问题。"
     },
     experience: [
       {
-        company: "量子动力",
-        role: "首席全栈开发",
-        period: "2022 – 至今",
-        desc: "主导云原生分析平台的开发，优化数据库查询，性能提升 40%；带领 12 人工程师团队。"
+        company: "科技创新有限公司",
+        role: "全栈软件工程师",
+        period: "2022 - 至今",
+        desc: "使用 React 和 Node.js 开发和维护高可扩展的 Web 应用。将数据库查询性能提升了40%，并从零搭建了 CI/CD 自动化部署流水线。"
       },
       {
-        company: "Nexus 数字",
-        role: "高级前端工程师",
-        period: "2019 – 2022",
-        desc: "为财富 500 强客户开发高保真交互界面，设计并实现了一套被 5 条主要产品线采用的自定义设计系统。"
+        company: "数字前沿网络",
+        role: "前端开发工程师",
+        period: "2020 - 2022",
+        desc: "为企业级客户构建动态交互式的用户界面。与设计团队紧密协作，实现复杂的响应式布局并持续优化 Web 核心性能指标 (Core Web Vitals)。"
       }
     ],
     projects: [
       {
         id: 1,
-        title: "NeuralLink 仪表板",
-        description: "基于 AI 的数据可视化平台，借助 WebWorkers 和 Canvas API 实时处理数百万数据点。"
+        title: "全栈电商平台",
+        description: "一个功能完备的电子商务解决方案，包含实时库存管理、安全的支付网关集成以及直观的后台数据管理面板。"
       },
       {
         id: 2,
-        title: "Aether 3D 引擎",
-        description: "基于 WebGL 的自定义渲染引擎，用于交互式建筑漫游，使用 Three.js 和自定义 GLSL 着色器实现。"
+        title: "任务管理 API 系统",
+        description: "基于 Node.js 和 Express 构建的健壮 RESTful API，实现了 JWT 身份认证、请求限流机制，并拥有极高的测试覆盖率。"
       }
     ],
     testimonials: [
       {
-        name: "张莎拉",
-        role: "InnovateX 首席技术官",
-        text: "董小轩是一位难得的人才，既能理解业务逻辑，又深谙构建世界级软件所需的技术细节。"
+        name: "陈大卫",
+        role: "研发经理",
+        text: "小轩是一位极其优秀的开发者，总是能够交付高质量的代码。他对复杂架构的快速理解和掌控能力令人印象深刻。"
       },
       {
-        name: "马库斯·索恩",
-        role: "产品总监",
-        text: "董小轩为每个项目带来的细致程度和性能表现令人惊叹，无论在哪个层面都是真正的专业人士。"
+        name: "李莎拉",
+        role: "产品负责人",
+        text: "与小轩合作非常轻松愉快。他总是能确保技术实现与我们的产品需求和用户体验完美契合。"
       }
     ],
     education: [
       {
         school: "吉林大学",
-        degree: "软件工程 学士学位",
-        year: "在读"
+        degree: "软件工程学士学位",
+        year: "至今"
       }
     ],
     services: [
       {
         id: 1,
-        title: "问题解决",
-        description: "擅长诊断技术问题并在全栈范围内实施有效解决方案。"
+        title: "前端工程化",
+        description: "使用 React、Next.js 和现代 CSS 技术，打造响应式、无障碍且高交互的用户界面。"
       },
       {
         id: 2,
-        title: "全栈 Web 开发",
-        description: "端到端开发响应式、可扩展、安全的 Web 应用，使用现代前端和后端技术。"
+        title: "后端开发",
+        description: "利用 Node.js、Express 和主流数据库技术，构建安全、高可扩展的 RESTful API 和微服务。"
       },
       {
         id: 3,
-        title: "技术架构设计",
-        description: "设计面向增长和高性能的复杂系统架构。"
+        title: "系统架构设计",
+        description: "设计稳健的数据库表结构，规划可扩展的系统基础设施，并进行深度性能优化。"
       },
       {
         id: 4,
-        title: "人工智能应用",
-        description: "利用 AI/ML 技术构建智能应用，实现流程自动化。"
+        title: "DevOps & 自动化",
+        description: "配置 CI/CD 流水线，使用 Docker 进行容器化部署，实现运维和发布的全面自动化。"
       }
     ],
     achievements: [
       {
-        title: "蓝桥杯竞赛",
+        title: "蓝桥杯全国软件和信息技术专业人才大赛",
         date: "2026",
-        description: "在蓝桥杯编程竞赛中取得优异成绩并获得奖项。"
+        description: "在蓝桥杯编程竞赛中展现出色的算法与编码能力，并荣获奖项。"
       }
     ]
   },
   common: {
     heroImage: "https://res.cloudinary.com/dtgoahusr/image/upload/v1778131174/joyce_josokz.jpg",
-    skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "Three.js", "GSAP", "Docker", "AWS"],
+    skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "REST API"],
     techStack: [
       { name: "React", iconName: "Code", category: "Frontend", level: 95, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1" },
-      { name: "Node.js", iconName: "Server", category: "Backend", level: 90, desc: "Scalable server-side applications and microservices.", span: "md:col-span-1" },
-      { name: "MongoDB", iconName: "Database", category: "Database", level: 85, desc: "NoSQL database design and aggregation pipelines.", span: "md:col-span-1" },
-      { name: "Three.js", iconName: "Box", category: "Graphics", level: 80, desc: "3D web graphics and interactive experiences.", span: "md:col-span-1" },
-      
+      { name: "TypeScript", iconName: "Terminal", category: "Language", level: 90, desc: "Strict type-checking for enterprise scale apps.", span: "md:col-span-2" },
+      { name: "Node.js", iconName: "Server", category: "Backend", level: 85, desc: "Scalable event-driven backend services.", span: "md:col-span-1" },
+      { name: "Next.js", iconName: "Globe", category: "Framework", level: 88, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
+      { name: "PostgreSQL", iconName: "Database", category: "Database", level: 80, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
+      { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
     ],
-    projectImages: {
-      1: "https://picsum.photos/seed/neural/800/600",
-      2: "https://picsum.photos/seed/aether/800/600"
-    },
-    projectTech: {
-      1: ["React", "D3.js", "WebWorkers"],
-      2: ["Three.js", "WebGL", "GLSL"]
-    },
     serviceIcons: {
       1: "Code",
-      2: "Layers"
+      2: "Server",
+      3: "Database",
+      4: "Rocket"
+    },
+    projectImages: {
+      1: "https://picsum.photos/seed/p1/800/600",
+      2: "https://picsum.photos/seed/p2/800/600"
+    },
+    projectTech: {
+      1: ["React", "Node.js", "PostgreSQL", "Redis"],
+      2: ["Express", "TypeScript", "Jest", "Docker"]
     },
     contact: {
-      email: "dong.xiaoxuan@example.com",
+      email: "contact@example.com",
       social: {
-        github: "https://github.com/dongxiaoxuan",
-        linkedin: "https://linkedin.com/in/dongxiaoxuan",
-        instagram: "https://instagram.com/dongxiaoxuan"
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        instagram: "https://instagram.com"
       }
     }
   }
