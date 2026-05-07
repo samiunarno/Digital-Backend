@@ -428,7 +428,7 @@ export default function Portfolio() {
               <div className="w-1 h-4 bg-accent/20 animate-[pulse_1.5s_infinite_0.6s]" />
             </div>
             <span className="tracking-[0.3em] text-[8px] sm:text-[10px]">{content[language].ui.hero.status}</span>
-            <span className="text-muted/40 ml-4 hidden md:inline">{content[language].ui.hero.node}: {Math.random().toString(36).substring(7).toUpperCase()}</span>
+            <span className="text-muted/40 ml-4 hidden md:inline">{content[language].ui.hero.node}</span>
           </div>
 
           <h1 className="hero-reveal font-display font-bold text-[clamp(2rem,10vw,9rem)] leading-[0.85] tracking-tight md:tracking-[-0.04em] mb-4 md:mb-6 uppercase relative z-10">
@@ -498,7 +498,7 @@ export default function Portfolio() {
             <div className="lg:col-span-7 section-reveal bg-bg border border-border p-5 sm:p-8 md:p-12 lg:p-16 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors" />
               <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase mb-8 sm:mb-12 leading-[0.85] font-display tracking-tighter">
-                <span className={cn("text-accent pr-4", theme === 'light' && "italic font-serif normal-case")}>{content[language].ui.about.title}</span>
+                {content[language].ui.about.titlePrefix}<span className={cn("text-accent pr-4", theme === 'light' && "italic font-serif normal-case")}>{content[language].ui.about.titleHighlight}</span>
               </h2>
               <p className="text-lg sm:text-xl md:text-3xl font-light leading-relaxed text-muted mb-16 max-w-2xl">
                 {t.about?.text || ""}
@@ -615,7 +615,7 @@ export default function Portfolio() {
       <section id="services" ref={servicesRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-b border-border">
         <div className="max-w-7xl mx-auto">
           <div className="mono-label section-reveal mb-4">{content[language].ui.services.label}</div>
-          <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal"><span className="text-accent">{content[language].ui.services.title}</span></h2>
+          <h2 className="text-5xl md:text-7xl font-bold uppercase mb-20 section-reveal">{content[language].ui.services.titlePrefix}<span className="text-accent">{content[language].ui.services.titleHighlight}</span></h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {(t.services || []).map((service, i) => {
               const iconName = common.serviceIcons[service.id] || 'Server';
@@ -666,7 +666,7 @@ export default function Portfolio() {
           <div className="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4 relative z-10">
             <div>
               <div className="mono-label section-reveal mb-4">{content[language].ui.tech.label}</div>
-              <h2 className="text-5xl md:text-7xl font-bold uppercase section-reveal"><span className="text-accent">{content[language].ui.tech.title}</span></h2>
+              <h2 className="text-5xl md:text-7xl font-bold uppercase section-reveal">{content[language].ui.tech.titlePrefix}<span className="text-accent">{content[language].ui.tech.titleHighlight}</span></h2>
             </div>
             <div className="mono-label text-[10px] opacity-40 animate-pulse">{content[language].ui.tech.status}</div>
           </div>
@@ -821,7 +821,7 @@ export default function Portfolio() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="section-reveal">
               <div className="mono-label mb-4">{content[language].ui.projects.label}</div>
-              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-none"><span className="text-accent">{content[language].ui.projects.title}</span></h2>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-none"><br className="hidden md:block"/>{content[language].ui.projects.titlePrefix}<span className="text-accent">{content[language].ui.projects.titleHighlight}</span></h2>
             </div>
             <p className="section-reveal max-w-xs text-muted font-light italic">
               {content[language].ui.projects.desc}
@@ -895,7 +895,7 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto">
           <div className="mono-label mb-4 section-reveal">{content[language].ui.testimonials.label}</div>
           <div className="flex justify-between items-end mb-12 section-reveal">
-            <h2 className="text-5xl font-bold uppercase">{content[language].ui.testimonials.title}</h2>
+            <h2 className="text-5xl md:text-7xl font-bold uppercase">{content[language].ui.testimonials.titlePrefix}<span className="text-accent">{content[language].ui.testimonials.titleHighlight}</span></h2>
             {t.testimonials && t.testimonials.length > 1 && (
               <div className="flex gap-4">
                 <button 
@@ -976,7 +976,7 @@ export default function Portfolio() {
       <section ref={achievementsRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
           <div className="mono-label mb-4 section-reveal">{content[language].ui.achievements.label}</div>
-          <h2 className="text-5xl font-bold uppercase mb-12 section-reveal">{content[language].ui.achievements.title}</h2>
+          <h2 className="text-5xl md:text-7xl font-bold uppercase mb-12 section-reveal">{content[language].ui.achievements.titlePrefix}<span className="text-accent">{content[language].ui.achievements.titleHighlight}</span></h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {(t.achievements || []).map((ach, i) => (
               <div key={i} className="group p-8 border border-border bg-bg section-reveal hover:border-accent/30 transition-all duration-500 relative overflow-hidden">
@@ -999,7 +999,7 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto">
           <div className="mono-label mb-4 section-reveal">{content[language].ui.gallery.label}</div>
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <h2 className="text-5xl font-bold uppercase section-reveal">{content[language].ui.gallery.title}</h2>
+            <h2 className="text-5xl md:text-7xl font-bold uppercase section-reveal">{content[language].ui.gallery.titlePrefix}<span className="text-accent">{content[language].ui.gallery.titleHighlight}</span></h2>
             <p className="section-reveal max-w-xs text-muted font-light italic text-sm">
               {content[language].ui.gallery.desc}
             </p>
@@ -1044,7 +1044,7 @@ export default function Portfolio() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
             <div className="section-reveal">
               <h2 className="text-5xl sm:text-7xl md:text-8xl font-extrabold uppercase leading-none mb-12 tracking-tighter">
-                <span className="text-accent">{content[language].ui.contact.title}</span>
+                {content[language].ui.contact.titlePrefix}<span className="text-accent">{content[language].ui.contact.titleHighlight}</span>
               </h2>
               <p className="text-xl text-muted font-light leading-relaxed mb-12 max-w-md">
                 {content[language].ui.contact.desc}

@@ -13,7 +13,7 @@ export const initialPortfolioData: PortfolioContent = {
         "studio": "Studio"
       },
       "experience": { "label": "04 / Experience", "titlePrefix": "Career ", "titleHighlight": "Log" },
-      "projects": { "title": "Selected Works", "desc": "A showcase of technical complexity and clean architecture." },
+      "projects": { "titlePrefix": "Selected ", "titleHighlight": "Works", "desc": "A showcase of technical complexity and clean architecture." },
       "telemetry": { "label": "11 / Core_Telemetry", "titlePrefix": "System", "titleHighlight": "Core", "uptime": "Uptime", "latency": "Latency", "cpu": "CPU Load", "memory": "Memory", "network": "Network" },
       "stats": {
         "metrics": [
@@ -43,60 +43,68 @@ export const initialPortfolioData: PortfolioContent = {
         "label": "06 / Process", "titlePrefix": "How I", "titleHighlight": "Work", "clickHint": "Click any step to expand details"
       },
       "hero": {
-        "systemBadge": "System_Online<br/>v1.0.4",
-        "status": "Status: Operational",
-        "node": "Node_ID",
+        "systemBadge": "Available for<br/>New Opportunities",
+        "status": "Status: Available",
+        "node": "Location: Remote/Global",
         "viewProjects": "View Projects",
         "contact": "Contact",
         "scroll": "Scroll to Explore",
-        "system": "Software.Engineering.Core"
+        "system": "Professional.Software.Portfolio"
       },
       "about": {
         "competenciesList": ["Full-Stack Development", "Cloud-Native Infrastructure", "System Architecture"],
         "philosophyList": ["Clean Code Practices", "Test-Driven Development", "User-Centric Engineering"],
-        "systemOperator": "Software_Engineer",
-        "osVersion": "Dev_Env // v2.5",
-        "label": "01 / Profile_Module",
-        "title": "Software Engineer",
-        "competencies": "Core_Competencies",
+        "systemOperator": "Professional",
+        "osVersion": "Tech Stack Focus",
+        "label": "01 / Identity",
+        "titlePrefix": "Tech ",
+        "titleHighlight": "Innovator",
+        "competencies": "Core Competencies",
         "resume": "Download CV",
         "stats": {
-          "node": "Node_Status",
-          "active": "Active",
-          "exp": "5+ Years_Exp"
+          "node": "Availability",
+          "active": "Open to Work",
+          "exp": "5+ Years Experience"
         },
-        "goals": "Strategic_Goals",
+        "goals": "Strategic Goals",
         "optimization": "Optimizing for Scalability"
       },
       "services": {
         "label": "02 / Expertise",
-        "title": "Technical Focus"
+        "titlePrefix": "Technical ",
+        "titleHighlight": "Focus"
       },
       "tech": {
         "label": "03 / Core_Stack",
-        "title": "Technology Stack",
-        "status": "System_Status: Operational"
+        "titlePrefix": "Technology ",
+        "titleHighlight": "Stack",
+        "status": "Continuously Learning & Evolving"
       },
       "testimonials": {
         "label": "05 / Feedback",
-        "title": "Peer Reviews"
+        "titlePrefix": "Peer ",
+        "titleHighlight": "Reviews"
       },
       "education": {
         "label": "07 / Foundation",
-        "title": "Education"
+        "titlePrefix": "Education ",
+        "titleHighlight": "Background"
       },
       "achievements": {
         "label": "08 / Milestones",
-        "title": "Achievements"
+        "titlePrefix": "Major ",
+        "titleHighlight": "Achievements"
       },
       "gallery": {
         "label": "09 / Archives",
-        "title": "Memories & Moments",
+        "titlePrefix": "Memories & ",
+        "titleHighlight": "Moments",
         "desc": "Capturing the journey through hackathons, team building, and open-source contributions."
       },
       "contact": {
         "label": "10 / Connection",
-        "title": "Initialize Contact",
+        "titlePrefix": "Initialize ",
+        "titleHighlight": "Contact",
         "desc": "Looking for a skilled engineer for your next project? Drop a message and let's build something exceptional.",
         "email": "Direct_Email",
         "name": "Full_Name",
@@ -209,7 +217,7 @@ export const initialPortfolioData: PortfolioContent = {
         "studio": "工作室模式"
       },
       "experience": { "label": "04 / 工作经历", "titlePrefix": "职业", "titleHighlight": "轨迹" },
-      "projects": { "title": "精选项目", "desc": "展示技术深度与代码架构能力的代表作品。" },
+      "projects": { "titlePrefix": "精选", "titleHighlight": "项目", "desc": "展示技术深度与代码架构能力的代表作品。" },
       "telemetry": { "label": "11 / 系统监控", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "运行时间", "latency": "延迟", "cpu": "CPU使用率", "memory": "内存", "network": "网络吞吐" },
       "stats": { 
         "metrics": [
@@ -239,60 +247,68 @@ export const initialPortfolioData: PortfolioContent = {
         "label": "06 / 开发流程", "titlePrefix": "我的", "titleHighlight": "工作流", "clickHint": "点击任意步骤展开详情"
       },
       "hero": {
-        "systemBadge": "系统在线<br/>v1.0.4",
-        "status": "状态：运行中",
-        "node": "节点_ID",
+        "systemBadge": "开放<br/>新机会",
+        "status": "状态：可接收新项目",
+        "node": "位置：远程/全球",
         "viewProjects": "查看项目",
         "contact": "联系我",
         "scroll": "向下滚动浏览",
-        "system": "软件工程.核心.模块"
+        "system": "专业.软件工程.作品集"
       },
       "about": {
         "competenciesList": ["全栈开发能力", "云原生基础设施", "系统架构设计"],
         "philosophyList": ["践行整洁代码规范", "测试驱动开发 (TDD)", "以用户体验为导向"],
-        "systemOperator": "软件工程师",
-        "osVersion": "开发环境 // v2.5",
-        "label": "01 / 个人简介",
-        "title": "软件工程师",
+        "systemOperator": "专业人士",
+        "osVersion": "核心技术栈",
+        "label": "01 / 个人档案",
+        "titlePrefix": "科技",
+        "titleHighlight": "创新者",
         "competencies": "核心能力",
         "resume": "下载简历",
         "stats": {
-          "node": "节点状态",
-          "active": "活跃",
-          "exp": "5年以上经验"
+          "node": "当前状态",
+          "active": "寻求机会",
+          "exp": "5年以上专业经验"
         },
         "goals": "职业目标",
         "optimization": "持续优化系统性能"
       },
       "services": {
         "label": "02 / 核心优势",
-        "title": "技术专长"
+        "titlePrefix": "核心",
+        "titleHighlight": "技能"
       },
       "tech": {
         "label": "03 / 技术栈",
-        "title": "技术武器库",
-        "status": "系统状态：正常运行"
+        "titlePrefix": "技术",
+        "titleHighlight": "生态",
+        "status": "持续学习与进化"
       },
       "testimonials": {
         "label": "05 / 同行评价",
-        "title": "团队反馈"
+        "titlePrefix": "同行",
+        "titleHighlight": "评价"
       },
       "education": {
         "label": "07 / 学历背景",
-        "title": "教育经历"
+        "titlePrefix": "教育",
+        "titleHighlight": "经历"
       },
       "achievements": {
         "label": "08 / 荣誉奖项",
-        "title": "重要成就"
+        "titlePrefix": "核心",
+        "titleHighlight": "成就"
       },
       "gallery": {
         "label": "09 / 精彩瞬间",
-        "title": "回忆与高光时刻",
+        "titlePrefix": "高光",
+        "titleHighlight": "时刻",
         "desc": "记录在黑客马拉松、团队建设和开源贡献中的点滴旅程。"
       },
       "contact": {
         "label": "10 / 建立联系",
-        "title": "初始化连接",
+        "titlePrefix": "建立",
+        "titleHighlight": "联系",
         "desc": "正在为您的下一个项目寻找经验丰富的工程师？发送信息，让我们共同打造出色的产品。",
         "email": "直接邮件",
         "name": "您的姓名",
