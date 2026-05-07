@@ -2,17 +2,26 @@ import express from "express";
 
 const router = express.Router();
 
+// AR Neural Engine – Joyi AI Processing Pipeline
+const ENGINE_ENDPOINT = process.env.AR_ENGINE_ENDPOINT || "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+
 router.post("/chat", async (req, res) => {
   try {
-    const apiKey = process.env.ZHIPU_API_KEY;
+    const apiKey = process.env.AR_ENGINE_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "ZHIPU_API_KEY not configured on server" });
+      return res.status(500).json({ error: "AR Engine key not configured on server" });
     }
 
     const { messages, model, images } = req.body;
 
+    // Model resolution – maps client-facing names to engine identifiers
+    const modelMap: Record<string, string> = {
+      'ar-neural-v2': 'glm-4',
+      'ar-neural-v2-vision': 'glm-4v',
+    };
+
     const body: any = {
-      model: model || "glm-4",
+      model: modelMap[model] || model || "glm-4",
       messages,
     };
 
@@ -20,7 +29,7 @@ router.post("/chat", async (req, res) => {
       body.images = images;
     }
 
-    const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+    const response = await fetch(ENGINE_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +41,7 @@ router.post("/chat", async (req, res) => {
     const data = await response.json();
     res.json(data);
   } catch (error: any) {
-    console.error("Zhipu API proxy error:", error.message);
+    console.error("AR Engine proxy error:", error.message);
     res.status(500).json({ error: "Failed to contact AI service" });
   }
 });
