@@ -1041,8 +1041,8 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── ACTIVITY HEATMAP ── */}
-      <ActivityHeatmap language={language} />
+      {/* ── SYSTEM CORE TELEMETRY ── */}
+      <SystemCoreTelemetry language={language} />
 
       {/* 11. Gallery / Memories Section */}
       <section ref={galleryRef} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border">
@@ -1455,167 +1455,119 @@ function ManifestoSection({ language }: { language: 'en' | 'zh' }) {
   );
 }
 
-// ─── Activity Heatmap ─────────────────────────────────────────────────────────
-function ActivityHeatmap({ language }: { language: 'en' | 'zh' }) {
-  const ref = useRef<HTMLDivElement>(null);
+// ─── System Core Telemetry ───────────────────────────────────────────────────
+function SystemCoreTelemetry({ language }: { language: 'en' | 'zh' }) {
   const [visible, setVisible] = useState(false);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; commits: number; date: string } | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const [logs, setLogs] = useState<string[]>([]);
 
-  // Generate deterministic-ish fake data
-  const weeks = 52;
-  const days = 7;
-  const cells = React.useMemo(() => {
-    const data: { commits: number; date: string; intensity: number }[][] = [];
-    const now = new Date();
-    for (let w = 0; w < weeks; w++) {
-      const week: { commits: number; date: string; intensity: number }[] = [];
-      for (let d = 0; d < days; d++) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - ((weeks - w - 1) * 7 + (days - d - 1)));
-        // Pseudo-random but consistent commits
-        const seed = w * 7 + d;
-        const raw = Math.sin(seed * 2.3 + 1.7) * 0.5 + 0.5; // 0..1
-        const spike = (w % 8 === 3 || w % 8 === 5) && d < 5 ? 1.6 : 1; // periodic spikes
-        const commits = Math.round(raw * raw * 12 * spike); // skew toward 0
-        const intensity = commits === 0 ? 0 : commits <= 2 ? 1 : commits <= 5 ? 2 : commits <= 9 ? 3 : 4;
-        week.push({
-          commits,
-          date: date.toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-          intensity,
-        });
-      }
-      data.push(week);
-    }
-    return data;
-  }, [language]);
+  useEffect(() => {
+    const initialLogs = Array.from({length: 8}).map((_, i) => 
+      `[${new Date(Date.now() - i * 5000).toISOString().split('T')[1].slice(0,-1)}] Sys_OP_OK // Node_${Math.floor(Math.random()*1000)} routing stable.`
+    );
+    setLogs(initialLogs);
 
+    const interval = setInterval(() => {
+      setLogs(prev => {
+        const newLog = `[${new Date().toISOString().split('T')[1].slice(0,-1)}] Sys_OP_OK // Node_${Math.floor(Math.random()*1000)} routing stable.`;
+        return [newLog, ...prev.slice(0, 7)];
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+  
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
       { threshold: 0.2 }
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  const totalCommits = cells.flat().reduce((s, c) => s + c.commits, 0);
-  const activeDays = cells.flat().filter(c => c.commits > 0).length;
-
-  const intensityClass = (level: number) => {
-    switch (level) {
-      case 0: return 'bg-white/5 hover:bg-accent/20';
-      case 1: return 'bg-accent/20 hover:bg-accent/40';
-      case 2: return 'bg-accent/40 hover:bg-accent/60';
-      case 3: return 'bg-accent/70 hover:bg-accent/90';
-      case 4: return 'bg-accent hover:bg-accent shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]';
-      default: return 'bg-white/5';
-    }
-  };
-
   return (
-    <section
-      ref={ref}
-      className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border"
-    >
-      <div className="max-w-7xl mx-auto">
+    <section ref={ref} className="py-32 px-6 md:px-[10%] relative z-10 border-t border-border overflow-hidden bg-white/[0.02]">
+      <div className="absolute inset-0 bg-accent/5 opacity-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-bg to-bg pointer-events-none z-0" />
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="mono-label mb-4 section-reveal">
-          {language === 'en' ? '11 / Activity' : '11 / 活跃度'}
+          {language === 'en' ? '11 / Core_Telemetry' : '11 / 核心遥测'}
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 section-reveal">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 section-reveal">
           <h2 className="text-5xl md:text-7xl font-bold uppercase">
-            {language === 'en' ? 'Commit' : '提交'}{' '}
-            <span className="text-accent">{language === 'en' ? 'History' : '历史'}</span>
+            {language === 'en' ? 'System' : '系统'}{' '}
+            <span className="text-accent">{language === 'en' ? 'Core' : '核心'}</span>
           </h2>
           <div className="flex gap-8 text-right">
             <div>
-              <div className="text-3xl font-bold tabular-nums text-accent">{totalCommits.toLocaleString()}</div>
-              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Total Commits' : '总提交'}</div>
+              <div className="text-3xl font-bold tabular-nums text-accent animate-pulse">
+                99.9%
+              </div>
+              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Uptime' : '正常运行时间'}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold tabular-nums">{activeDays}</div>
-              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Active Days' : '活跃天数'}</div>
+              <div className="text-3xl font-bold tabular-nums">0.2ms</div>
+              <div className="mono-label text-[9px] opacity-40 uppercase mt-1">{language === 'en' ? 'Latency' : '延迟'}</div>
             </div>
           </div>
         </div>
 
-        {/* Heatmap grid — scrollable on mobile */}
-        <div className="relative">
-          <div className="overflow-x-auto pb-4 -mx-2 px-2">
-            <div
-              className="flex gap-[3px] min-w-max"
-              style={{ minWidth: 'calc(52 * (12px + 3px))' }}
-            >
-              {cells.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
-                  {week.map((cell, di) => (
-                    <motion.div
-                      key={di}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={visible ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ duration: 0.3, delay: visible ? (wi * 0.012 + di * 0.008) : 0 }}
-                      className={cn(
-                        'w-3 h-3 rounded-[2px] cursor-pointer transition-all duration-200',
-                        intensityClass(cell.intensity)
-                      )}
-                      onMouseEnter={(e) => {
-                        const rect = (e.target as HTMLElement).getBoundingClientRect();
-                        setTooltip({
-                          x: rect.left + rect.width / 2,
-                          y: rect.top - 8,
-                          commits: cell.commits,
-                          date: cell.date,
-                        });
-                      }}
-                      onMouseLeave={() => setTooltip(null)}
-                    />
-                  ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+          <div className="order-2 lg:order-1 h-64 border border-border bg-bg/50 p-6 overflow-hidden relative font-mono text-[10px] leading-relaxed section-reveal shadow-inner">
+            <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-bg to-transparent z-10" />
+            <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-bg to-transparent z-10" />
+            <div className="flex flex-col gap-3 opacity-80 transition-all duration-500">
+              {logs.map((log, i) => (
+                <div key={i} className="flex gap-2 whitespace-nowrap animate-[pulse_2s_ease-in-out]">
+                  <span className="text-accent/80">{log.split('] ')[0]}]</span>
+                  <span className="text-muted/80">{log.split('] ')[1]}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Scroll hint on mobile */}
-          <div className="flex md:hidden items-center gap-2 mt-3 text-muted/30 font-mono text-[9px] uppercase tracking-widest">
-            <ChevronRight size={10} />
-            {language === 'en' ? 'Scroll to see full history' : '滑动查看完整历史'}
-          </div>
-        </div>
+          <div className="order-1 lg:order-2 flex justify-center items-center h-80 relative section-reveal">
+            <div className="absolute w-64 h-64 border border-dashed border-accent/20 rounded-full animate-[spin_20s_linear_infinite]" />
+            <div className="absolute w-52 h-52 border border-accent/30 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+            <div className="absolute w-40 h-40 border-2 border-dotted border-accent/40 rounded-full animate-[spin_10s_linear_infinite]" />
+            
+            <div className="relative w-20 h-20 bg-accent/10 border border-accent flex justify-center items-center rotate-45 shadow-[0_0_40px_rgba(var(--accent-rgb),0.3)] group hover:scale-110 transition-transform duration-700">
+              <div className="absolute inset-0 bg-accent/20 animate-ping" />
+              <div className="w-10 h-10 border border-bg rotate-45 flex justify-center items-center bg-accent text-bg shadow-[0_0_20px_rgba(var(--accent-rgb),0.6)]">
+                <Cpu size={20} className="-rotate-45" />
+              </div>
+            </div>
 
-        {/* Legend */}
-        <div className="flex items-center justify-between mt-6 flex-wrap gap-4">
-          <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-muted/40">
-            <span>{language === 'en' ? 'Less' : '少'}</span>
-            {[0, 1, 2, 3, 4].map(l => (
-              <div key={l} className={cn('w-3 h-3 rounded-[2px]', intensityClass(l))} />
-            ))}
-            <span>{language === 'en' ? 'More' : '多'}</span>
+            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-accent/40 to-transparent -translate-y-1/2 -z-10" />
+            <div className="absolute left-1/2 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-accent/40 to-transparent -translate-x-1/2 -z-10" />
           </div>
-          <div className="font-mono text-[9px] uppercase tracking-widest text-muted/30">
-            {language === 'en' ? `Last 12 months of contributions` : `过去12个月的贡献`}
+
+          <div className="order-3 lg:order-3 space-y-8 section-reveal">
+            {[
+              { label: language === 'en' ? 'CPU Load' : 'CPU 负载', val: 32 },
+              { label: language === 'en' ? 'Memory' : '内存', val: 64 },
+              { label: language === 'en' ? 'Network' : '网络', val: 88 }
+            ].map((metric, i) => (
+              <div key={i} className="group">
+                <div className="flex justify-between font-mono text-[10px] uppercase mb-3 text-muted/60">
+                  <span>{metric.label}</span>
+                  <span className="text-accent tracking-widest">{metric.val}%</span>
+                </div>
+                <div className="h-[2px] bg-white/5 relative overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={visible ? { width: `${metric.val}%` } : {}}
+                    transition={{ duration: 1.5, delay: i * 0.2, ease: "easeOut" }}
+                    className="absolute top-0 left-0 h-full bg-accent group-hover:shadow-[0_0_10px_rgba(var(--accent-rgb),0.8)]"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-
-      {/* Floating tooltip */}
-      <AnimatePresence>
-        {tooltip && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.15 }}
-            className="fixed z-[200] pointer-events-none"
-            style={{ left: tooltip.x, top: tooltip.y, transform: 'translate(-50%, -100%)' }}
-          >
-            <div className="bg-bg border border-border shadow-xl px-3 py-2 rounded font-mono text-[10px] whitespace-nowrap">
-              <span className="text-accent font-bold">{tooltip.commits} {language === 'en' ? 'commits' : '次提交'}</span>
-              <span className="text-muted/60 ml-2">{tooltip.date}</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
