@@ -155,13 +155,63 @@ export const initialPortfolioData: PortfolioContent = {
     projects: [
       {
         id: 1,
-        title: "E-Commerce Platform",
-        description: "A full-stack e-commerce solution featuring real-time inventory management, secure payment gateways, and an intuitive admin dashboard."
+        title: "XiaoXuan Competitive Programming Platform",
+        description: "A full-stack competitive programming platform featuring real-time code collaboration, automated testing, and a rich problem library."
       },
       {
         id: 2,
-        title: "Task Management API",
-        description: "A robust RESTful API built with Node.js and Express, implementing JWT authentication, rate limiting, and comprehensive test coverage."
+        title: "Ward Management System Console Application",
+        description: "A robust console application for managing ward activities, featuring user authentication, role-based access control, and a responsive UI."
+      },
+      {
+        id: 3,
+        title: "Hospital Management System",
+        description: "A robust console application for managing hospital activities, featuring user authentication, role-based access control, and a responsive UI."
+      },
+      {
+        id: 4,
+        title: "Multiverse Code Editor",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 5,
+        title: "Root-Runner Game",
+        description: "A robust game application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 6,
+        title: "Esports Ball Combat Game",
+        description: "A robust game application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 7,
+        title: "Task Management System",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 8,
+        title: "Excel Data Analysis Software",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 9,
+        title: "JOYI AI Humanoid Artificial Intellegent V-2",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 10,
+        title: "Digital Human for Scientific Tour Guide Service",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 11,
+        title: "Mathmatics Terms Solver",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
+      },
+      {
+        id: 12,
+        title: "Personal Portfolio",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
       }
     ],
     testimonials: [
