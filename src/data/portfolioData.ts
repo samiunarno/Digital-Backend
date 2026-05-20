@@ -251,8 +251,8 @@ export const initialPortfolioData: PortfolioContent = {
       },
       {
         id: 4,
-        title: "DevOps & Tooling",
-        description: "Setting up CI/CD pipelines, Docker containerization, and automating deployment workflows."
+        title: "Data Science",
+        description: "Leveraging data analysis and machine learning to drive insights and decision-making."
       }
     ],
     achievements: [
@@ -263,12 +263,12 @@ export const initialPortfolioData: PortfolioContent = {
       }
     ],
     techStack: [
-      { name: "React", iconName: "Code", category: "Frontend", level: 95, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1" },
-      { name: "TypeScript", iconName: "Terminal", category: "Language", level: 90, desc: "Strict type-checking for enterprise scale apps.", span: "md:col-span-2" },
-      { name: "Node.js", iconName: "Server", category: "Backend", level: 85, desc: "Scalable event-driven backend services.", span: "md:col-span-1" },
-      { name: "Next.js", iconName: "Globe", category: "Framework", level: 88, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
-      { name: "PostgreSQL", iconName: "Database", category: "Database", level: 80, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
-      { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
+      { name: "C/C++", iconName: "Code", category: "Language", level: 50, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1.5" },
+      { name: "Python", iconName: "Terminal", category: "Language", level: 50, desc: "Strict type-checking for enterprise scale apps.", span: "md:col-span-1" },
+      { name: "JavaScript", iconName: "Server", category: "Backend", level: 30, desc: "Scalable event-driven backend services.", span: "md:col-span-1" },
+      { name: "HTML", iconName: "Globe", category: "Framework", level: 20, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
+      { name: "CSS", iconName: "Database", category: "Database", level: 20, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
+      // { name: "", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
     ],
     skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "REST API"],
     projectTech: {

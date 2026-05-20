@@ -340,13 +340,14 @@ export default function AIChatPage() {
     setIsLoading(true);
     try {
       const body: any = {
-        model: 'ar-neural-v2',
-        messages: [
-          { role: 'system', content: systemInstruction },
-          ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
-          { role: 'user', content: userMsg },
-        ],
-      };
+          // Zhipu model names (backend maps to glm-4 / glm-4v)
+          model: 'ar-neural-v2',
+          messages: [
+            { role: 'system', content: systemInstruction },
+            ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
+            { role: 'user', content: userMsg },
+          ],
+        };
       if (selectedImage) {
         const arrayBuf = await selectedImage.arrayBuffer();
         const bytes = new Uint8Array(arrayBuf);
