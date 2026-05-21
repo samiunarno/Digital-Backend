@@ -12,11 +12,13 @@ import CMSDashboard from './components/CMSDashboard';
 import AdminLogin from './components/AdminLogin';
 import AdminRegister from './components/AdminRegister';
 import AIProjectBuilder from './components/AIProjectBuilder';
+import GlobalNavbar from './components/GlobalNavbar';
 
 export default function App() {
   return (
     <Router>
       <main className="bg-bg text-ink min-h-screen">
+        <GlobalNavbar />
         <ThreeBackground />
         <Routes>
           <Route path="/" element={<Portfolio />} />
@@ -30,3 +32,4 @@ export default function App() {
     </Router>
   );
 }
+
