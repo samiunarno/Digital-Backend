@@ -316,8 +316,13 @@ ABSOLUTE GOLDEN RULES — NEVER BREAK THESE
 export default function AIChatPage() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string; time: string }>>([]);
   const [input, setInput] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -332,31 +337,72 @@ export default function AIChatPage() {
   const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   const sendMessage = async () => {
-    if (!input.trim() && !selectedImage) return;
+    if (!input.trim() && !selectedImage && selectedFiles.length === 0) return;
+
     const userMsg = input.trim();
     setMessages(prev => [...prev, { role: 'user', text: userMsg, time: now() }]);
     setInput('');
-    setSelectedImage(null);
     setIsLoading(true);
+
     try {
+      // 1) If we have files (pdf/txt/code/etc), upload and create/refresh a RAG session.
+      if (selectedFiles.length > 0 && selectedFiles.some(f => !f.type.startsWith('image/'))) {
+        const filesPayload = await Promise.all(
+          selectedFiles.map(async f => {
+            const arrayBuf = await f.arrayBuffer();
+            const bytes = new Uint8Array(arrayBuf);
+            let binary = '';
+            bytes.forEach(b => (binary += String.fromCharCode(b)));
+            return {
+              filename: f.name,
+              mimeType: f.type || 'application/octet-stream',
+              base64: btoa(binary),
+            };
+          })
+        );
+
+        const upResp = await fetch('/api/documents/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files: filesPayload }),
+        });
+        const upData = await upResp.json();
+        if (!upResp.ok) throw new Error(upData?.error || 'Upload failed');
+        setActiveSessionId(upData.sessionId);
+      }
+
+      // 2) If we have a sessionId, answer via RAG.
+      if (activeSessionId) {
+        const resp = await fetch('/api/documents/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: activeSessionId, question: userMsg }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data?.error || 'Chat failed');
+        setMessages(prev => [...prev, { role: 'assistant', text: data?.reply || '...', time: now() }]);
+        return;
+      }
+
+      // 3) Otherwise fallback to vision (image) chat.
       const body: any = {
-          // Zhipu model names (backend maps to glm-4 / glm-4v)
-          model: 'ar-neural-v2',
-          messages: [
-            { role: 'system', content: systemInstruction },
-            ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
-            { role: 'user', content: userMsg },
-          ],
-        };
+        model: 'ar-neural-v2',
+        messages: [
+          { role: 'system', content: systemInstruction },
+          { role: 'user', content: userMsg },
+        ],
+      };
+
       if (selectedImage) {
         const arrayBuf = await selectedImage.arrayBuffer();
         const bytes = new Uint8Array(arrayBuf);
         let binary = '';
-        bytes.forEach(b => binary += String.fromCharCode(b));
+        bytes.forEach(b => (binary += String.fromCharCode(b)));
         const base64 = btoa(binary);
         body.model = 'ar-neural-v2-vision';
         body.images = [{ format: 'png', data: base64 }];
       }
+
       const resp = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -369,6 +415,8 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, { role: 'assistant', text: '⚠️ Error contacting AI service.', time: now() }]);
     } finally {
       setIsLoading(false);
+      setSelectedFiles([]);
+      setSelectedImage(null);
       inputRef.current?.focus();
     }
   };
@@ -420,8 +468,22 @@ export default function AIChatPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] text-gray-500 font-mono hidden sm:inline">LIVE</span>
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/project-builder";
+              }}
+              className="px-3 py-2 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] transition-colors text-[12px] font-mono text-gray-200 flex items-center gap-2"
+              title="Open the Google-vibe AI Project Builder"
+            >
+              <Sparkles size={16} />
+              Vibe Code
+            </button>
+
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] text-gray-500 font-mono hidden sm:inline">LIVE</span>
+            </div>
           </div>
         </header>
 
@@ -518,17 +580,27 @@ export default function AIChatPage() {
           >
             <input
               type="file"
-              accept="image/*"
-              onChange={e => setSelectedImage(e.target.files?.[0] || null)}
+              multiple
+              accept="image/*,.pdf,.docx,.txt,.md,.csv,.xlsx,.json,.xml,.yml,.yaml,.ts,.tsx,.js,.py,.java,.go,.c,.cpp,.h,.hpp"
+              onChange={e => {
+                const files = Array.from(e.target.files || []);
+                setSelectedFiles(files);
+                const firstImage = files.find(f => f.type.startsWith('image/')) || null;
+                setSelectedImage(firstImage);
+              }}
               className="hidden"
-              id="ai-image-upload"
+              id="ai-file-upload"
             />
-            <label htmlFor="ai-image-upload" className="cursor-pointer p-2 rounded-lg text-gray-500 hover:text-cyan-400 hover:bg-white/5 transition-all">
+            <label htmlFor="ai-file-upload" className="cursor-pointer p-2 rounded-lg text-gray-500 hover:text-cyan-400 hover:bg-white/5 transition-all">
               <ImageIcon size={20} />
             </label>
-            {selectedImage && (
-              <span className="text-[10px] text-cyan-400 font-mono truncate max-w-[80px]">{selectedImage.name}</span>
-            )}
+            {selectedFiles.length > 0 ? (
+              <span className="text-[10px] text-cyan-400 font-mono truncate max-w-[180px]">
+                {selectedFiles.length === 1 ? selectedFiles[0].name : `${selectedFiles.length} files selected`}
+              </span>
+            ) : selectedImage ? (
+              <span className="text-[10px] text-cyan-400 font-mono truncate max-w-[180px]">{selectedImage.name}</span>
+            ) : null}
             <input
               ref={inputRef}
               type="text"

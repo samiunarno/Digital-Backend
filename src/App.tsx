@@ -11,6 +11,7 @@ import Dashboard from './components/Dashboard';
 import CMSDashboard from './components/CMSDashboard';
 import AdminLogin from './components/AdminLogin';
 import AdminRegister from './components/AdminRegister';
+import AIProjectBuilder from './components/AIProjectBuilder';
 
 export default function App() {
   return (
@@ -23,7 +24,7 @@ export default function App() {
           <Route path="/register" element={<AdminRegister />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/ai" element={<AIChatPage />} />
-          
+          <Route path="/project-builder" element={<AIProjectBuilder />} />
         </Routes>
       </main>
     </Router>
