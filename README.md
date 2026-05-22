@@ -7,7 +7,7 @@ An ultra-premium, industrial-styled Developer Portfolio and fully integrated Con
 ## ✨ Core Features
 
 * **Sleek Glassmorphic Frontend**: Fully custom React 18 application styled with responsive, premium CSS and Tailwind CSS v4 design tokens, loaded with fluid animations and responsive layout grids.
-* **Joyi AI Vibe Coder**: An opinionated, self-aware GLM-4 powered agentic loop. Armed with live GitHub API tools to read code, create branches, write files, open PRs, and self-improve on your repository dynamically.
+* **Joyi AI Vibe Coder**: An opinionated, self-aware and autonomous agentic loop. Armed with live GitHub API tools to read code, create branches, write files, open PRs, and self-improve on your repository dynamically.
 * **Robust CMS Dashboard**: Secure admin authentication system with full capabilities to edit portfolio data, monitor traffic analytics, and review contact messages.
 * **Advanced RAG Engine**: A custom backend service featuring document extraction (`pdf-parse`, `mammoth`, `xlsx`), token chunking, and simple vector stores to chat with uploaded files and knowledge bases.
 * **Real-time Synchronization**: Socket.io backed real-time updates for active tasks, AI logs, and analytics tracking.
@@ -19,7 +19,7 @@ An ultra-premium, industrial-styled Developer Portfolio and fully integrated Con
 * **Frontend**: React 18 + Vite + TypeScript + Framer Motion (`motion/react`) + Lucide Icons
 * **Backend**: Node.js + Express + TypeScript (`tsx` on-the-fly execution)
 * **Database**: MongoDB + Mongoose ODM
-* **AI Provider**: Joyi AI version AR-2 (GLM-4 & GLM-4V) Proxied through unified fallback routing
+* **AI Provider**: Joyi AI version AR-2 (Proxied through unified fallback routing)
 * **Web Sockets**: Socket.io
 
 ---
