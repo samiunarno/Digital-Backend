@@ -19,7 +19,7 @@ An ultra-premium, industrial-styled Developer Portfolio and fully integrated Con
 * **Frontend**: React 18 + Vite + TypeScript + Framer Motion (`motion/react`) + Lucide Icons
 * **Backend**: Node.js + Express + TypeScript (`tsx` on-the-fly execution)
 * **Database**: MongoDB + Mongoose ODM
-* **AI Provider**: ZhipuAI (GLM-4 & GLM-4V) Proxied through unified fallback routing
+* **AI Provider**: Joyi AI version AR-2 (GLM-4 & GLM-4V) Proxied through unified fallback routing
 * **Web Sockets**: Socket.io
 
 ---
@@ -44,8 +44,8 @@ JWT_EXPIRES_IN='90d'
 ADMIN_USERNAME='admin'
 ADMIN_PASSWORD='your_secure_password'
 
-# ZhipuAI / AR Neural Engine Keys (Both accepted as fallbacks)
-ZHIPU_API_KEY='your_zhipu_api_key'
+# Joyi AI version AR-2 / AR Neural Engine Keys (Both accepted as fallbacks)
+ZHIPU_API_KEY='your_joyi_api_key'
 AR_ENGINE_KEY='your_ar_neural_engine_key'
 
 # GitHub Live API Credentials
