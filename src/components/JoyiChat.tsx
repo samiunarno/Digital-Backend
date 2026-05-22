@@ -105,9 +105,13 @@ GOLDEN RULES:
       }
       formattedMessages.push({ role: 'user', content: userContent });
 
+      const token = localStorage.getItem('token');
       const response = await fetch("/api/ai/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           model: currentImage ? "ar-neural-v2-vision" : "ar-neural-v2",
           messages: formattedMessages

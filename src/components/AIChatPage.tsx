@@ -388,6 +388,7 @@ export default function AIChatPage() {
     setIsLoading(true);
 
     try {
+      const token = localStorage.getItem('token');
       // Handle file uploads if present
       let sessionId = activeSessionId;
       
@@ -408,7 +409,10 @@ export default function AIChatPage() {
 
         const upResp = await fetch('/api/documents/upload', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
           body: JSON.stringify({ files: filesPayload }),
         });
         const upData = await upResp.json();
@@ -421,7 +425,10 @@ export default function AIChatPage() {
       if (sessionId) {
         const resp = await fetch('/api/documents/chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
           body: JSON.stringify({ sessionId, question: userMsg }),
         });
         const data = await resp.json();
@@ -463,7 +470,10 @@ export default function AIChatPage() {
 
       const resp = await fetch('/api/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(body),
       });
 

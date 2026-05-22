@@ -408,9 +408,13 @@ export default function VibeCoder() {
         content: m.text,
       }));
 
+      const token = localStorage.getItem('token');
       const resp = await fetch('/api/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           model: 'ar-neural-v2',
           useGitHubTools: githubStatus?.connected ?? false,
