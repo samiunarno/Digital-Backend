@@ -59,7 +59,10 @@ function FileTree({ onSelect }: { onSelect: (path: string) => void }) {
     if (tree[path]) return;
     setLoading(p => new Set([...p, path]));
     try {
-      const r = await fetch(`/api/github/files?path=${encodeURIComponent(path)}`);
+      const token = localStorage.getItem('token');
+      const r = await fetch(`/api/github/files?path=${encodeURIComponent(path)}`, {
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+      });
       const d = await r.json();
       if (d.files) setTree(prev => ({ ...prev, [path]: d.files }));
     } catch { /* silent */ }
@@ -131,7 +134,10 @@ function CommitList() {
   const load = async () => {
     setLoading(true);
     try {
-      const r = await fetch('/api/github/commits?limit=8');
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/github/commits?limit=8', {
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+      });
       const d = await r.json();
       if (d.commits) setCommits(d.commits);
     } catch { /* silent */ }
@@ -338,7 +344,10 @@ export default function VibeCoder() {
   const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   useEffect(() => {
-    fetch('/api/github/status')
+    const token = localStorage.getItem('token');
+    fetch('/api/github/status', {
+      headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+    })
       .then(r => r.json())
       .then(d => setGithubStatus(d))
       .catch(() => setGithubStatus({ connected: false }));
@@ -353,7 +362,10 @@ export default function VibeCoder() {
     setFileContent(null);
     setFileLoading(true);
     try {
-      const r = await fetch(`/api/github/file?path=${encodeURIComponent(path)}`);
+      const token = localStorage.getItem('token');
+      const r = await fetch(`/api/github/file?path=${encodeURIComponent(path)}`, {
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+      });
       const d = await r.json();
       setFileContent(d.content || '');
     } catch {
@@ -368,9 +380,13 @@ export default function VibeCoder() {
     setPushSuccess(null);
     try {
       const commitMsg = customCommitMessage.trim() || `feat: update code autonomously via Joyi AI`;
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/github/push', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ message: commitMsg }),
       });
       const data = await res.json();

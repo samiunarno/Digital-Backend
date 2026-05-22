@@ -359,10 +359,18 @@ export default function Portfolio() {
       {/* 1. Navigation */}
       <nav className="fixed top-0 left-0 w-full px-4 py-3 md:px-6 md:py-4 flex flex-col justify-between items-center z-50 border-b border-border bg-bg/90 backdrop-blur-xl">
         <div className="flex items-center gap-3 sm:gap-4 max-w-7xl mx-auto w-full justify-between">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-accent rounded-sm flex items-center justify-center text-bg font-bold text-xs sm:text-base">S</div>
-            <div className="font-mono text-[9px] sm:text-[10px] tracking-widest uppercase">
-              {heroName} <span className="text-muted hidden sm:inline">/</span> <span className="hidden sm:inline">{t.hero?.role || "Architect"}</span>
+          <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer transition-all duration-300" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div className="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-accent/20 to-indigo-500/20 border border-accent/30 overflow-hidden group-hover:border-accent/60 group-hover:shadow-[0_0_15px_var(--accent)] transition-all">
+              <div className="absolute inset-0 bg-accent/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="font-mono font-bold text-accent text-sm sm:text-base tracking-tighter mix-blend-screen">DX</span>
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="font-mono uppercase text-[10px] sm:text-[11px] font-bold tracking-[0.2em] group-hover:text-accent transition-colors">
+                {heroName}
+              </span>
+              <span className="font-mono text-[7px] sm:text-[8px] text-muted tracking-[0.3em] uppercase leading-none mt-0.5">
+                {t.hero?.role || "Architect"}
+              </span>
             </div>
           </div>
           <div className="flex gap-3 sm:gap-6 md:gap-8 items-center">

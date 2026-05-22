@@ -61,7 +61,10 @@ export default function GlobalNavbar() {
   // Load telemetry when on vibe-coder
   useEffect(() => {
     if (path === '/vibe-coder') {
-      fetch('/api/github/status')
+      const token = localStorage.getItem('token');
+      fetch('/api/github/status', {
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+      })
         .then(r => r.json())
         .then(d => setGithubStatus(d))
         .catch(() => setGithubStatus({ connected: false }));
@@ -186,11 +189,19 @@ export default function GlobalNavbar() {
 
         {/* Default / Live Portfolio Homepage Style */}
         {path !== '/ai' && path !== '/vibe-coder' && path !== '/cms' && path !== '/project-builder' && (
-          <Link to="/" className="flex items-center gap-2 text-white hover:text-cyan-400 transition-colors">
-            <span className="font-mono uppercase text-xs font-bold tracking-[0.25em]">Dong_Xiao_Xuan</span>
-            <span className="text-[9px] font-mono text-cyan-400/60 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded uppercase hidden xs:inline">
-              Portfolio
-            </span>
+          <Link to="/" className="flex items-center gap-2 group transition-all duration-300">
+            <div className="relative flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-500/30 overflow-hidden group-hover:border-cyan-400/60 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all">
+              <div className="absolute inset-0 bg-cyan-400/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="font-mono font-bold text-cyan-400 text-sm tracking-tighter mix-blend-screen">DX</span>
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="font-mono uppercase text-[11px] font-bold tracking-[0.2em] text-white group-hover:text-cyan-300 transition-colors">
+                Dong_Xiao
+              </span>
+              <span className="font-mono text-[8px] text-cyan-400/70 tracking-[0.3em] uppercase leading-none mt-0.5">
+                Xuan_Studio
+              </span>
+            </div>
           </Link>
         )}
       </div>
