@@ -8,6 +8,8 @@ import authRoutes from "./auth.js";
 import userRoutes from "./userRoutes.js";
 import aiRoutes from "./ai.js";
 import githubRoutes from "./github.js";
+import documentsRoutes from "./documents.js";
+import patchRoutes from "./patch.js";
 
 const router = express.Router();
 
@@ -15,6 +17,8 @@ router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
 router.use("/ai", aiRoutes);
 router.use("/github", githubRoutes);
+router.use("/documents", documentsRoutes);
+router.use("/patch", patchRoutes);
 router.use("/portfolio", portfolioRoutes);
 router.use("/contact", contactRoutes);
 router.use("/messages", messageRoutes);

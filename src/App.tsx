@@ -12,11 +12,14 @@ import CMSDashboard from './components/CMSDashboard';
 import AdminLogin from './components/AdminLogin';
 import AdminRegister from './components/AdminRegister';
 import VibeCoder from './components/VibeCoder';
+import AIProjectBuilder from './components/AIProjectBuilder';
+import GlobalNavbar from './components/GlobalNavbar';
 
 export default function App() {
   return (
     <Router>
       <main className="bg-bg text-ink min-h-screen">
+        <GlobalNavbar />
         <ThreeBackground />
         <Routes>
           <Route path="/" element={<Portfolio />} />
@@ -26,8 +29,10 @@ export default function App() {
           <Route path="/ai" element={<AIChatPage />} />
           <Route path="/cms" element={<CMSDashboard />} />
           <Route path="/vibe-coder" element={<VibeCoder />} />
+          <Route path="/project-builder" element={<AIProjectBuilder />} />
         </Routes>
       </main>
     </Router>
   );
 }
+
