@@ -44,7 +44,7 @@
     overflow-x: hidden;
   }
   body {
-    @apply bg-bg text-ink font-sans overflow-x-hidden antialiased cursor-none transition-colors duration-500;
+    @apply bg-bg text-ink font-sans overflow-x-hidden antialiased transition-colors duration-500;
     max-width: 100vw;
   }
   *, *::before, *::after {
@@ -68,6 +68,13 @@
   @apply fixed top-0 left-0 w-10 h-10 border border-accent/30 rounded-full pointer-events-none z-[998];
   transform: translate3d(calc(var(--cursor-x, -100px) - 20px), calc(var(--cursor-y, -100px) - 20px), 0);
   transition: transform 0.15s ease-out;
+}
+
+@media (min-width: 769px) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
 }
 
 @media (max-width: 768px) {

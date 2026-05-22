@@ -168,7 +168,12 @@ export default function Portfolio() {
     };
 
     window.addEventListener('mousemove', moveCursor);
-    return () => window.removeEventListener('mousemove', moveCursor);
+    document.body.classList.add('custom-cursor-active');
+
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+      document.body.classList.remove('custom-cursor-active');
+    };
   }, []);
 
   useEffect(() => {
