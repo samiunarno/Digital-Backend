@@ -1,0 +1,29 @@
+# Render Blueprint Specification for Digital Backend Fullstack Application
+# To deploy, go to https://dashboard.render.com -> New -> Blueprint
+services:
+  - type: web
+    name: digital-backend
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false # User will be prompted to enter this during deployment
+      - key: JWT_SECRET
+        generateValue: true # Render will automatically generate a secure random string
+      - key: JWT_EXPIRES_IN
+        value: 90d
+      - key: AR_ENGINE_KEY
+        sync: false
+      - key: VITE_AR_ENGINE_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_OWNER
+        value: dongxiaoxuan
+      - key: GITHUB_REPO
+        value: Digital-Backend
