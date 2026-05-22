@@ -173,6 +173,7 @@ export default function AdminRegister() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [role, setRole] = useState<'admin' | 'user'>('user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [bootText, setBootText] = useState('');
@@ -208,14 +209,18 @@ export default function AdminRegister() {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username.trim(), password, role: 'admin' }),
+        body: JSON.stringify({ username: username.trim(), password, role }),
       });
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('isAdmin', 'true');
+        localStorage.setItem('isAdmin', data.user.role === 'admin' ? 'true' : 'false');
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/cms');
+        if (data.user.role === 'admin') {
+          navigate('/cms');
+        } else {
+          navigate('/ai');
+        }
       } else {
         setError(data.message || data.error || data.status || 'Registration failed. Please try again.');
       }
@@ -295,7 +300,7 @@ export default function AdminRegister() {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold uppercase tracking-tighter text-white">
-                    Create <span className="text-purple-400">Admin Account</span>
+                    Create <span className="text-purple-400">Joyi Account</span>
                   </h1>
                   <p className="text-[10px] font-mono text-white/30 mt-0.5 uppercase tracking-widest">
                     {bootText}<BlinkCursor />
@@ -306,6 +311,37 @@ export default function AdminRegister() {
 
             {/* Form */}
             <form onSubmit={handleRegister} className="p-8 space-y-5">
+              {/* Role Selection */}
+              <div className="space-y-2">
+                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-purple-400/60">
+                  <span className="text-purple-400/40 mr-1">{'>'}</span> System Permissions
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setRole('user')}
+                    className={`py-3.5 px-4 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all border ${
+                      role === 'user'
+                        ? 'border-purple-400 bg-purple-500/10 text-purple-400 shadow-[0_0_15px_rgba(167,139,250,0.15)]'
+                        : 'border-white/5 bg-white/[0.02] text-white/40 hover:text-white/70 hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    User (AI Chat)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRole('admin')}
+                    className={`py-3.5 px-4 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all border ${
+                      role === 'admin'
+                        ? 'border-purple-400 bg-purple-500/10 text-purple-400 shadow-[0_0_15px_rgba(167,139,250,0.15)]'
+                        : 'border-white/5 bg-white/[0.02] text-white/40 hover:text-white/70 hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    Admin (Studio)
+                  </button>
+                </div>
+              </div>
+
               {/* Username */}
               <div className="space-y-2">
                 <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-purple-400/60">
@@ -320,7 +356,7 @@ export default function AdminRegister() {
                     type="text"
                     value={username}
                     onChange={e => { setUsername(e.target.value); setError(''); }}
-                    placeholder="admin_username"
+                    placeholder="user_username"
                     autoComplete="username"
                     className="w-full py-3.5 pl-11 pr-4 rounded-xl text-sm text-white placeholder:text-white/15 outline-none transition-all duration-200 font-mono"
                     style={inputStyle}

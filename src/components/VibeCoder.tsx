@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -294,6 +294,19 @@ PERSONALITY:
 - Never say "as an AI"`;
 
 export default function VibeCoder() {
+  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const adminStatus = localStorage.getItem('isAdmin') === 'true';
+    setIsAdmin(adminStatus);
+    setAuthLoading(false);
+    if (!adminStatus) {
+      navigate('/admin');
+    }
+  }, [navigate]);
+
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: 'assistant',
@@ -308,6 +321,16 @@ export default function VibeCoder() {
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<'files' | 'commits'>('files');
+
+  // Sidebar and SSE status states
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [changedFiles, setChangedFiles] = useState<string[]>([]);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushSuccess, setPushSuccess] = useState<string | null>(null);
+  const [pushError, setPushError] = useState<string | null>(null);
+  const [customCommitMessage, setCustomCommitMessage] = useState('');
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -339,6 +362,35 @@ export default function VibeCoder() {
     setFileLoading(false);
   };
 
+  const handleGitPush = async () => {
+    setPushLoading(true);
+    setPushError(null);
+    setPushSuccess(null);
+    try {
+      const commitMsg = customCommitMessage.trim() || `feat: update code autonomously via Joyi AI`;
+      const res = await fetch('/api/github/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: commitMsg }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to push changes.');
+      }
+      setPushSuccess(data.message || 'Pushed successfully!');
+      setCustomCommitMessage('');
+      setTimeout(() => {
+        setChangedFiles([]);
+        setPushSuccess(null);
+      }, 3000);
+      setSidebarTab('commits');
+    } catch (err: any) {
+      setPushError(err.message || 'Failed to push.');
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
   const send = async () => {
     const text = input.trim();
     if (!text || loading) return;
@@ -346,6 +398,9 @@ export default function VibeCoder() {
     setMessages(prev => [...prev, { role: 'user', text, time: now() }]);
     setInput('');
     setLoading(true);
+    setStatusMessage('Initiating agentic run...');
+    setPushSuccess(null);
+    setPushError(null);
 
     try {
       const history = messages.map(m => ({
@@ -359,6 +414,7 @@ export default function VibeCoder() {
         body: JSON.stringify({
           model: 'ar-neural-v2',
           useGitHubTools: githubStatus?.connected ?? false,
+          stream: true,
           messages: [
             { role: 'system', content: JOYI_SYSTEM },
             ...history,
@@ -367,34 +423,113 @@ export default function VibeCoder() {
         }),
       });
 
-      const data = await resp.json();
-
       if (!resp.ok) {
-        throw new Error(typeof data?.error === 'string' ? data.error : data?.error?.message || `API ${resp.status}`);
+        const errData = await resp.json().catch(() => ({}));
+        throw new Error(errData?.error || `API ${resp.status}`);
       }
 
-      const reply = data?.choices?.[0]?.message?.content;
-      if (!reply) throw new Error('Empty response from AI engine.');
+      const reader = resp.body?.getReader();
+      if (!reader) throw new Error('Response stream not readable.');
 
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      // Initialize assistant message
       setMessages(prev => [...prev, {
         role: 'assistant',
-        text: reply,
+        text: '',
         time: now(),
-        toolCalls: data.toolCallLog || [],
+        toolCalls: [],
       }]);
 
-      // Refresh commits after any write operations
-      if (data.toolCallLog?.some((t: any) => t.name === 'github_update_file' || t.name === 'github_create_pr')) {
-        setSidebarTab('commits');
+      let fullText = '';
+      let toolCallLog: any[] = [];
+      let isDone = false;
+
+      while (!isDone) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+          if (trimmed.startsWith('data: ')) {
+            const dataStr = trimmed.slice(6);
+            try {
+              const event = JSON.parse(dataStr);
+              if (event.type === 'text') {
+                fullText += event.content;
+                setMessages(prev => {
+                  const copy = [...prev];
+                  const last = copy[copy.length - 1];
+                  if (last && last.role === 'assistant') {
+                    last.text = fullText;
+                  }
+                  return copy;
+                });
+              } else if (event.type === 'status') {
+                setStatusMessage(event.message);
+              } else if (event.type === 'tool_end') {
+                toolCallLog.push(event);
+                setMessages(prev => {
+                  const copy = [...prev];
+                  const last = copy[copy.length - 1];
+                  if (last && last.role === 'assistant') {
+                    last.toolCalls = [...toolCallLog];
+                  }
+                  return copy;
+                });
+              } else if (event.type === 'file_updated') {
+                setChangedFiles(prev => Array.from(new Set([...prev, event.path])));
+                if (selectedFile === event.path) {
+                  viewFile(event.path);
+                }
+              } else if (event.type === 'done') {
+                isDone = true;
+                setStatusMessage('');
+                if (event.toolCallLog) {
+                  toolCallLog = event.toolCallLog;
+                }
+                setMessages(prev => {
+                  const copy = [...prev];
+                  const last = copy[copy.length - 1];
+                  if (last && last.role === 'assistant') {
+                    last.toolCalls = toolCallLog;
+                  }
+                  return copy;
+                });
+              } else if (event.type === 'error') {
+                throw new Error(event.error);
+              }
+            } catch (err) {
+              // Ignore
+            }
+          }
+        }
       }
+
     } catch (err: any) {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        text: `*[Something broke — ${err.message}]*\n\nTry again?`,
-        time: now(),
-      }]);
+      setMessages(prev => {
+        const copy = [...prev];
+        const last = copy[copy.length - 1];
+        if (last && last.role === 'assistant' && !last.text) {
+          last.text = `*[Something broke — ${err.message}]*\n\nTry again?`;
+        } else {
+          copy.push({
+            role: 'assistant',
+            text: `*[Something broke — ${err.message}]*\n\nTry again?`,
+            time: now(),
+          });
+        }
+        return copy;
+      });
     } finally {
       setLoading(false);
+      setStatusMessage('');
       inputRef.current?.focus();
     }
   };
@@ -403,36 +538,19 @@ export default function VibeCoder() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
   };
 
-  return (
-    <div className="min-h-screen bg-[#04060a] text-white flex flex-col" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-      {/* ── Top bar ── */}
-      <header className="h-12 flex items-center justify-between px-5 border-b border-white/5 bg-black/40 backdrop-blur-xl shrink-0 z-20">
-        <div className="flex items-center gap-4">
-          <Link to="/cms" className="flex items-center gap-2 text-white/30 hover:text-white transition-colors text-[11px] font-mono uppercase tracking-widest">
-            <ArrowLeft size={14} /> CMS
-          </Link>
-          <span className="text-white/10">|</span>
-          <div className="flex items-center gap-2">
-            <Zap size={13} className="text-cyan-400" />
-            <span className="text-[11px] font-mono uppercase tracking-widest text-white/60">Joyi Vibe Coder</span>
-          </div>
+  if (authLoading || !isAdmin) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#07070c] text-white">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="animate-spin text-cyan-400" size={24} />
+          <span className="text-[11px] font-mono text-cyan-400/60 uppercase tracking-widest animate-pulse">Authenticating Admin...</span>
         </div>
+      </div>
+    );
+  }
 
-        {/* GitHub status pill */}
-        <div className={cn(
-          'flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-mono uppercase tracking-widest border',
-          githubStatus?.connected
-            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-            : 'bg-red-500/10 border-red-500/20 text-red-400'
-        )}>
-          {githubStatus?.connected ? <Wifi size={9} /> : <WifiOff size={9} />}
-          {githubStatus === null
-            ? 'Connecting…'
-            : githubStatus.connected
-              ? <a href={githubStatus.url} target="_blank" rel="noopener noreferrer" className="hover:underline">{githubStatus.repo}</a>
-              : 'GitHub Not Connected'}
-        </div>
-      </header>
+  return (
+    <div className="min-h-screen bg-[#04060a] text-white flex flex-col pt-14" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
 
       {/* ── No token banner ── */}
       <AnimatePresence>
@@ -459,41 +577,88 @@ export default function VibeCoder() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── Left sidebar: File browser + Commits ── */}
-        <aside className="w-64 border-r border-white/5 flex flex-col shrink-0 bg-black/20 overflow-hidden">
-          {/* Sidebar tabs */}
-          <div className="flex border-b border-white/5 shrink-0">
-            {(['files', 'commits'] as const).map(tab => (
-              <button key={tab} onClick={() => setSidebarTab(tab)}
-                className={cn(
-                  'flex-1 py-2.5 text-[9px] font-mono uppercase tracking-widest transition-colors',
-                  sidebarTab === tab ? 'text-cyan-400 border-b border-cyan-400' : 'text-white/20 hover:text-white/40'
-                )}>
-                {tab === 'files' ? <><Folder size={9} className="inline mr-1" />Files</> : <><GitCommit size={9} className="inline mr-1" />Commits</>}
-              </button>
-            ))}
-          </div>
+        <AnimatePresence initial={false}>
+          {leftSidebarOpen && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 256, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="border-r border-white/5 flex flex-col shrink-0 bg-black/20 overflow-hidden"
+            >
+              {/* Sidebar tabs */}
+              <div className="flex border-b border-white/5 shrink-0 items-center justify-between">
+                <div className="flex flex-1">
+                  {(['files', 'commits'] as const).map(tab => (
+                    <button key={tab} onClick={() => setSidebarTab(tab)}
+                      className={cn(
+                        'flex-1 py-2.5 text-[9px] font-mono uppercase tracking-widest transition-colors',
+                        sidebarTab === tab ? 'text-cyan-400 border-b border-cyan-400' : 'text-white/20 hover:text-white/40'
+                      )}>
+                      {tab === 'files' ? <><Folder size={9} className="inline mr-1" />Files</> : <><GitCommit size={9} className="inline mr-1" />Commits</>}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setLeftSidebarOpen(false)} className="px-3 py-2 text-white/20 hover:text-white/50 shrink-0">
+                  <ArrowLeft size={12} />
+                </button>
+              </div>
 
-          {sidebarTab === 'files' ? (
-            <FileTree onSelect={viewFile} />
-          ) : (
-            <CommitList />
-          )}
+              {sidebarTab === 'files' ? (
+                <FileTree onSelect={viewFile} />
+              ) : (
+                <CommitList />
+              )}
 
-          {/* Repo info footer */}
-          {githubStatus?.connected && (
-            <div className="border-t border-white/5 px-4 py-3 shrink-0">
-              <a href={githubStatus.url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[10px] font-mono text-white/20 hover:text-cyan-400 transition-colors">
-                <Globe size={10} />
-                <span className="truncate">{githubStatus.repo}</span>
-                <ExternalLink size={8} className="shrink-0" />
-              </a>
-            </div>
+              {/* Repo info footer */}
+              {githubStatus?.connected && (
+                <div className="border-t border-white/5 px-4 py-3 shrink-0">
+                  <a href={githubStatus.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-[10px] font-mono text-white/20 hover:text-cyan-400 transition-colors">
+                    <Globe size={10} />
+                    <span className="truncate">{githubStatus.repo}</span>
+                    <ExternalLink size={8} className="shrink-0" />
+                  </a>
+                </div>
+              )}
+            </motion.aside>
           )}
-        </aside>
+        </AnimatePresence>
 
         {/* ── Center: Chat area ── */}
         <main className="flex-1 flex flex-col overflow-hidden">
+          
+          {/* Header Panel Controls */}
+          <div className="px-6 py-3 bg-black/10 border-b border-white/5 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              {!leftSidebarOpen && (
+                <button
+                  onClick={() => setLeftSidebarOpen(true)}
+                  className="bg-white/5 border border-white/10 hover:border-cyan-500/30 px-3 py-1.5 rounded-xl hover:scale-105 transition-all text-cyan-400 flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider"
+                >
+                  <FolderOpen size={11} />
+                  Show Explorer
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase flex items-center gap-1">
+                <Zap size={9} className="animate-pulse" /> Joyi Vibe Coder Studio
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {!rightSidebarOpen && (
+                <button
+                  onClick={() => setRightSidebarOpen(true)}
+                  className="bg-white/5 border border-white/10 hover:border-cyan-500/30 px-3 py-1.5 rounded-xl hover:scale-105 transition-all text-cyan-400 flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider"
+                >
+                  <Code size={11} />
+                  Show Previewer
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
             {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
@@ -502,10 +667,104 @@ export default function VibeCoder() {
                 <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-1">
                   <Bot size={14} className="text-cyan-400" />
                 </div>
-                <ThinkingDots />
+                <div className="flex flex-col gap-1.5">
+                  <ThinkingDots />
+                  {statusMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/5 border border-cyan-500/10 px-3 py-1.5 rounded-lg flex items-center gap-2 w-fit animate-pulse"
+                    >
+                      <Loader2 size={10} className="animate-spin" />
+                      <span>{statusMessage}</span>
+                    </motion.div>
+                  )}
+                </div>
               </div>
             )}
           </div>
+
+          {/* Floating Git Push Panel (shown when local changes are pending) */}
+          <AnimatePresence>
+            {changedFiles.length > 0 && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 20, opacity: 0 }}
+                className="mx-6 my-2 p-4 bg-gradient-to-r from-emerald-950/40 to-cyan-950/40 border border-emerald-500/20 rounded-2xl flex flex-col gap-3 shadow-2xl relative overflow-hidden backdrop-blur-md"
+              >
+                {/* Decorative cyber grid line */}
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-50" />
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <GitBranch className="text-emerald-400 w-4 h-4 animate-pulse" />
+                    <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
+                      Local Changes Detected
+                    </span>
+                    <span className="bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-mono text-emerald-300 px-1.5 py-0.5 rounded-full">
+                      {changedFiles.length} File{changedFiles.length > 1 ? 's' : ''} Modified
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setChangedFiles([])}
+                    className="text-white/20 hover:text-white/50 text-[10px] font-mono hover:underline"
+                  >
+                    Clear Status
+                  </button>
+                </div>
+
+                {/* List of files changed */}
+                <div className="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto custom-scrollbar">
+                  {changedFiles.map(f => (
+                    <span key={f} className="text-[9px] font-mono px-2 py-0.5 bg-white/5 border border-white/5 rounded text-white/60">
+                      {f}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Commit Input & Action Button */}
+                <div className="flex flex-col sm:flex-row gap-2 mt-1">
+                  <input
+                    type="text"
+                    placeholder="Enter custom commit message..."
+                    value={customCommitMessage}
+                    onChange={e => setCustomCommitMessage(e.target.value)}
+                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/20 outline-none focus:border-emerald-500/30 transition-colors font-mono"
+                  />
+                  <button
+                    onClick={handleGitPush}
+                    disabled={pushLoading}
+                    className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/20 disabled:text-white/20 text-[#04060a] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0"
+                  >
+                    {pushLoading ? (
+                      <>
+                        <Loader2 size={12} className="animate-spin" />
+                        Pushing...
+                      </>
+                    ) : (
+                      <>
+                        <GitCommit size={12} />
+                        Push to GitHub
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Status messages */}
+                {pushSuccess && (
+                  <p className="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                    <CheckCircle2 size={11} /> {pushSuccess}
+                  </p>
+                )}
+                {pushError && (
+                  <p className="text-[10px] font-mono text-red-400 flex items-center gap-1.5 mt-0.5">
+                    <AlertCircle size={11} /> {pushError}
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Input */}
           <div className="p-4 border-t border-white/5 bg-black/20 shrink-0">
@@ -556,40 +815,55 @@ export default function VibeCoder() {
         </main>
 
         {/* ── Right panel: File viewer ── */}
-        <aside className="w-80 border-l border-white/5 flex flex-col shrink-0 bg-black/10 overflow-hidden">
-          <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between shrink-0">
-            <span className="text-[9px] font-mono uppercase tracking-widest text-white/20">
-              {selectedFile ? selectedFile : 'File Viewer'}
-            </span>
-            {selectedFile && (
-              <a
-                href={`https://github.com/${githubStatus?.repo || 'samiunarno/Digital-Backend'}/blob/main/${selectedFile}`}
-                target="_blank" rel="noopener noreferrer"
-                className="text-white/20 hover:text-cyan-400 transition-colors"
-              >
-                <ExternalLink size={11} />
-              </a>
-            )}
-          </div>
-          <div className="flex-1 overflow-auto scrollbar-hide">
-            {!selectedFile && (
-              <div className="h-full flex flex-col items-center justify-center gap-3 text-center px-6">
-                <FileCode size={32} className="text-white/10" />
-                <p className="text-[11px] font-mono text-white/20">Click any file in the tree to preview it here</p>
+        <AnimatePresence initial={false}>
+          {rightSidebarOpen && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 320, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="border-l border-white/5 flex flex-col shrink-0 bg-black/10 overflow-hidden"
+            >
+              <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between shrink-0">
+                <span className="text-[9px] font-mono uppercase tracking-widest text-white/20 truncate max-w-[150px]">
+                  {selectedFile ? selectedFile : 'File Viewer'}
+                </span>
+                <div className="flex items-center gap-2">
+                  {selectedFile && (
+                    <a
+                      href={`https://github.com/${githubStatus?.repo || 'dongxiaoxuan/Digital-Backend'}/blob/main/${selectedFile}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="text-white/20 hover:text-cyan-400 transition-colors"
+                    >
+                      <ExternalLink size={11} />
+                    </a>
+                  )}
+                  <button onClick={() => setRightSidebarOpen(false)} className="text-white/20 hover:text-white/50 p-1">
+                    <XCircle size={12} />
+                  </button>
+                </div>
               </div>
-            )}
-            {selectedFile && fileLoading && (
-              <div className="flex items-center justify-center h-32">
-                <Loader2 size={18} className="animate-spin text-white/20" />
+              <div className="flex-1 overflow-auto scrollbar-hide">
+                {!selectedFile && (
+                  <div className="h-full flex flex-col items-center justify-center gap-3 text-center px-6">
+                    <FileCode size={32} className="text-white/10" />
+                    <p className="text-[11px] font-mono text-white/20">Click any file in the tree to preview it here</p>
+                  </div>
+                )}
+                {selectedFile && fileLoading && (
+                  <div className="flex items-center justify-center h-32">
+                    <Loader2 size={18} className="animate-spin text-white/20" />
+                  </div>
+                )}
+                {selectedFile && !fileLoading && fileContent !== null && (
+                  <pre className="text-[10px] font-mono text-white/50 p-4 leading-relaxed overflow-x-auto whitespace-pre-wrap break-words">
+                    {fileContent}
+                  </pre>
+                )}
               </div>
-            )}
-            {selectedFile && !fileLoading && fileContent !== null && (
-              <pre className="text-[10px] font-mono text-white/50 p-4 leading-relaxed overflow-x-auto whitespace-pre-wrap break-words">
-                {fileContent}
-              </pre>
-            )}
-          </div>
-        </aside>
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

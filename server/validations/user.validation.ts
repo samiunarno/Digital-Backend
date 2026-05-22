@@ -13,8 +13,8 @@ const passwordSchema = z.string()
   .regex(/[0-9]/, 'Password must contain at least one number')
   .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character');
 
-const roleSchema = z.enum(['admin', 'editor'], {
-  message: 'Role must be either admin or editor',
+const roleSchema = z.enum(['admin', 'editor', 'user'], {
+  message: 'Role must be either admin, editor or user',
 });
 
 const paramsSchema = z.object({

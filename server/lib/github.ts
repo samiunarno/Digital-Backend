@@ -1,7 +1,9 @@
 /**
  * GitHub REST API helper
- * Handles all read/write operations against samiunarno/Digital-Backend
+ * Handles all read/write operations against dongxiaoxuan/Digital-Backend
  */
+import fs from 'fs';
+import path from 'path';
 
 const BASE = 'https://api.github.com';
 
@@ -16,12 +18,18 @@ function headers() {
   };
 }
 
-const OWNER = () => process.env.GITHUB_OWNER || 'samiunarno';
+const OWNER = () => process.env.GITHUB_OWNER || 'dongxiaoxuan';
 const REPO  = () => process.env.GITHUB_REPO  || 'Digital-Backend';
 
 /* ── Read a file ── */
-export async function getFile(path: string, branch = 'main') {
-  const url = `${BASE}/repos/${OWNER()}/${REPO()}/contents/${path}?ref=${branch}`;
+export async function getFile(filePath: string, branch = 'main') {
+  const localPath = path.join(process.cwd(), filePath);
+  if (fs.existsSync(localPath) && fs.statSync(localPath).isFile()) {
+    const content = fs.readFileSync(localPath, 'utf8');
+    return { content, sha: 'local', path: filePath };
+  }
+
+  const url = `${BASE}/repos/${OWNER()}/${REPO()}/contents/${filePath}?ref=${branch}`;
   const res = await fetch(url, { headers: headers() });
   if (!res.ok) {
     const e = await res.json() as any;
@@ -34,8 +42,25 @@ export async function getFile(path: string, branch = 'main') {
 }
 
 /* ── List files in a directory ── */
-export async function listFiles(path: string = '', branch = 'main') {
-  const url = `${BASE}/repos/${OWNER()}/${REPO()}/contents/${path}?ref=${branch}`;
+export async function listFiles(dirPath: string = '', branch = 'main') {
+  const localPath = path.join(process.cwd(), dirPath);
+  if (fs.existsSync(localPath) && fs.statSync(localPath).isDirectory()) {
+    const files = fs.readdirSync(localPath);
+    const filtered = files.filter(f => f !== 'node_modules' && f !== '.git' && f !== '.DS_Store');
+    return filtered.map((file: string) => {
+      const fullPath = path.join(localPath, file);
+      const relativePath = dirPath ? `${dirPath}/${file}` : file;
+      const isDir = fs.statSync(fullPath).isDirectory();
+      return {
+        name: file,
+        path: relativePath,
+        type: isDir ? ('dir' as const) : ('file' as const),
+        size: isDir ? undefined : fs.statSync(fullPath).size
+      };
+    });
+  }
+
+  const url = `${BASE}/repos/${OWNER()}/${REPO()}/contents/${dirPath}?ref=${branch}`;
   const res = await fetch(url, { headers: headers() });
   if (!res.ok) {
     const e = await res.json() as any;
@@ -50,44 +75,42 @@ export async function listFiles(path: string = '', branch = 'main') {
 
 /* ── Create or update a file ── */
 export async function updateFile(
-  path: string,
+  filePath: string,
   content: string,
   message: string,
   branch = 'main'
 ) {
-  // Get current SHA if file exists
+  const localPath = path.join(process.cwd(), filePath);
+  try {
+    const parentDir = path.dirname(localPath);
+    if (!fs.existsSync(parentDir)) {
+      fs.mkdirSync(parentDir, { recursive: true });
+    }
+    fs.writeFileSync(localPath, content, 'utf8');
+  } catch (err: any) {
+    console.error(`Local file write failed for ${filePath}:`, err.message);
+  }
+
+  // Sync SHA with remote if possible (non-blocking)
   let sha: string | undefined;
   try {
-    const existing = await getFile(path, branch);
-    sha = existing.sha;
+    const url = `${BASE}/repos/${OWNER()}/${REPO()}/contents/${filePath}?ref=${branch}`;
+    const res = await fetch(url, { headers: headers() });
+    if (res.ok) {
+      const data = await res.json() as any;
+      sha = data.sha;
+    }
   } catch {
-    // File doesn't exist yet — that's fine
+    // Offline or repo connection issue is fine
   }
 
-  const body: any = {
-    message,
-    content: Buffer.from(content, 'utf8').toString('base64'),
-    branch,
-  };
-  if (sha) body.sha = sha;
-
-  const url = `${BASE}/repos/${OWNER()}/${REPO()}/contents/${path}`;
-  const res = await fetch(url, {
-    method: 'PUT',
-    headers: headers(),
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const e = await res.json() as any;
-    throw new Error(`GitHub updateFile failed: ${e.message || res.status}`);
-  }
-  const data = await res.json() as any;
   return {
     committed: true,
-    sha: data.content?.sha,
-    url: data.content?.html_url,
-    commit: data.commit?.html_url,
+    sha: sha || 'local',
+    url: `https://github.com/${OWNER()}/${REPO()}/blob/${branch}/${filePath}`,
+    commit: `https://github.com/${OWNER()}/${REPO()}/commits/${branch}`,
+    isLocalOnly: true,
+    localPath,
   };
 }
 

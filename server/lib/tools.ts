@@ -1,12 +1,12 @@
 /**
  * Tool definitions for Joyi's agentic loop.
- * These are sent to GLM-4 as function tools so it can
+ * These are sent to Joyi AI AR-2 as function tools so it can
  * decide when to read/write GitHub files autonomously.
  */
 
 import * as GitHub from './github.js';
 
-/* ── GLM-4 / OpenAI-compatible tool definitions ── */
+/* ── Joyi AI AR-2 / OpenAI-compatible tool definitions ── */
 export const GITHUB_TOOLS = [
   {
     type: 'function',

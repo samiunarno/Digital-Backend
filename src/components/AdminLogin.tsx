@@ -191,10 +191,14 @@ export default function AdminLogin() {
       });
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('isAdmin', 'true');
+        localStorage.setItem('isAdmin', data.user.role === 'admin' ? 'true' : 'false');
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/cms');
+        if (data.user.role === 'admin') {
+          navigate('/cms');
+        } else {
+          navigate('/ai');
+        }
       } else {
         // Handle all error response shapes from the server
         setError(data.message || data.error || data.status || 'Invalid credentials. Please try again.');
@@ -263,7 +267,7 @@ export default function AdminLogin() {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold uppercase tracking-tighter text-white">
-                    Admin <span className="text-sky-400">Authentication</span>
+                    Joyi <span className="text-sky-400">Authentication</span>
                   </h1>
                   <p className="text-[10px] font-mono text-white/30 mt-0.5 uppercase tracking-widest">
                     {bootText}<BlinkCursor />

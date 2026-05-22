@@ -51,7 +51,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
   const newUser = await User.create({
     username,
     password,
-    role: role || 'admin' // Default to admin for this portfolio app
+    role: role || 'user' // Default to user for safety
   });
 
   const token = signToken(newUser._id.toString());

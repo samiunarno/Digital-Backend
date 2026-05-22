@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Image as ImageIcon, Send, Sparkles, Bot, User2, Zap, Activity, Cpu, Database, Wifi, Server, MemoryStick, Copy, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowLeft, Image as ImageIcon, Send, Sparkles, Bot, User2, Zap, Activity, Cpu, Database, Wifi, Server, MemoryStick, Copy, Check, Trash2, Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils'; // Make sure this path exists
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion'; // Fixed import
@@ -33,6 +33,20 @@ const AnimatedBackground = () => (
         border-radius: 50%;
         filter: blur(80px);
         pointer-events: none;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(6, 182, 212, 0.3);
       }
     `}</style>
     <div className="absolute inset-0 ai-bg" />
@@ -198,6 +212,20 @@ const systemInstruction = `...`; // Your system instruction content here (trunca
 
 /* ──────────────── Main Component ──────────────── */
 export default function AIChatPage() {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user) {
+      navigate('/admin');
+    } else {
+      setIsAuthenticated(true);
+    }
+    setAuthLoading(false);
+  }, [navigate]);
+
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string; time: string }>>([]);
   const [input, setInput] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -216,9 +244,17 @@ export default function AIChatPage() {
   const storageKey = 'joyi-ai-threads-v1';
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Listen for global navbar sidebar toggles
+  useEffect(() => {
+    const handleToggle = () => setSidebarOpen(prev => !prev);
+    window.addEventListener('toggle-ai-sidebar', handleToggle);
+    return () => window.removeEventListener('toggle-ai-sidebar', handleToggle);
+  }, []);
 
   // Load threads from localStorage
   useEffect(() => {
@@ -280,19 +316,41 @@ export default function AIChatPage() {
     persistThreads(next);
   };
 
-  const saveCurrentMessageToThread = (nextMessages: typeof messages, maybeNewTitle?: string) => {
-    if (!activeThreadId) return;
+  const saveCurrentMessageToThread = (nextMessages: typeof messages, maybeNewTitle?: string, overrideThreadId?: string) => {
+    const targetId = overrideThreadId || activeThreadId;
+    if (!targetId) return;
     const nowTs = Date.now();
-    const next = threads.map(t => {
-      if (t.id !== activeThreadId) return t;
-      return {
-        ...t,
-        title: maybeNewTitle && t.title === 'New chat' ? maybeNewTitle : t.title,
-        updatedAt: nowTs,
-        messages: nextMessages,
-      };
+    setThreads(prevThreads => {
+      const next = prevThreads.map(t => {
+        if (t.id !== targetId) return t;
+        return {
+          ...t,
+          title: maybeNewTitle && t.title === 'New chat' ? maybeNewTitle : t.title,
+          updatedAt: nowTs,
+          messages: nextMessages,
+        };
+      });
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(next));
+      } catch (err) {
+        console.error(err);
+      }
+      return next;
     });
+  };
+
+  const deleteThread = (idToDelete: string) => {
+    const next = threads.filter(t => t.id !== idToDelete);
     persistThreads(next);
+    if (activeThreadId === idToDelete) {
+      if (next.length > 0) {
+        setActiveThreadId(next[0].id);
+        setMessages(next[0].messages);
+      } else {
+        setActiveThreadId(null);
+        setMessages([]);
+      }
+    }
   };
 
   const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -301,9 +359,30 @@ export default function AIChatPage() {
     if (!input.trim() && !selectedImage && selectedFiles.length === 0) return;
 
     const userMsg = input.trim();
+    let currentThreadId = activeThreadId;
+
+    if (!currentThreadId) {
+      currentThreadId = `chat_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      const newThread: ChatThread = {
+        id: currentThreadId,
+        title: userMsg.slice(0, 30) || 'New chat',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        messages: [],
+      };
+      setThreads(prev => {
+        const next = [newThread, ...prev];
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      setActiveThreadId(currentThreadId);
+    }
+
     const nextUserMessages = [...messages, { role: 'user' as const, text: userMsg, time: now() }];
     setMessages(nextUserMessages);
-    saveCurrentMessageToThread(nextUserMessages);
+    saveCurrentMessageToThread(nextUserMessages, userMsg.slice(0, 30), currentThreadId);
 
     setInput('');
     setIsLoading(true);
@@ -350,7 +429,7 @@ export default function AIChatPage() {
         const assistantMsg = data?.reply || '...';
         const nextMessages = [...nextUserMessages, { role: 'assistant' as const, text: assistantMsg, time: now() }];
         setMessages(nextMessages);
-        saveCurrentMessageToThread(nextMessages);
+        saveCurrentMessageToThread(nextMessages, undefined, currentThreadId);
         return;
       }
 
@@ -360,7 +439,7 @@ export default function AIChatPage() {
 
       if (selectedImage) {
         modelName = 'ar-neural-v2-vision';
-        // Convert File to base64 data URL for GLM-4V image_url format
+        // Convert File to base64 data URL for Joyi Vision AR-2 image_url format
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
@@ -402,13 +481,13 @@ export default function AIChatPage() {
 
       const nextMessages = [...nextUserMessages, { role: 'assistant' as const, text: reply, time: now() }];
       setMessages(nextMessages);
-      saveCurrentMessageToThread(nextMessages);
+      saveCurrentMessageToThread(nextMessages, undefined, currentThreadId);
     } catch (error: any) {
       console.error('Chat error:', error);
       const errorMsg = error?.message || 'Unknown error';
       const nextErrorMessages = [...nextUserMessages, { role: 'assistant' as const, text: `⚠️ Error: ${errorMsg}`, time: now() }];
       setMessages(nextErrorMessages);
-      saveCurrentMessageToThread(nextErrorMessages);
+      saveCurrentMessageToThread(nextErrorMessages, undefined, currentThreadId);
     } finally {
       setIsLoading(false);
       setSelectedFiles([]);
@@ -417,220 +496,214 @@ export default function AIChatPage() {
     }
   };
 
+  if (authLoading || !isAuthenticated) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-black text-white">
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-[11px] font-mono text-cyan-400/60 uppercase tracking-widest animate-pulse">Authenticating User...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative flex h-screen overflow-hidden text-white">
+    <div className="relative flex h-screen overflow-hidden text-white pt-14 bg-black">
       <AnimatedBackground />
 
+      {/* Mobile Sidebar Backdrop Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── Sidebar ── */}
-      <aside className="relative z-10 w-72 hidden md:flex flex-col border-r border-white/10 bg-black/40 backdrop-blur-xl">
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 w-72 bg-[#080b11]/95 border-r border-white/10 flex flex-col transition-transform duration-300 md:static md:translate-x-0 md:flex md:bg-black/40 md:backdrop-blur-xl md:z-10",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         {/* Header */}
-        <div className="p-5 border-b border-white/10">
-          <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors mb-5">
-            <ArrowLeft size={18} />
-            <span className="font-mono uppercase text-xs tracking-widest">Portfolio</span>
-          </Link>
+        <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Zap size={18} className="text-white" />
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <Zap size={14} className="text-white animate-pulse" />
             </div>
             <div>
-              <h1 className="text-lg font-bold leading-tight">Joyi AI</h1>
-              <p className="text-[10px] text-cyan-400 font-mono uppercase tracking-wider">Neural Interface v2.0</p>
+              <h1 className="text-sm font-bold leading-tight">Joyi AI Chat</h1>
+              <p className="text-[9px] text-cyan-400/60 font-mono uppercase tracking-wider">AR-2 Neural Engine</p>
             </div>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+          >
+            <X size={14} />
+          </button>
         </div>
 
-        {/* System Status */}
-        <SidebarMetrics />
+        {/* Action Button: New Chat */}
+        <div className="p-4 border-b border-white/10">
+          <button
+            type="button"
+            onClick={() => {
+              createNewThread();
+              setSidebarOpen(false);
+            }}
+            className="w-full py-2.5 rounded-xl border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/15 transition-all text-xs font-mono font-bold text-cyan-400 flex items-center justify-center gap-2 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+          >
+            + New Chat
+          </button>
+        </div>
+
+        {/* Chat History List */}
+        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-3">
+          <p className="text-[9px] font-mono uppercase tracking-wider text-gray-500 px-2 mb-2">Saved Threads</p>
+          {threads.length === 0 ? (
+            <p className="text-xs font-mono text-gray-600 px-2 italic">No active threads</p>
+          ) : (
+            <div className="space-y-1.5">
+              {threads.map(t => (
+                <div
+                  key={t.id}
+                  className={cn(
+                    'group relative flex items-center justify-between rounded-xl border transition-all duration-200',
+                    t.id === activeThreadId
+                      ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300'
+                      : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.04] text-gray-300 hover:text-white hover:border-white/10'
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveThreadId(t.id);
+                      setSidebarOpen(false);
+                    }}
+                    className="flex-1 text-left px-3.5 py-2.5 text-xs font-mono truncate pr-8"
+                  >
+                    <div className="truncate font-medium">{t.title || 'Chat'}</div>
+                    <div className="text-[8px] text-gray-500 mt-0.5">
+                      {new Date(t.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteThread(t.id);
+                    }}
+                    className="absolute right-2 opacity-0 group-hover:opacity-100 p-1.5 text-gray-500 hover:text-rose-400 rounded-lg hover:bg-white/5 transition-all duration-150"
+                    title="Delete Thread"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Collapsible/Compact System Status metrics */}
+        <div className="max-h-48 overflow-y-auto border-t border-white/10 bg-black/20 custom-scrollbar">
+          <SidebarMetrics />
+        </div>
 
         {/* Footer */}
-        <div className="p-5 border-t border-white/10">
-          <p className="text-[9px] text-gray-600 font-mono text-center">Powered by AR-2</p>
+        <div className="p-3 bg-black/40 border-t border-white/10">
+          <p className="text-[8px] text-gray-600 font-mono text-center">Powered by Joyi AR-2 Engine</p>
         </div>
       </aside>
 
       {/* ── Chat Area ── */}
-      <section className="relative z-10 flex-1 flex flex-col">
-        {/* Top bar */}
-        <header className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-black/30 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex">
-              <button
-                type="button"
-                onClick={createNewThread}
-                className="px-3 py-2 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] transition-colors text-[12px] font-mono text-gray-200 flex items-center gap-2"
-              >
-                + New chat
-              </button>
-            </div>
-
-            <div className="flex sm:hidden">
-              <button
-                type="button"
-                onClick={createNewThread}
-                className="p-2 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] transition-colors text-[12px] font-mono text-gray-200"
-                aria-label="New chat"
-                title="New chat"
-              >
-                +
-              </button>
-            </div>
-
-            <Link to="/" className="md:hidden text-gray-400 hover:text-cyan-400 transition-colors mr-2">
-              <ArrowLeft size={20} />
-            </Link>
-            <Bot className="text-cyan-400" size={22} />
-            <div>
-              <h2 className="text-sm font-semibold">Joyi – Neural Interface</h2>
-              <p className="text-[10px] text-gray-500 font-mono">node:active · AR-2 · processing</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                window.location.href = "/project-builder";
-              }}
-              className="px-3 py-2 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] transition-colors text-[12px] font-mono text-gray-200 flex items-center gap-2"
-              title="Open the Google-vibe AI Project Builder"
-            >
-              <Sparkles size={16} />
-              Vibe Code
-            </button>
-
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-gray-500 font-mono hidden sm:inline">LIVE</span>
-            </div>
-          </div>
-        </header>
-
-        {/* History + Messages */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="hidden md:block px-6 py-4 border-b border-white/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">History</h3>
-                <p className="text-[10px] text-gray-500 font-mono">{threads.length} chats stored</p>
-              </div>
-              <button
-                type="button"
-                onClick={createNewThread}
-                className="px-3 py-2 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] transition-colors text-[12px] font-mono text-gray-200"
-              >
-                + New chat
-              </button>
-            </div>
-
-            {threads.length > 0 && (
-              <div className="mt-3 flex flex-col gap-2">
-                {threads.slice(0, 8).map(t => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setActiveThreadId(t.id)}
+      <section className="relative z-10 flex-1 flex flex-col min-h-0 bg-transparent">
+        {/* Conversations Container */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar">
+          {messages.length === 0 && !isLoading ? (
+            <WelcomeScreen />
+          ) : (
+            <div className="flex flex-col">
+              <AnimatePresence>
+                {messages.map((msg, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
                     className={cn(
-                      'text-left px-3 py-2 rounded-xl border transition-colors text-[12px] font-mono',
-                      t.id === activeThreadId
-                        ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300'
-                        : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05] text-gray-200'
+                      'w-full px-4 sm:px-6 py-5 border-b border-white/[0.04]',
+                      msg.role === 'assistant' ? 'bg-white/[0.02]' : 'bg-transparent'
                     )}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="truncate">{t.title || 'Chat'}</span>
-                      <span className="text-[10px] text-gray-500">
-                        {new Date(t.updatedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div ref={scrollRef} className="flex-1 overflow-y-auto">
-            {messages.length === 0 && !isLoading ? (
-              <WelcomeScreen />
-            ) : (
-              <div className="flex flex-col">
-                <AnimatePresence>
-                  {messages.map((msg, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className={cn(
-                        'w-full px-4 sm:px-6 py-5 border-b border-white/[0.04]',
-                        msg.role === 'assistant' ? 'bg-white/[0.02]' : 'bg-transparent'
-                      )}
-                    >
-                      <div className="max-w-3xl mx-auto flex gap-4">
-                        {/* Avatar */}
-                        <div className={cn(
-                          'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5',
-                          msg.role === 'assistant'
-                            ? 'bg-gradient-to-br from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/20'
-                            : 'bg-white/10 border border-white/20'
-                        )}>
-                          {msg.role === 'assistant' ? <Bot size={16} /> : <User2 size={16} className="text-gray-400" />}
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <span className="text-xs font-semibold text-white">
-                              {msg.role === 'assistant' ? 'Joyi' : 'You'}
-                            </span>
-                            <span className="text-[10px] text-gray-500 font-mono">{msg.time}</span>
-                          </div>
-                          <div className={cn(
-                            'text-sm leading-7 text-gray-200 prose prose-invert max-w-none',
-                            '[&_p]:mb-3 [&_p:last-child]:mb-0',
-                            '[&_strong]:text-white [&_strong]:font-semibold',
-                            '[&_em]:text-cyan-300 [&_em]:italic',
-                            '[&_code]:bg-white/10 [&_code]:text-cyan-300 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono',
-                            '[&_pre]:bg-black/40 [&_pre]:border [&_pre]:border-white/10 [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:my-3 [&_pre]:overflow-x-auto',
-                            '[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-300',
-                            '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ul]:my-2',
-                            '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_ol]:my-2',
-                            '[&_li]:text-gray-300',
-                            '[&_h1]:text-xl [&_h1]:font-bold [&_h1]:text-white [&_h1]:mt-4 [&_h1]:mb-2',
-                            '[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-white [&_h2]:mt-3 [&_h2]:mb-2',
-                            '[&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-white [&_h3]:mt-3 [&_h3]:mb-1',
-                            '[&_blockquote]:border-l-2 [&_blockquote]:border-cyan-500/40 [&_blockquote]:pl-4 [&_blockquote]:text-gray-400 [&_blockquote]:italic [&_blockquote]:my-2',
-                            '[&_a]:text-cyan-400 [&_a]:underline [&_a]:underline-offset-2',
-                            '[&_hr]:border-white/10 [&_hr]:my-4',
-                            '[&_table]:w-full [&_table]:my-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-gray-400 [&_th]:pb-2 [&_th]:border-b [&_th]:border-white/10 [&_td]:text-xs [&_td]:py-1.5 [&_td]:border-b [&_td]:border-white/5',
-                          )}>
-                            <ReactMarkdown>{msg.text}</ReactMarkdown>
-                          </div>
-                          {msg.role === 'assistant' && <CopyButton text={msg.text} />}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="w-full px-4 sm:px-6 py-5 bg-white/[0.02]"
-                  >
                     <div className="max-w-3xl mx-auto flex gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-cyan-500/20">
-                        <Bot size={16} />
+                      {/* Avatar */}
+                      <div className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5',
+                        msg.role === 'assistant'
+                          ? 'bg-gradient-to-br from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/20'
+                          : 'bg-white/10 border border-white/20'
+                      )}>
+                        {msg.role === 'assistant' ? <Bot size={16} /> : <User2 size={16} className="text-gray-400" />}
                       </div>
-                      <div className="pt-1">
-                        <TypingDots />
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-xs font-semibold text-white">
+                            {msg.role === 'assistant' ? 'Joyi' : 'You'}
+                          </span>
+                          <span className="text-[10px] text-gray-500 font-mono">{msg.time}</span>
+                        </div>
+                        <div className={cn(
+                          'text-sm leading-7 text-gray-200 prose prose-invert max-w-none',
+                          '[&_p]:mb-3 [&_p:last-child]:mb-0',
+                          '[&_strong]:text-white [&_strong]:font-semibold',
+                          '[&_em]:text-cyan-300 [&_em]:italic',
+                          '[&_code]:bg-white/10 [&_code]:text-cyan-300 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono',
+                          '[&_pre]:bg-black/40 [&_pre]:border [&_pre]:border-white/10 [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:my-3 [&_pre]:overflow-x-auto',
+                          '[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-300',
+                          '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ul]:my-2',
+                          '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_ol]:my-2',
+                          '[&_li]:text-gray-300',
+                          '[&_h1]:text-xl [&_h1]:font-bold [&_h1]:text-white [&_h1]:mt-4 [&_h1]:mb-2',
+                          '[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-white [&_h2]:mt-3 [&_h2]:mb-2',
+                          '[&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-white [&_h3]:mt-3 [&_h3]:mb-1',
+                          '[&_blockquote]:border-l-2 [&_blockquote]:border-cyan-500/40 [&_blockquote]:pl-4 [&_blockquote]:text-gray-400 [&_blockquote]:italic [&_blockquote]:my-2',
+                          '[&_a]:text-cyan-400 [&_a]:underline [&_a]:underline-offset-2',
+                          '[&_hr]:border-white/10 [&_hr]:my-4',
+                          '[&_table]:w-full [&_table]:my-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-gray-400 [&_th]:pb-2 [&_th]:border-b [&_th]:border-white/10 [&_td]:text-xs [&_td]:py-1.5 [&_td]:border-b [&_td]:border-white/5',
+                        )}>
+                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        </div>
+                        {msg.role === 'assistant' && <CopyButton text={msg.text} />}
                       </div>
                     </div>
                   </motion.div>
-                )}
-              </div>
-            )}
-          </div>
+                ))}
+              </AnimatePresence>
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="w-full px-4 sm:px-6 py-5 bg-white/[0.02]"
+                >
+                  <div className="max-w-3xl mx-auto flex gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-cyan-500/20">
+                      <Bot size={16} />
+                    </div>
+                    <div className="pt-1">
+                      <TypingDots />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* ── Input Bar ── */}

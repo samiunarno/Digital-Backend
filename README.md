@@ -50,7 +50,7 @@ AR_ENGINE_KEY='your_ar_neural_engine_key'
 
 # GitHub Live API Credentials
 GITHUB_TOKEN='ghp_your_personal_access_token_here'
-GITHUB_OWNER='samiunarno'
+GITHUB_OWNER='dongxiaoxuan'
 GITHUB_REPO='Digital-Backend'
 ```
 

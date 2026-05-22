@@ -31,7 +31,7 @@ export default function GitHubCommits({
     const fetchCommits = async () => {
       try {
         // Fetch from the Digital-Backend repository
-        const response = await fetch('https://api.github.com/repos/samiunarno/Digital-Backend/commits?per_page=' + limit);
+        const response = await fetch('https://api.github.com/repos/dongxiaoxuan/Digital-Backend/commits?per_page=' + limit);
         
         if (!response.ok) {
           throw new Error('Failed to fetch commits');
@@ -168,7 +168,7 @@ export default function GitHubCommits({
       </div>
       
       <a
-        href="https://github.com/samiunarno/Digital-Backend/commits"
+        href="https://github.com/dongxiaoxuan/Digital-Backend/commits"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2 text-accent hover:text-white transition-colors text-sm font-mono uppercase tracking-wider"

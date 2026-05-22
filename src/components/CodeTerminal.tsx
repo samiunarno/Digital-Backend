@@ -6,7 +6,7 @@ const COMMANDS = [
   { cmd: 'joyi build --production', output: 'Optimizing assets for production...' },
   { cmd: 'joyi deploy', output: 'Deployment successful. Node active.' },
   { cmd: 'cat config.json', output: '{ "status": "operational", "mode": "creative" }' },
-  { cmd: 'whoami', output: 'Joyi Arnouk // Full Stack Developer' },
+  { cmd: 'whoami', output: 'Dong Xiao Xuan // Full Stack Developer' },
 ];
 
 export default function CodeTerminal() {

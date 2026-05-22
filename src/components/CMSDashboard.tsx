@@ -87,8 +87,9 @@ export default function CMSDashboard() {
   const [users, setUsers] = useState<UserType[]>([]);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [showUserForm, setShowUserForm] = useState(false);
-  const [newUser, setNewUser] = useState({ username: '', password: '', role: 'editor' as 'admin' | 'editor' });
+  const [newUser, setNewUser] = useState({ username: '', password: '', role: 'editor' as 'admin' | 'editor' | 'user' });
   const [editingUser, setEditingUser] = useState<UserType | null>(null);
+  const [editPassword, setEditPassword] = useState('');
   const [replyingTo, setReplyingTo] = useState<MessageType | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [showTemplateForm, setShowTemplateForm] = useState(false);
@@ -153,50 +154,140 @@ export default function CMSDashboard() {
   }, [navigate]);
 
   const fetchUsers = async () => {
-    // Users are managed locally
-    const saved = localStorage.getItem('cms-users');
-    if (saved) {
-      try { setUsers(JSON.parse(saved)); } catch {}
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/users', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (response.ok && data.status === 'success') {
+        setUsers(data.data);
+      } else {
+        console.error('Failed to fetch users:', data);
+        setMessage({ type: 'error', text: data.error || data.message || 'Failed to fetch users.' });
+        setTimeout(() => setMessage(null), 3000);
+      }
+    } catch (err: any) {
+      console.error('Error fetching users:', err);
+      setMessage({ type: 'error', text: err.message || 'Failed to fetch users due to a network or server error.' });
+      setTimeout(() => setMessage(null), 3000);
     }
   };
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     if (!newUser.username || !newUser.password) {
       setMessage({ type: 'error', text: 'Username and password are required.' });
       setTimeout(() => setMessage(null), 3000);
       return;
     }
-    const newUserObj: UserType = {
-      _id: Date.now().toString(),
-      username: newUser.username,
-      role: newUser.role,
-      createdAt: new Date().toISOString(),
-    };
-    const updated = [...users, newUserObj];
-    setUsers(updated);
-    localStorage.setItem('cms-users', JSON.stringify(updated));
-    setMessage({ type: 'success', text: 'User added successfully!' });
-    setNewUser({ username: '', password: '', role: 'editor' });
-    setShowUserForm(false);
-    setTimeout(() => setMessage(null), 3000);
+    
+    // Password validation details for clear client-side UX
+    const pass = newUser.password;
+    if (pass.length < 8) {
+      setMessage({ type: 'error', text: 'Password must be at least 8 characters long.' });
+      setTimeout(() => setMessage(null), 4000);
+      return;
+    }
+    if (!/[a-z]/.test(pass) || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass) || !/[^a-zA-Z0-9]/.test(pass)) {
+      setMessage({ type: 'error', text: 'Password must contain lowercase, uppercase, number, and special character.' });
+      setTimeout(() => setMessage(null), 5000);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newUser)
+      });
+      const data = await response.json();
+      if (response.ok && data.status === 'success') {
+        setMessage({ type: 'success', text: 'User added successfully!' });
+        setNewUser({ username: '', password: '', role: 'editor' as 'admin' | 'editor' | 'user' });
+        setShowUserForm(false);
+        fetchUsers();
+      } else {
+        const errMsg = data.error || data.message || 'Failed to create user.';
+        setMessage({ type: 'error', text: errMsg });
+      }
+    } catch (err: any) {
+      console.error('Error creating user:', err);
+      setMessage({ type: 'error', text: err.message || 'Error communicating with the server.' });
+    }
+    setTimeout(() => setMessage(null), 4000);
   };
 
-  const handleUpdateUser = () => {
+  const handleUpdateUser = async () => {
     if (!editingUser) return;
-    const updated = users.map(u => u._id === editingUser._id ? editingUser : u);
-    setUsers(updated);
-    localStorage.setItem('cms-users', JSON.stringify(updated));
-    setMessage({ type: 'success', text: 'User updated successfully!' });
-    setEditingUser(null);
-    setTimeout(() => setMessage(null), 3000);
+    try {
+      const token = localStorage.getItem('token');
+      // If user provided a password field, validate it if set
+      if (editPassword) {
+        const pass = editPassword;
+        if (pass.length < 8 || !/[a-z]/.test(pass) || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass) || !/[^a-zA-Z0-9]/.test(pass)) {
+          setMessage({ type: 'error', text: 'Password must meet all complexity requirements.' });
+          setTimeout(() => setMessage(null), 4000);
+          return;
+        }
+      }
+
+      const response = await fetch(`/api/users/${editingUser._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          username: editingUser.username,
+          role: editingUser.role,
+          password: editPassword || undefined
+        })
+      });
+      const data = await response.json();
+      if (response.ok && data.status === 'success') {
+        setMessage({ type: 'success', text: 'User updated successfully!' });
+        setEditingUser(null);
+        setEditPassword('');
+        fetchUsers();
+      } else {
+        const errMsg = data.error || data.message || 'Failed to update user.';
+        setMessage({ type: 'error', text: errMsg });
+      }
+    } catch (err: any) {
+      console.error('Error updating user:', err);
+      setMessage({ type: 'error', text: err.message || 'Error communicating with the server.' });
+    }
+    setTimeout(() => setMessage(null), 4000);
   };
 
-  const handleDeleteUser = (id: string) => {
-    const updated = users.filter(u => u._id !== id);
-    setUsers(updated);
-    localStorage.setItem('cms-users', JSON.stringify(updated));
-    setMessage({ type: 'success', text: 'User deleted successfully!' });
-    setTimeout(() => setMessage(null), 3000);
+  const handleDeleteUser = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this user?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'User deleted successfully!' });
+        fetchUsers();
+      } else {
+        const data = await response.json().catch(() => ({}));
+        setMessage({ type: 'error', text: data.error || data.message || 'Failed to delete user.' });
+      }
+    } catch (err: any) {
+      console.error('Error deleting user:', err);
+      setMessage({ type: 'error', text: err.message || 'Error communicating with the server.' });
+    }
+    setTimeout(() => setMessage(null), 4000);
   };
 
   const hasUnsavedChanges = JSON.stringify(content) !== JSON.stringify(originalContent);
@@ -263,6 +354,12 @@ export default function CMSDashboard() {
     }
   }, [aiMessages]);
 
+  useEffect(() => {
+    if (activeTab === 'users') {
+      fetchUsers();
+    }
+  }, [activeTab]);
+
   const handleAiImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -313,7 +410,7 @@ GOLDEN RULES:
 5. Use Markdown naturally. Be warm, funny, sharp, opinionated, deeply caring. Always.
       `;
 
-      // Build history — only user/assistant roles for GLM-4
+      // Build history — only user/assistant roles for Joyi AI AR-2
       const historyMessages = aiMessages.slice(-8).map(m => ({
         role: m.role === 'model' ? 'assistant' : 'user',
         content: m.text
@@ -604,7 +701,7 @@ GOLDEN RULES:
                           {currentUser?.role === 'admin' && user.username !== currentUser.username && (
                             <div className="flex gap-2">
                               <button 
-                                onClick={() => setEditingUser(user)}
+                                onClick={() => { setEditingUser(user); setEditPassword(''); }}
                                 className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-muted hover:text-white transition-colors"
                               >
                                 <Edit3 size={14} />
@@ -672,6 +769,7 @@ GOLDEN RULES:
                                 onChange={(e) => setNewUser({...newUser, role: e.target.value as any})}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:outline-none focus:border-accent/50 transition-all appearance-none"
                               >
+                                <option value="user" className="bg-bg">User (AI only)</option>
                                 <option value="editor" className="bg-bg">Editor (Can edit content)</option>
                                 <option value="admin" className="bg-bg">Admin (Full control)</option>
                               </select>
@@ -731,9 +829,20 @@ GOLDEN RULES:
                                 onChange={(e) => setEditingUser({...editingUser, role: e.target.value as any})}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:outline-none focus:border-accent/50 transition-all appearance-none"
                               >
+                                <option value="user" className="bg-bg">User</option>
                                 <option value="editor" className="bg-bg">Editor</option>
                                 <option value="admin" className="bg-bg">Admin</option>
                               </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-mono uppercase tracking-widest text-muted ml-1">New Password (leave blank to keep unchanged)</label>
+                              <input 
+                                type="password"
+                                value={editPassword}
+                                onChange={(e) => setEditPassword(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:outline-none focus:border-accent/50 transition-all"
+                                placeholder="Min 8 chars (with uppercase/number/special)"
+                              />
                             </div>
                             <div className="flex gap-4 pt-4">
                               <button 

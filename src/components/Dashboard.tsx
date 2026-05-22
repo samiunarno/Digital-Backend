@@ -80,7 +80,7 @@ export default function Dashboard() {
           </div>
           
           <div className="flex gap-4">
-            <div className="bg-white/5 border border-white/10 p-4 rounded-xl backdrop-blur-md">
+            <div className="glass p-4 rounded-xl">
               <div className="flex items-center gap-3 mb-1">
                 <Activity size={16} className="text-accent animate-pulse" />
                 <span className="font-mono text-[10px] uppercase tracking-widest opacity-40">System_Status</span>
@@ -90,9 +90,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Analytics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl relative overflow-hidden group">
+          <div className="glass p-8 rounded-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <Users size={80} />
             </div>
@@ -109,7 +108,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl relative overflow-hidden group">
+          <div className="glass p-8 rounded-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <BarChart3 size={80} />
             </div>
@@ -123,7 +122,7 @@ export default function Dashboard() {
             <div className="text-[10px] text-muted uppercase tracking-widest">Cumulative Traffic</div>
           </div>
 
-          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl relative overflow-hidden group">
+          <div className="glass p-8 rounded-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <MessageSquare size={80} />
             </div>
@@ -152,7 +151,7 @@ export default function Dashboard() {
             <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
               <AnimatePresence initial={false}>
                 {messages.length === 0 ? (
-                  <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl opacity-40">
+                  <div className="text-center py-20 border border-dashed border-border rounded-2xl opacity-40">
                     <Mail size={40} className="mx-auto mb-4" />
                     <p className="font-mono text-[10px] uppercase tracking-widest">No messages yet</p>
                   </div>
@@ -166,7 +165,7 @@ export default function Dashboard() {
                       className={`p-6 rounded-2xl border cursor-pointer transition-all duration-300 ${
                         selectedMessage?.id === msg.id 
                           ? 'bg-accent border-accent text-bg' 
-                          : 'bg-white/5 border-white/10 hover:border-accent/30'
+                          : 'glass hover:border-accent/30'
                       }`}
                     >
                       <div className="flex justify-between items-start mb-4">
@@ -207,7 +206,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 h-full flex flex-col"
+                  className="glass rounded-3xl p-8 md:p-12 h-full flex flex-col"
                 >
                   <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
                     <div>
@@ -232,12 +231,12 @@ export default function Dashboard() {
 
                   <div className="flex-grow">
                     <div className="mono-label text-[10px] opacity-40 mb-4 uppercase">Message_Content</div>
-                    <div className="bg-bg/50 border border-white/5 p-8 rounded-2xl text-lg font-light leading-relaxed text-muted whitespace-pre-wrap">
+                    <div className="bg-bg/50 border border-border p-8 rounded-2xl text-lg font-light leading-relaxed text-muted whitespace-pre-wrap">
                       {selectedMessage.message}
                     </div>
                   </div>
 
-                  <div className="mt-12 pt-8 border-t border-white/5 flex justify-between items-center">
+                  <div className="mt-12 pt-8 border-t border-border flex justify-between items-center">
                     <div className="flex items-center gap-4">
                       <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
                       <span className="font-mono text-[10px] uppercase tracking-widest opacity-40">Secure_Transmission</span>
@@ -246,8 +245,8 @@ export default function Dashboard() {
                   </div>
                 </motion.div>
               ) : (
-                <div className="bg-white/5 border border-white/10 border-dashed rounded-3xl p-12 h-full flex flex-col items-center justify-center text-center opacity-40">
-                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
+                <div className="glass border-dashed rounded-3xl p-12 h-full flex flex-col items-center justify-center text-center opacity-40">
+                  <div className="w-20 h-20 bg-accent/5 border border-border rounded-full flex items-center justify-center mb-6">
                     <Mail size={32} />
                   </div>
                   <h3 className="text-2xl font-bold uppercase mb-2">Select a Message</h3>

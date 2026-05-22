@@ -93,6 +93,6 @@ export interface ReplyTemplate {
 export interface User {
   _id: string;
   username: string;
-  role: 'admin' | 'editor';
+  role: 'admin' | 'editor' | 'user';
   createdAt: string;
 }

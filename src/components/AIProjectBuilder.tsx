@@ -1,10 +1,9 @@
 import React, { useMemo, useRef, useState, useEffect } from "react";
 import { 
-  ArrowLeft, Bot, Copy, Download, FileCode, Folder, Sparkles, Wand2, 
-  Moon, Sun, Check, Code2, Layers, Zap, Palette, Eye, Activity,
-  Maximize2, Minimize2, Loader2
+  Bot, Copy, Download, FileCode, Folder, Sparkles, Wand2, 
+  Check, Code2, Layers, Zap, Palette, Eye, Activity,
+  Loader2
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -235,6 +234,30 @@ export default function AIProjectBuilder() {
     }
   };
 
+  useEffect(() => {
+    const handleVibeChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail) setVibeMode(detail);
+    };
+    const handleDarkToggle = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setIsDarkMode(detail);
+    };
+    const handleFullscreenToggle = () => {
+      toggleFullscreen();
+    };
+
+    window.addEventListener('project-builder-vibe-change', handleVibeChange);
+    window.addEventListener('project-builder-dark-toggle', handleDarkToggle);
+    window.addEventListener('project-builder-fullscreen-toggle', handleFullscreenToggle);
+
+    return () => {
+      window.removeEventListener('project-builder-vibe-change', handleVibeChange);
+      window.removeEventListener('project-builder-dark-toggle', handleDarkToggle);
+      window.removeEventListener('project-builder-fullscreen-toggle', handleFullscreenToggle);
+    };
+  }, []);
+
   const onGenerate = async () => {
     setError(null);
     setResp(null);
@@ -299,7 +322,7 @@ export default function AIProjectBuilder() {
 
   return (
     <div ref={containerRef} className={cn(
-      "relative min-h-screen transition-all duration-300",
+      "relative min-h-screen pt-14 transition-all duration-300",
       isDarkMode ? "text-white" : "text-gray-900",
       isDarkMode ? "bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950" : "bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50"
     )}>
@@ -317,87 +340,6 @@ export default function AIProjectBuilder() {
       </div>
 
       <div className="relative">
-        <header className={cn(
-          "sticky top-0 z-20 border-b transition-all duration-300 backdrop-blur-xl",
-          isDarkMode 
-            ? "border-white/10 bg-black/50" 
-            : "border-gray-200 bg-white/70"
-        )}>
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-3">
-                <Link to="/" className={cn(
-                  "transition-colors",
-                  isDarkMode ? "text-gray-400 hover:text-cyan-400" : "text-gray-600 hover:text-cyan-600"
-                )}>
-                  <ArrowLeft size={20} />
-                </Link>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                  <Sparkles size={18} className="text-white" />
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold leading-tight">Vibe Code Studio</h1>
-                  <p className="text-[10px] font-mono opacity-60">AI-powered · generate · preview · vibe</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {/* Vibe mode selector */}
-                <div className={cn(
-                  "hidden sm:flex items-center gap-1 rounded-xl border p-1",
-                  isDarkMode ? "border-white/10 bg-white/5" : "border-gray-200 bg-gray-100"
-                )}>
-                  {(['chill', 'focused', 'creative'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => setVibeMode(mode)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-[11px] font-mono capitalize transition-all",
-                        vibeMode === mode
-                          ? isDarkMode 
-                            ? "bg-cyan-500/20 text-cyan-400 border border-cyan-400/30"
-                            : "bg-cyan-500 text-white"
-                          : isDarkMode ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"
-                      )}
-                    >
-                      {mode}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setIsDarkMode(!isDarkMode)}
-                  className={cn(
-                    "p-2 rounded-xl transition-colors",
-                    isDarkMode 
-                      ? "border border-white/10 hover:bg-white/10" 
-                      : "border border-gray-200 hover:bg-gray-100"
-                  )}
-                >
-                  {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-                </button>
-
-                <button
-                  onClick={toggleFullscreen}
-                  className={cn(
-                    "p-2 rounded-xl transition-colors",
-                    isDarkMode 
-                      ? "border border-white/10 hover:bg-white/10" 
-                      : "border border-gray-200 hover:bg-gray-100"
-                  )}
-                >
-                  {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-                </button>
-
-                <div className="flex items-center gap-2 text-[10px] font-mono opacity-60">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="hidden sm:inline">ar-neural-v2</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
         <main className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-[480px_1fr] gap-6">
             {/* Left panel */}
