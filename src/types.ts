@@ -17,6 +17,8 @@ export interface TranslatableContent {
     id: number;
     title: string;
     description: string;
+    githubUrl?: string;
+    liveUrl?: string;
   }[];
   testimonials: {
     name: string;

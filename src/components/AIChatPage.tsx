@@ -339,33 +339,60 @@ export default function AIChatPage() {
     setSelectedImage(null);
     setIsLoading(true);
     try {
-      const body: any = {
-        model: 'ar-neural-v2',
+      // Build user content — plain text or image+text for vision model
+      let userContent: any = userMsg || 'Please describe this image.';
+      let modelName = 'ar-neural-v2';
+
+      if (selectedImage) {
+        modelName = 'ar-neural-v2-vision';
+        // Convert File to base64 data URL for GLM-4V image_url format
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(selectedImage);
+        });
+        userContent = [
+          { type: 'text', text: userMsg || 'Please describe this image.' },
+          { type: 'image_url', image_url: { url: base64 } }
+        ];
+      }
+
+      const body = {
+        model: modelName,
         messages: [
           { role: 'system', content: systemInstruction },
-          ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
-          { role: 'user', content: userMsg },
+          ...messages.map(m => ({ role: m.role, content: m.text })),
+          { role: 'user', content: userContent },
         ],
       };
-      if (selectedImage) {
-        const arrayBuf = await selectedImage.arrayBuffer();
-        const bytes = new Uint8Array(arrayBuf);
-        let binary = '';
-        bytes.forEach(b => binary += String.fromCharCode(b));
-        const base64 = btoa(binary);
-        body.model = 'ar-neural-v2-vision';
-        body.images = [{ format: 'png', data: base64 }];
-      }
+
       const resp = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
+
       const data = await resp.json();
-      const reply = data?.choices?.[0]?.message?.content || '...';
+
+      if (!resp.ok) {
+        const errMsg = typeof data?.error === 'string'
+          ? data.error
+          : data?.error?.message || data?.message || `API Error ${resp.status}`;
+        throw new Error(errMsg);
+      }
+
+      const reply = data?.choices?.[0]?.message?.content;
+      if (!reply) throw new Error('Empty response from AI engine.');
+
       setMessages(prev => [...prev, { role: 'assistant', text: reply, time: now() }]);
-    } catch {
-      setMessages(prev => [...prev, { role: 'assistant', text: '⚠️ Error contacting AI service.', time: now() }]);
+    } catch (err: any) {
+      const errMsg = err?.message || 'Unknown error';
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        text: `*[Connection lost — ${errMsg}]*\n\nSomething broke. Try again?`,
+        time: now()
+      }]);
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();

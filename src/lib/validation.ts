@@ -19,6 +19,8 @@ const TranslatableContentSchema = z.object({
     id: z.number(),
     title: z.string().min(1, "Project title is required").max(100),
     description: z.string().min(1, "Project description is required").max(1000),
+    githubUrl: z.string().url("Invalid GitHub URL").max(300).optional().or(z.literal('')),
+    liveUrl: z.string().url("Invalid live URL").max(300).optional().or(z.literal('')),
   })).max(20),
   testimonials: z.array(z.object({
     name: z.string().min(1, "Testimonial name is required").max(100),

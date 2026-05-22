@@ -1,125 +1,462 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, User, ArrowRight, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Lock, User, ArrowRight, ArrowLeft, Eye, EyeOff, Shield, Terminal, Cpu, Wifi } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+/* ── Industrial Animated Background ── */
+const IndustrialBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Particle nodes
+    const nodes: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
+    for (let i = 0; i < 60; i++) {
+      nodes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 1.5 + 0.5,
+      });
+    }
+
+    let frame = 0;
+    let raf: number;
+
+    const draw = () => {
+      frame++;
+      ctx.fillStyle = 'rgba(4, 6, 10, 0.15)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Move nodes
+      nodes.forEach(n => {
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+      });
+
+      // Draw connections
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            const alpha = (1 - dist / 120) * 0.15;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      nodes.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.fill();
+      });
+
+      // Horizontal scan line
+      const scanY = ((frame * 1.2) % (canvas.height + 40)) - 20;
+      const scanGrad = ctx.createLinearGradient(0, scanY - 20, 0, scanY + 20);
+      scanGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
+      scanGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.04)');
+      scanGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+      ctx.fillStyle = scanGrad;
+      ctx.fillRect(0, scanY - 20, canvas.width, 40);
+
+      raf = requestAnimationFrame(draw);
+    };
+
+    // Initial fill
+    ctx.fillStyle = '#04060a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    draw();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      {/* Grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(56,189,248,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.8) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-radial-[ellipse_at_center] from-transparent via-transparent to-black/60 pointer-events-none" />
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-32 h-32 border-l-2 border-t-2 border-sky-500/20" />
+      <div className="absolute top-0 right-0 w-32 h-32 border-r-2 border-t-2 border-sky-500/20" />
+      <div className="absolute bottom-0 left-0 w-32 h-32 border-l-2 border-b-2 border-sky-500/20" />
+      <div className="absolute bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-sky-500/20" />
+    </>
+  );
+};
+
+/* ── Blinking cursor ── */
+const BlinkCursor = () => (
+  <span className="inline-block w-[2px] h-[1em] bg-sky-400 align-middle ml-0.5 animate-[blink_1s_step-end_infinite]" />
+);
+
+/* ── Status Bar ── */
+const StatusBar = () => {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="flex items-center justify-between px-4 py-2 border-b border-sky-500/10 bg-black/40 backdrop-blur-sm">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest">System Online</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Wifi size={9} className="text-sky-400" />
+          <span className="text-[9px] font-mono text-sky-400 uppercase tracking-widest">Secure Channel</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest">
+          {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+        </span>
+        <Cpu size={9} className="text-white/20" />
+      </div>
+    </div>
+  );
+};
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [bootText, setBootText] = useState('');
   const navigate = useNavigate();
+
+  // Boot sequence text effect
+  const fullBootText = 'JOYI_OS v2.0 — Auth Module Loaded';
+  useEffect(() => {
+    let i = 0;
+    const t = setInterval(() => {
+      i++;
+      setBootText(fullBootText.slice(0, i));
+      if (i >= fullBootText.length) clearInterval(t);
+    }, 40);
+    return () => clearInterval(t);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+    if (!username.trim() || !password) {
+      setError('Username and password are required.');
+      return;
+    }
+    setLoading(true);
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ username: username.trim(), password }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         localStorage.setItem('isAdmin', 'true');
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/cms');
       } else {
-        setError(data.message || 'Invalid username or password');
+        // Handle all error response shapes from the server
+        setError(data.message || data.error || data.status || 'Invalid credentials. Please try again.');
       }
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('Connection failed. Please try again.');
+    } catch {
+      setError('Connection failed. Check your network and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-bg text-ink font-sans relative overflow-hidden">
-      {/* Background Accents */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-700" />
+    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: '#04060a', color: '#e2e8f0' }}>
+      <IndustrialBackground />
+
+      {/* Status bar */}
+      <div className="relative z-10">
+        <StatusBar />
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md relative z-10"
-      >
-        <Link to="/" className="inline-flex items-center gap-2 text-muted hover:text-accent transition-colors mb-8 group">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">Back to Portfolio</span>
-        </Link>
+      {/* Main content */}
+      <div className="relative z-10 flex-1 flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full max-w-md"
+        >
+          {/* Back link */}
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 mb-8 group"
+            style={{ color: 'rgba(148,163,184,0.6)' }}
+          >
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="font-mono text-[10px] uppercase tracking-widest group-hover:text-sky-400 transition-colors">
+              Back to Portfolio
+            </span>
+          </Link>
 
-        <div className="bg-white/5 border border-white/10 p-10 rounded-3xl backdrop-blur-xl shadow-2xl">
-          <div className="mb-10 text-center">
-            <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center text-accent mx-auto mb-6">
-              <Lock size={32} />
+          {/* Card */}
+          <div
+            className="relative overflow-hidden rounded-2xl"
+            style={{
+              background: 'rgba(8, 12, 20, 0.85)',
+              border: '1px solid rgba(56, 189, 248, 0.15)',
+              backdropFilter: 'blur(24px)',
+              boxShadow: '0 0 60px rgba(56, 189, 248, 0.05), 0 32px 64px rgba(0,0,0,0.5)',
+            }}
+          >
+            {/* Card top accent line */}
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-sky-400/60 to-transparent" />
+
+            {/* Header */}
+            <div className="px-8 pt-8 pb-6 border-b border-white/5">
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                    boxShadow: '0 0 20px rgba(56, 189, 248, 0.1)',
+                  }}
+                >
+                  <Shield size={22} className="text-sky-400" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold uppercase tracking-tighter text-white">
+                    Admin <span className="text-sky-400">Authentication</span>
+                  </h1>
+                  <p className="text-[10px] font-mono text-white/30 mt-0.5 uppercase tracking-widest">
+                    {bootText}<BlinkCursor />
+                  </p>
+                </div>
+              </div>
             </div>
-            <h1 className="text-4xl font-bold uppercase tracking-tighter mb-2">Admin_<span className="text-accent">Login</span></h1>
-            <p className="text-muted text-sm">Enter your credentials to access the control center.</p>
+
+            {/* Form */}
+            <form onSubmit={handleLogin} className="p-8 space-y-5">
+              {/* Username */}
+              <div className="space-y-2">
+                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-sky-400/60">
+                  <span className="text-sky-400/40 mr-1">{'>'}</span> User Identifier
+                </label>
+                <div className="relative group">
+                  <User
+                    size={15}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-sky-400 transition-colors duration-200"
+                  />
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={e => { setUsername(e.target.value); setError(''); }}
+                    placeholder="admin"
+                    autoComplete="username"
+                    className="w-full py-3.5 pl-11 pr-4 rounded-xl text-sm text-white placeholder:text-white/15 outline-none transition-all duration-200 font-mono"
+                    style={{
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
+                    onFocus={e => {
+                      e.currentTarget.style.border = '1px solid rgba(56,189,248,0.4)';
+                      e.currentTarget.style.background = 'rgba(56,189,248,0.04)';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(56,189,248,0.06)';
+                    }}
+                    onBlur={e => {
+                      e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)';
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-sky-400/60">
+                  <span className="text-sky-400/40 mr-1">{'>'}</span> Access Key
+                </label>
+                <div className="relative group">
+                  <Lock
+                    size={15}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-sky-400 transition-colors duration-200"
+                  />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className="w-full py-3.5 pl-11 pr-12 rounded-xl text-sm text-white placeholder:text-white/15 outline-none transition-all duration-200 font-mono"
+                    style={{
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
+                    onFocus={e => {
+                      e.currentTarget.style.border = '1px solid rgba(56,189,248,0.4)';
+                      e.currentTarget.style.background = 'rgba(56,189,248,0.04)';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(56,189,248,0.06)';
+                    }}
+                    onBlur={e => {
+                      e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)';
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(s => !s)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-sky-400 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: -6, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div
+                      className="flex items-center gap-2.5 px-4 py-3 rounded-xl"
+                      style={{
+                        background: 'rgba(239,68,68,0.08)',
+                        border: '1px solid rgba(239,68,68,0.2)',
+                      }}
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0 animate-pulse" />
+                      <span className="text-xs font-mono text-red-400">{error}</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Submit */}
+              <motion.button
+                type="submit"
+                disabled={loading}
+                whileHover={!loading ? { scale: 1.02 } : {}}
+                whileTap={!loading ? { scale: 0.98 } : {}}
+                className="w-full relative py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 overflow-hidden transition-all disabled:cursor-not-allowed"
+                style={{
+                  background: loading ? 'rgba(56,189,248,0.1)' : 'rgba(56,189,248,1)',
+                  color: loading ? 'rgba(56,189,248,0.4)' : '#04060a',
+                  border: loading ? '1px solid rgba(56,189,248,0.2)' : 'none',
+                  boxShadow: loading ? 'none' : '0 0 30px rgba(56,189,248,0.3)',
+                }}
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-sky-400/30 border-t-sky-400 rounded-full animate-spin" />
+                    <span className="font-mono text-sky-400">Authenticating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Terminal size={14} />
+                    Authenticate
+                    <ArrowRight size={14} className="ml-auto" />
+                  </>
+                )}
+              </motion.button>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 py-1">
+                <div className="flex-1 h-[1px] bg-white/5" />
+                <span className="font-mono text-[9px] text-white/15 uppercase tracking-widest">or</span>
+                <div className="flex-1 h-[1px] bg-white/5" />
+              </div>
+
+              {/* Register link */}
+              <Link
+                to="/register"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-mono text-[11px] uppercase tracking-widest transition-all"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  color: 'rgba(255,255,255,0.3)',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = 'rgba(56,189,248,0.2)';
+                  e.currentTarget.style.color = 'rgba(56,189,248,0.7)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.3)';
+                }}
+              >
+                Register New Admin Account
+              </Link>
+            </form>
+
+            {/* Footer */}
+            <div className="px-8 pb-6 flex items-center justify-between">
+              <span className="font-mono text-[9px] text-white/15 uppercase tracking-widest">
+                Secure_Access_Protocol v2.0
+              </span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 rounded-full bg-emerald-400" />
+                <span className="font-mono text-[9px] text-white/15 uppercase tracking-widest">Encrypted</span>
+              </div>
+            </div>
+
+            {/* Card bottom accent */}
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-sky-400/20 to-transparent" />
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-2">
-              <label className="font-mono text-[10px] uppercase tracking-widest opacity-40 ml-1">Username</label>
-              <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors" size={18} />
-                <input 
-                  type="text" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-accent/50 transition-all"
-                />
-              </div>
-            </div>
+          {/* Bottom metadata */}
+          <p className="text-center font-mono text-[9px] text-white/10 uppercase tracking-widest mt-6">
+            JOYI_CMS · All sessions are logged and monitored
+          </p>
+        </motion.div>
+      </div>
 
-            <div className="space-y-2">
-              <label className="font-mono text-[10px] uppercase tracking-widest opacity-40 ml-1">Access_Key</label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors" size={18} />
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-accent/50 transition-all"
-                />
-              </div>
-            </div>
-
-            {error && (
-              <motion.p 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-red-400 text-xs font-mono text-center"
-              >
-                Error: {error}
-              </motion.p>
-            )}
-
-            <button 
-              type="submit"
-              className="w-full bg-accent text-bg py-4 rounded-xl font-bold uppercase text-xs tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
-            >
-              Authenticate
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </form>
-        </div>
-
-        <div className="mt-8 text-center space-y-4">
-          <Link to="/register" className="font-mono text-[10px] uppercase tracking-widest text-muted hover:text-accent transition-colors block">
-            Don't have an account? Register_New_Admin
-          </Link>
-          <p className="font-mono text-[10px] uppercase tracking-widest opacity-20 block">Secure_Access_Protocol_v2.0</p>
-        </div>
-      </motion.div>
+      <style>{`
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+      `}</style>
     </div>
   );
 }

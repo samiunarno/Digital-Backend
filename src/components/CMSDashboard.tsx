@@ -40,7 +40,17 @@ import {
   ChevronRight,
   Bot,
   Loader2,
-  User
+  User,
+  GitBranch,
+  GitCommit,
+  FileCode,
+  FolderOpen,
+  GitPullRequest,
+  ToggleLeft,
+  ToggleRight,
+  ExternalLink,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -88,11 +98,13 @@ export default function CMSDashboard() {
   
   // AI Chat State
   const [aiInput, setAiInput] = useState('');
-  const [aiMessages, setAiMessages] = useState<{ role: 'user' | 'model', text: string, image?: string, isGlitchy?: boolean }[]>([
-    { role: 'model', text: "Hey, admin! 👋 Joyi here — I've got my eyes on AR's portfolio. What are we working on today?" }
+  const [aiMessages, setAiMessages] = useState<{ role: 'user' | 'model', text: string, image?: string, isGlitchy?: boolean, toolCalls?: any[] }[]>([
+    { role: 'model', text: "Hey, admin! 👋 Joyi here — I've got my eyes on AR's portfolio. What are we working on today?\n\n*GitHub mode: Toggle the switch above to let me read & write your repo directly.*" }
   ]);
   const [aiIsLoading, setAiIsLoading] = useState(false);
   const [aiSelectedImage, setAiSelectedImage] = useState<string | null>(null);
+  const [useGitHubTools, setUseGitHubTools] = useState(false);
+  const [githubStatus, setGithubStatus] = useState<{ connected: boolean; repo?: string; branch?: string; url?: string } | null>(null);
   const aiFileInputRef = useRef<HTMLInputElement>(null);
   const aiScrollRef = useRef<HTMLDivElement>(null);
 
@@ -130,6 +142,12 @@ export default function CMSDashboard() {
     };
 
     loadContent();
+
+    // Check GitHub connection status
+    fetch('/api/ai/github-status')
+      .then(r => r.json())
+      .then(d => setGithubStatus(d))
+      .catch(() => setGithubStatus({ connected: false }));
 
     return () => {};
   }, [navigate]);
@@ -295,46 +313,61 @@ GOLDEN RULES:
 5. Use Markdown naturally. Be warm, funny, sharp, opinionated, deeply caring. Always.
       `;
 
-      const formattedMessages: any[] = [
-        { role: 'system', content: systemInstruction },
-        ...aiMessages.slice(-6).map(m => ({
-          role: m.role === 'model' ? 'assistant' : 'user',
-          content: m.text
-        }))
-      ];
+      // Build history — only user/assistant roles for GLM-4
+      const historyMessages = aiMessages.slice(-8).map(m => ({
+        role: m.role === 'model' ? 'assistant' : 'user',
+        content: m.text
+      }));
 
-      let userContent: any = currentInput;
+      // Compose current user message content
+      let userContent: any = currentInput || 'Please describe this image.';
       if (currentImage) {
         userContent = [
-          { type: "text", text: currentInput || "Please describe this image" },
-          { type: "image_url", image_url: { url: currentImage } }
+          { type: 'text', text: currentInput || 'Please describe this image.' },
+          { type: 'image_url', image_url: { url: currentImage } }
         ];
       }
-      formattedMessages.push({ role: 'user', content: userContent });
 
-      const response = await fetch("/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const formattedMessages = [
+        { role: 'system', content: systemInstruction },
+        ...historyMessages,
+        { role: 'user', content: userContent }
+      ];
+
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: currentImage ? "ar-neural-v2-vision" : "ar-neural-v2",
-          messages: formattedMessages
+          model: currentImage ? 'ar-neural-v2-vision' : 'ar-neural-v2',
+          messages: formattedMessages,
+          useGitHubTools: useGitHubTools && !currentImage, // GitHub tools only for text mode
         })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+        // Server returns: { error: "string" } or { error: "...", details: {...} }
+        const errMsg = typeof data?.error === 'string'
+          ? data.error
+          : data?.error?.message || data?.message || `API Error ${response.status}`;
+        throw new Error(errMsg);
       }
 
-      const data = await response.json();
-      const responseText = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that request.";
-      const isGlitchy = Math.random() > 0.85;
-      
-      setAiMessages(prev => [...prev, { role: 'model', text: responseText, isGlitchy }]);
+      const responseText = data.choices?.[0]?.message?.content;
+      if (!responseText) throw new Error('Empty response from AI engine.');
+
+      const isGlitchy = Math.random() > 0.88;
+      const toolCalls = data.toolCallLog || [];
+      setAiMessages(prev => [...prev, { role: 'model', text: responseText, isGlitchy, toolCalls }]);
     } catch (error: any) {
       console.error('AI Engine Error:', error);
-      let errorMessage = "System error: Connection to the neural network was interrupted. Please try again.";
-      setAiMessages(prev => [...prev, { role: 'model', text: errorMessage, isGlitchy: true }]);
+      const errText = error?.message || 'Unknown error';
+      setAiMessages(prev => [...prev, {
+        role: 'model',
+        text: `*[Neural link disrupted — ${errText}]*\n\nHmm. Something broke on my end. Try again?`,
+        isGlitchy: true
+      }]);
     } finally {
       setAiIsLoading(false);
     }
@@ -980,46 +1013,75 @@ GOLDEN RULES:
                   <button 
                     onClick={() => {
                       const newId = Date.now() + Math.floor(Math.random() * 1000);
-                      const newEnProject = { id: newId, title: "New Project", description: "" };
-                      const newZhProject = { id: newId, title: "新项目", description: "" };
+                      const newEnProject = { id: newId, title: "New Project", description: "", githubUrl: "", liveUrl: "" };
+                      const newZhProject = { id: newId, title: "新项目", description: "", githubUrl: "", liveUrl: "" };
                       
                       setContent(prev => {
                         if (!prev) return null;
                         return {
                           ...prev, 
-                          en: { ...prev.en, projects: [...(prev.en.projects || []), newEnProject], projectTech: { ...(prev.en.projectTech || {}), [newId]: ["React", "Tailwind"] } },
-                          zh: { ...prev.zh, projects: [...(prev.zh.projects || []), newZhProject], projectTech: { ...(prev.zh.projectTech || {}), [newId]: ["React", "Tailwind"] } },
+                          en: { ...prev.en, projects: [...(prev.en.projects || []), newEnProject], projectTech: { ...(prev.en.projectTech || {}), [newId]: ["React", "TypeScript"] } },
+                          zh: { ...prev.zh, projects: [...(prev.zh.projects || []), newZhProject], projectTech: { ...(prev.zh.projectTech || {}), [newId]: ["React", "TypeScript"] } },
                           common: {
                             ...prev.common,
-                            projectImages: { ...(prev.common.projectImages || {}), [newId]: "https://picsum.photos/seed/project/1200/800" }
+                            projectImages: { ...(prev.common.projectImages || {}), [newId]: "" }
                           }
                         };
                       });
                     }}
-                    className="bg-accent/10 text-accent p-3 rounded-xl hover:bg-accent hover:text-bg transition-all"
+                    className="flex items-center gap-2 bg-accent/10 text-accent px-5 py-2.5 rounded-xl hover:bg-accent hover:text-bg transition-all font-mono text-[10px] uppercase tracking-widest"
                   >
-                    <Plus size={20} />
+                    <Plus size={16} />
+                    Add Project
                   </button>
                 </div>
-                           <div className="space-y-8">
+               <div className="space-y-8">
                   {content[currentLang].projects.map((project, index) => (
                     <motion.div 
                       key={project.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-bg/50 border border-white/5 p-8 rounded-2xl relative group hover:border-accent/30 transition-colors"
+                      transition={{ delay: index * 0.08 }}
+                      className="bg-bg/50 border border-white/5 rounded-2xl relative group hover:border-accent/30 transition-colors overflow-hidden"
                     >
-                      <button 
-                        onClick={() => setShowDeleteConfirm({ type: 'project', index, id: project.id })}
-                        className="absolute top-4 right-4 text-red-500/40 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Project Title</label>
+                      {/* Project Preview Header */}
+                      <div className="relative h-32 bg-gradient-to-br from-white/5 to-white/[0.02] overflow-hidden">
+                        {content.common.projectImages[project.id] ? (
+                          <img
+                            src={content.common.projectImages[project.id]}
+                            alt={project.title}
+                            className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                          />
+                        ) : null}
+                        <div className="absolute inset-0 bg-gradient-to-t from-bg/80 to-transparent" />
+                        <div className="absolute bottom-3 left-5 flex items-center gap-3">
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-muted bg-white/5 px-2 py-1 rounded-full border border-white/10">
+                            #{index + 1} · ID:{project.id}
+                          </span>
+                          {project.githubUrl && (
+                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[9px] uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full border border-cyan-400/20 hover:bg-cyan-400/20 transition-colors">
+                              GitHub ↗
+                            </a>
+                          )}
+                          {project.liveUrl && (
+                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[9px] uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full border border-emerald-400/20 hover:bg-emerald-400/20 transition-colors">
+                              Live ↗
+                            </a>
+                          )}
+                        </div>
+                        <button 
+                          onClick={() => setShowDeleteConfirm({ type: 'project', index, id: project.id })}
+                          className="absolute top-3 right-3 p-1.5 bg-red-500/10 hover:bg-red-500/30 rounded-lg text-red-500/60 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      {/* Form Fields */}
+                      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Project Title ({currentLang.toUpperCase()})</label>
                           <input 
                             type="text"
                             value={project.title}
@@ -1032,11 +1094,12 @@ GOLDEN RULES:
                                 return {...prev, [currentLang]: {...prev[currentLang], projects: newProjects}};
                               });
                             }}
-                            className="w-full bg-bg border border-white/10 p-4 rounded-xl focus:border-accent outline-none transition-colors"
+                            className="w-full bg-bg border border-white/10 p-3 rounded-xl focus:border-accent outline-none transition-colors text-sm"
+                            placeholder="e.g. My Awesome App"
                           />
                         </div>
-                        <div className="space-y-4">
-                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Image URL (Common)</label>
+                        <div className="space-y-2">
+                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Cover Image URL (Shared)</label>
                           <input 
                             type="text"
                             value={content.common.projectImages[project.id] || ""}
@@ -1053,11 +1116,65 @@ GOLDEN RULES:
                                 };
                               });
                             }}
-                            className="w-full bg-bg border border-white/10 p-4 rounded-xl focus:border-accent outline-none transition-colors"
+                            className="w-full bg-bg border border-white/10 p-3 rounded-xl focus:border-accent outline-none transition-colors text-sm"
+                            placeholder="https://your-image-url.com/image.jpg"
                           />
                         </div>
-                        <div className="md:col-span-2 space-y-4">
-                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Description</label>
+                        <div className="space-y-2">
+                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">GitHub URL (Shared)</label>
+                          <input 
+                            type="text"
+                            value={project.githubUrl || ""}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setContent(prev => {
+                                if (!prev) return null;
+                                // Update both EN and ZH
+                                const newEnProjects = [...prev.en.projects];
+                                const newZhProjects = [...prev.zh.projects];
+                                const enIdx = newEnProjects.findIndex(p => p.id === project.id);
+                                const zhIdx = newZhProjects.findIndex(p => p.id === project.id);
+                                if (enIdx !== -1) newEnProjects[enIdx] = { ...newEnProjects[enIdx], githubUrl: val };
+                                if (zhIdx !== -1) newZhProjects[zhIdx] = { ...newZhProjects[zhIdx], githubUrl: val };
+                                return {
+                                  ...prev,
+                                  en: { ...prev.en, projects: newEnProjects },
+                                  zh: { ...prev.zh, projects: newZhProjects },
+                                };
+                              });
+                            }}
+                            className="w-full bg-bg border border-white/10 p-3 rounded-xl focus:border-accent outline-none transition-colors text-sm"
+                            placeholder="https://github.com/username/repo"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Live URL (Shared)</label>
+                          <input 
+                            type="text"
+                            value={project.liveUrl || ""}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setContent(prev => {
+                                if (!prev) return null;
+                                const newEnProjects = [...prev.en.projects];
+                                const newZhProjects = [...prev.zh.projects];
+                                const enIdx = newEnProjects.findIndex(p => p.id === project.id);
+                                const zhIdx = newZhProjects.findIndex(p => p.id === project.id);
+                                if (enIdx !== -1) newEnProjects[enIdx] = { ...newEnProjects[enIdx], liveUrl: val };
+                                if (zhIdx !== -1) newZhProjects[zhIdx] = { ...newZhProjects[zhIdx], liveUrl: val };
+                                return {
+                                  ...prev,
+                                  en: { ...prev.en, projects: newEnProjects },
+                                  zh: { ...prev.zh, projects: newZhProjects },
+                                };
+                              });
+                            }}
+                            className="w-full bg-bg border border-white/10 p-3 rounded-xl focus:border-accent outline-none transition-colors text-sm"
+                            placeholder="https://yourproject.vercel.app"
+                          />
+                        </div>
+                        <div className="md:col-span-2 space-y-2">
+                          <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Description ({currentLang.toUpperCase()})</label>
                           <textarea 
                             value={project.description}
                             onChange={(e) => {
@@ -1069,10 +1186,11 @@ GOLDEN RULES:
                                 return {...prev, [currentLang]: {...prev[currentLang], projects: newProjects}};
                               });
                             }}
-                            className="w-full bg-bg border border-white/10 p-4 rounded-xl focus:border-accent outline-none transition-colors h-24 resize-none"
+                            className="w-full bg-bg border border-white/10 p-3 rounded-xl focus:border-accent outline-none transition-colors h-20 resize-none text-sm"
+                            placeholder="Brief description of what this project does..."
                           />
                         </div>
-                        <div className="md:col-span-2 space-y-4">
+                        <div className="md:col-span-2 space-y-2">
                           <label className="block font-mono text-[10px] uppercase tracking-widest opacity-40">Technologies ({currentLang.toUpperCase()}, comma separated)</label>
                           <input 
                             type="text"
@@ -1091,8 +1209,19 @@ GOLDEN RULES:
                                 };
                               });
                             }}
-                            className="w-full bg-bg border border-white/10 p-4 rounded-xl focus:border-accent outline-none transition-colors"
+                            className="w-full bg-bg border border-white/10 p-3 rounded-xl focus:border-accent outline-none transition-colors text-sm"
+                            placeholder="React, TypeScript, Node.js, PostgreSQL"
                           />
+                          {/* Tech badge preview */}
+                          {(content[currentLang].projectTech[project.id] || []).length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {(content[currentLang].projectTech[project.id] || []).map((tech, ti) => (
+                                <span key={ti} className="text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </motion.div>
@@ -2098,7 +2227,7 @@ GOLDEN RULES:
             )}
             {activeTab === 'ai' && (
               <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden flex flex-col h-[600px]">
-                <div className="p-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
+              <div className="p-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
                       <Bot size={20} className="text-accent" />
@@ -2107,6 +2236,51 @@ GOLDEN RULES:
                       <h3 className="text-sm font-bold uppercase tracking-widest">Joyi_AI [Admin_Expert]</h3>
                       <p className="text-[8px] font-mono text-muted uppercase tracking-widest">Neural_Link: Ultra_Fast_Active</p>
                     </div>
+                  </div>
+
+                  {/* GitHub Toggle */}
+                  <div className="flex items-center gap-3">
+                    {/* Connection status badge */}
+                    {githubStatus && (
+                      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-mono uppercase tracking-widest border ${
+                        githubStatus.connected
+                          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                          : 'bg-red-500/10 border-red-500/20 text-red-400'
+                      }`}>
+                        {githubStatus.connected ? <Wifi size={9} /> : <WifiOff size={9} />}
+                        {githubStatus.connected ? (
+                          <a href={githubStatus.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            {githubStatus.repo}
+                          </a>
+                        ) : 'GitHub: Not Connected'}
+                      </div>
+                    )}
+
+                    {/* Toggle button */}
+                    <button
+                      onClick={() => setUseGitHubTools(v => !v)}
+                      disabled={!githubStatus?.connected}
+                      title={githubStatus?.connected ? 'Toggle GitHub mode' : 'Add GITHUB_TOKEN to .env to enable'}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[10px] font-mono uppercase tracking-widest transition-all ${
+                        !githubStatus?.connected
+                          ? 'opacity-30 cursor-not-allowed border-white/10'
+                          : useGitHubTools
+                            ? 'bg-accent/15 border-accent/30 text-accent'
+                            : 'bg-white/5 border-white/10 text-muted hover:border-white/20'
+                      }`}
+                    >
+                      <GitBranch size={12} />
+                      {useGitHubTools ? 'GitHub: ON' : 'GitHub: OFF'}
+                    </button>
+
+                    {/* Vibe Coder Link */}
+                    <Link
+                      to="/vibe-coder"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-cyan-500/25 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono uppercase tracking-widest transition-all hover:bg-cyan-500/20 hover:border-cyan-500/40 hover:scale-102"
+                    >
+                      <Sparkles size={12} className="animate-pulse" />
+                      Vibe Coder
+                    </Link>
                   </div>
                 </div>
 
@@ -2154,6 +2328,47 @@ GOLDEN RULES:
                         )}>
                           <ReactMarkdown>{msg.text}</ReactMarkdown>
                         </div>
+                        
+                        {/* Tool call activity log */}
+                        {msg.toolCalls && msg.toolCalls.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
+                            <p className="text-[9px] font-mono text-accent/60 uppercase tracking-widest flex items-center gap-1">
+                              <GitCommit size={9} /> GitHub Activity
+                            </p>
+                            {msg.toolCalls.map((tc: any, ti: number) => (
+                              <div key={ti} className={`flex items-start gap-2 text-[10px] font-mono rounded-lg px-3 py-2 ${
+                                tc.error
+                                  ? 'bg-red-500/10 text-red-400'
+                                  : 'bg-emerald-500/10 text-emerald-400'
+                              }`}>
+                                {tc.name === 'github_read_file' && <FileCode size={10} className="mt-0.5 flex-shrink-0" />}
+                                {tc.name === 'github_list_files' && <FolderOpen size={10} className="mt-0.5 flex-shrink-0" />}
+                                {tc.name === 'github_update_file' && <GitCommit size={10} className="mt-0.5 flex-shrink-0" />}
+                                {tc.name === 'github_create_branch' && <GitBranch size={10} className="mt-0.5 flex-shrink-0" />}
+                                {tc.name === 'github_create_pr' && <GitPullRequest size={10} className="mt-0.5 flex-shrink-0" />}
+                                {tc.name === 'github_get_commits' && <GitCommit size={10} className="mt-0.5 flex-shrink-0" />}
+                                {tc.name === 'github_repo_info' && <Globe size={10} className="mt-0.5 flex-shrink-0" />}
+                                <div className="flex-1 min-w-0">
+                                  <span className="opacity-60">{tc.name.replace('github_', '').replace(/_/g, ' ')}</span>
+                                  {tc.args?.path && <span className="ml-1 opacity-40">{tc.args.path}</span>}
+                                  {tc.error && <span className="ml-1">— {tc.error}</span>}
+                                  {tc.result?.url && (
+                                    <a href={tc.result.url} target="_blank" rel="noopener noreferrer"
+                                      className="ml-2 inline-flex items-center gap-0.5 underline opacity-60 hover:opacity-100">
+                                      View <ExternalLink size={8} />
+                                    </a>
+                                  )}
+                                  {tc.result?.commit && (
+                                    <a href={tc.result.commit} target="_blank" rel="noopener noreferrer"
+                                      className="ml-2 inline-flex items-center gap-0.5 underline opacity-60 hover:opacity-100">
+                                      Commit <ExternalLink size={8} />
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   ))}

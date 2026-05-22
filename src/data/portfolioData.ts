@@ -155,13 +155,23 @@ export const initialPortfolioData: PortfolioContent = {
     projects: [
       {
         id: 1,
-        title: "E-Commerce Platform",
-        description: "A full-stack e-commerce solution featuring real-time inventory management, secure payment gateways, and an intuitive admin dashboard."
+        title: "XiaoXuan Competitive Programming Platform",
+        description: "A full-stack competitive programming platform featuring real-time code collaboration, automated testing, and a rich problem library."
       },
       {
         id: 2,
-        title: "Task Management API",
-        description: "A robust RESTful API built with Node.js and Express, implementing JWT authentication, rate limiting, and comprehensive test coverage."
+        title: "Ward Management System Console Application",
+        description: "A robust console application for managing ward activities, featuring user authentication, role-based access control, and a responsive UI."
+      },
+      {
+        id: 3,
+        title: "Hospital Management System",
+        description: "A robust console application for managing hospital activities, featuring user authentication, role-based access control, and a responsive UI."
+      },
+      {
+        id: 4,
+        title: "Multiverse Code Editor",
+        description: "A robust code editor application featuring real-time collaboration, extensive language support, and a customizable interface."
       }
     ],
     testimonials: [
@@ -213,12 +223,62 @@ export const initialPortfolioData: PortfolioContent = {
       }
     ],
     techStack: [
-      { name: "React", iconName: "Code", category: "Frontend", level: 95, desc: "Building complex UIs with hooks and context API.", span: "md:col-span-1" },
-      { name: "TypeScript", iconName: "Terminal", category: "Language", level: 90, desc: "Strict type-checking for enterprise scale apps.", span: "md:col-span-2" },
-      { name: "Node.js", iconName: "Server", category: "Backend", level: 85, desc: "Scalable event-driven backend services.", span: "md:col-span-1" },
-      { name: "Next.js", iconName: "Globe", category: "Framework", level: 88, desc: "Server-side rendering and static site generation.", span: "md:col-span-1" },
-      { name: "PostgreSQL", iconName: "Database", category: "Database", level: 80, desc: "Relational data modeling and complex queries.", span: "md:col-span-1" },
-      { name: "Docker", iconName: "Cpu", category: "DevOps", level: 75, desc: "Containerization and environment consistency.", span: "md:col-span-2" }
+      {
+        name: "C",
+        iconName: "Code",
+        category: "Programming Language",
+        level: 95,
+        desc: "Strong foundation in system-level programming, memory management, and efficient algorithms.",
+        span: "md:col-span-1",
+      },
+      {
+        name: "C++",
+        iconName: "Terminal",
+        category: "Programming Language",
+        level: 90,
+        desc: "Object-oriented programming, STL, competitive programming, and performance optimization.",
+        span: "md:col-span-2",
+      },
+      {
+        name: "Python",
+        iconName: "Server",
+        category: "Programming Language",
+        level: 88,
+        desc: "Scalable backend services, automation scripts, and data-driven applications.",
+        span: "md:col-span-1",
+      },
+      {
+        name: "HTML",
+        iconName: "Globe",
+        category: "Frontend",
+        level: 85,
+        desc: "Semantic and accessible structure for modern web applications.",
+        span: "md:col-span-1",
+      },
+      {
+        name: "CSS",
+        iconName: "Palette",
+        category: "Frontend",
+        level: 80,
+        desc: "Responsive design, layouts, animations, and modern UI styling.",
+        span: "md:col-span-1",
+      },
+      {
+        name: "React",
+        iconName: "Layers",
+        category: "Frontend",
+        level: 90,
+        desc: "Building interactive and component-based user interfaces with modern hooks and state management.",
+        span: "md:col-span-2",
+      },
+      {
+        name: "Node.js",
+        iconName: "Server",
+        category: "Backend",
+        level: 88,
+        desc: "Backend development with scalable APIs, REST services, and real-time applications.",
+        span: "md:col-span-1",
+      }
     ],
     skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "REST API"],
     projectTech: {
@@ -241,13 +301,13 @@ export const initialPortfolioData: PortfolioContent = {
       "experience": { "label": "〇四 / 教育经历", "titlePrefix": "教育", "titleHighlight": "历程" },
       "projects": { "titlePrefix": "精选", "titleHighlight": "项目", "desc": "展示技术深度与代码架构能力的代表作品。" },
       "telemetry": { "label": "一一 / 系统监控", "titlePrefix": "系统", "titleHighlight": "核心", "uptime": "运行时间", "latency": "延迟", "cpu": "CPU使用率", "memory": "内存", "network": "网络吞吐" },
-      "stats": { 
+      "stats": {
         "metrics": [
           { "id": "exp", "value": 5, "max": 10, "suffix": "+", "unit": "年", "label": "开发经验", "sub": "生产环境实践", "pct": 50 },
           { "id": "apps", "value": 50, "max": 100, "suffix": "+", "unit": "项目", "label": "完成项目", "sub": "Web · 移动端 · 接口", "pct": 50 },
           { "id": "wins", "value": 20, "max": 40, "suffix": "+", "unit": "奖项", "label": "竞赛获奖", "sub": "黑客马拉松与比赛", "pct": 80 }
         ],
-        "label": "系统指标 — 实时" 
+        "label": "系统指标 — 实时"
       },
       "manifesto": {
         "branches": [
