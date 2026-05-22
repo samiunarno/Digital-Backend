@@ -15,7 +15,6 @@ import CodeBackground from './CodeBackground';
 import CodeTerminal from './CodeTerminal';
 import ProjectModal from './ProjectModal';
 import PortfolioChatbot from './PortfolioChatbot';
-import GitHubCommits from './GitHubCommits';
 
 import { useSectionTracking, useInteractionTracking } from '../hooks/useAnalytics';
 import { initialPortfolioData } from '../data/portfolioData';
@@ -499,13 +498,6 @@ export default function Portfolio() {
       {/* ── MARQUEE TECH BANNER ── */}
       <MarqueeBanner skills={content[language].skills} />
 
-      {/* GitHub Commits Section */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-b border-border bg-white/[0.01]">
-        <div className="max-w-7xl mx-auto">
-          <div className="mono-label mb-12">{content[language].ui.hero.system} // RECENT_ACTIVITY</div>
-          <GitHubCommits limit={5} showAuthor={true} compact={false} />
-        </div>
-      </section>
 
       {/* 3. About Section */}
       <section id="about" ref={aboutRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-[10%] relative z-10 border-y border-border bg-white/[0.01]">
