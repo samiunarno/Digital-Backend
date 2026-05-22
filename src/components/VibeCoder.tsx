@@ -835,7 +835,7 @@ export default function VibeCoder() {
                 <div className="flex items-center gap-2">
                   {selectedFile && (
                     <a
-                      href={`https://github.com/${githubStatus?.repo || 'dongxiaoxuan/Digital-Backend'}/blob/main/${selectedFile}`}
+                      href={`https://github.com/${githubStatus?.repo || 'samiunarno/Digital-Backend'}/blob/main/${selectedFile}`}
                       target="_blank" rel="noopener noreferrer"
                       className="text-white/20 hover:text-cyan-400 transition-colors"
                     >

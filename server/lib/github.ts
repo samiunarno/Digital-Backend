@@ -18,7 +18,7 @@ function headers() {
   };
 }
 
-const OWNER = () => process.env.GITHUB_OWNER || 'dongxiaoxuan';
+const OWNER = () => process.env.GITHUB_OWNER || 'samiunarno';
 const REPO  = () => process.env.GITHUB_REPO  || 'Digital-Backend';
 
 /* ── Read a file ── */

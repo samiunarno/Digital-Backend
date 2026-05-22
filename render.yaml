@@ -24,6 +24,6 @@ services:
       - key: GITHUB_TOKEN
         sync: false
       - key: GITHUB_OWNER
-        value: dongxiaoxuan
+        value: samiunarno
       - key: GITHUB_REPO
         value: Digital-Backend

@@ -106,7 +106,7 @@ async function proxyToJoyi(params: {
 
 /* ── Build GitHub-aware context injection ── */
 function buildGithubContext(): string {
-  const owner = process.env.GITHUB_OWNER || 'dongxiaoxuan';
+  const owner = process.env.GITHUB_OWNER || 'samiunarno';
   const repo  = process.env.GITHUB_REPO  || 'Digital-Backend';
   return `
 ## Your GitHub Access
@@ -708,7 +708,7 @@ router.post('/project/generate', async (req, res) => {
 ───────────────────────────────────────── */
 router.get('/github-status', async (_req, res) => {
   const token = process.env.GITHUB_TOKEN;
-  const owner = process.env.GITHUB_OWNER || 'dongxiaoxuan';
+  const owner = process.env.GITHUB_OWNER || 'samiunarno';
   const repo  = process.env.GITHUB_REPO  || 'Digital-Backend';
 
   if (!token || token === 'PASTE_YOUR_PAT_HERE') {
