@@ -57,7 +57,7 @@ async function startServer() {
   app.use("/api", apiRoutes);
 
   // Handle unhandled API routes
-  app.all("/api/*", (req, res, next) => {
+  app.all("/api/*splat", (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
   });
 
@@ -74,7 +74,7 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get("*", (req, res) => {
+    app.get("*splat", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
